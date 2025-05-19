@@ -8,18 +8,106 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Writing Part</title>
-    <link rel="icon" href="/cet/static/images/logo.jpeg">
+    <link rel="icon" href="{% static 'images/logo.jpeg' %}">
+    <style>
+        body {
+            background-color: #f9f9fb;
+            font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+        }
+
+        .tit {
+            font-size: 5.5vw;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            border: none;
+            text-align: center;
+            margin: 0 auto 20px;
+        }
+
+        .card-body {
+            text-align: center;
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .card-img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .list-group-item {
+            background-color: #fff;
+            font-size: 0.95rem;
+        }
+    </style>
 </head>
 
 <body>
-    <hr>
-    <div class="bck_title">
-        <div class="tit">Part I &nbsp; 写作</div>
+    <div class="card">
+        <div class="card-body">
+            <hr>
+            <div class="bck_title">
+                <div class="tit">Part I &nbsp; 写作</div>
+            </div>
+            <hr>
+        </div>
     </div>
-    <hr>
 
+    <div class="card">
+        <div class="card-body">
+            <hr>
+            <p style="text-align: center; font-size: 3vw;">✅ 先 牢 记 考 试 时 间 🕰️</p>
+            <div class="card" style="width: 90%">
+                <img src="{% static 'images/writing_time.png' %}" class="card-img">
+            </div>
+            <div class="card" style="width: 90%">
+                <img src="{% static 'images/writing_time6.png' %}" class="card-img">
+            </div>
+            <p style="text-align: center; font-size:2vw;">📝写作时间：30 分钟（建议25分钟内完成）。 🎯分值：占总分的 15%，满分为 106.5 分。 </p>
+            <hr>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <p style="text-align: center; font-size: 3vw;">✅ 直 接 说 作 答 思 路 💡</p>
+                <pre style="text-align:left; font-size: 1.8vw;">
+要明白，无论题目怎么出，核心都是<strong>围绕某一个主题进行讨论</strong>。那么不管这个主题是什么，我们都按照以下步奏：
 
+1.先在草稿纸上快速列出<strong>三个讨论方向</strong>（用花括号）准备进行阐述。
+    （例如：主题为“自律”  那么： 1.什么是自律  2.自律的好处  3.如何做到自律）
+    （例如：主题为“心理健康”  那么： 1.心理健康的重要性  2.个人如何保障心理健康  3.社会如何促进心理健康）
 
+2.选择开头，中间，结尾的<strong>骨架句型</strong>（比如中间：On the one hand…  On the other hand…  Moreover…  结尾：In summary…）
+    （具体请看下面的《优秀骨架句型大全》）
+
+3.选用准备好的万能句型模板对开头，中间三个小方向，结尾<strong>分别进行扩充</strong>。
+    （具体请看下面的《万能优秀模版大全》）
+
+完毕，是不是很清晰很简单。
+                </pre>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <p style="text-align: center; font-size: 3vw;">🔍 优秀骨架句型大全 🎯</p>
+
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <p style="text-align: center; font-size: 3vw;">✨ 万能扩充模版大全 ✨</p>
+
+            </div>
+        </div>
+    </div>
 
     <script src="{% static 'js/bootstrap/jquery-3.7.1.min.js' %}"></script>
     <script src="{% static 'js/bootstrap/bootstrap.min.js' %}"></script>
