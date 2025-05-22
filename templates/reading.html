@@ -7,22 +7,146 @@
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reading Part</title>
+    <title>Translate Part</title>
     <link rel="icon" href="{% static 'images/logo.jpeg' %}">
+    <style>
+        body {
+            background-color: #f9f9fb;
+            font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+        }
+
+        .tit {
+            font-size: 8.5vw;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            border: none;
+            text-align: center;
+            margin: 0 auto 20px;
+        }
+
+        .card-body {
+            text-align: center;
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .card-img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .list-group-item {
+            background-color: #fff;
+            font-size: 0.95rem;
+        }
+    </style>
 </head>
 
 <body>
-    <hr>
-    <div class="bck_title">
-        <div class="tit">Part III &nbsp; 阅读</div>
+    <div class="card">
+        <div class="card-body">
+            <hr>
+            <div class="bck_title">
+                <div class="tit">Part III &nbsp; 阅读</div>
+            </div>
+            <hr>
+        </div>
     </div>
-    <hr>
 
+    <div class="card">
+        <div class="card-body">
+            <hr>
+            <p style="text-align: center; font-size: 5.5vw;">✅ 先 牢 记 考 试 时 间 🕰️</p>
+            <div class="card" style="width: 90%">
+                <img src="{% static 'images/reading_time.png' %}" class="card-img">
+            </div>
+            <div class="card" style="width: 90%">
+                <img src="{% static 'images/reading_time6.png' %}" class="card-img">
+            </div>
+            <p style="text-align: center; font-size:3.5vw;">
+                📝阅读时间：40 分钟<br>（选词填空 5 min，长阅读 15 min，短阅读 2×10 min）。<br>
+                🎯分值：占总分的 35%，满分为 710 × 35% = 248.5 分。
+            </p>
+            <hr>
+        </div>
 
+        <p style="text-align: center; font-size: 5.5vw;">✅ 先 说 做 题 顺 序 💡</p>
+        <p style="text-align: center; font-size: 4vw;">短阅读 -> 长阅读 -> 翻译 -> 选词填空 <br> 【按照分值排序，先做「高性价比」题型。】
+        </p>
+        <div class="card">
+            <div class="card-body">
+                <br>
+                <p style="text-align: center; font-size: 5vw;"> ❶ 短 阅 读 </p>
+                <p style="text-align: center; font-size: 3.5vw;">【把握中心 + 找信息句】</p>
+                <table border="1" style="width: 80%; text-align: center; margin: 0 auto; font-size: 3vw;">
+                    <tr>
+                        <th style="text-align: center;"><strong>步骤</strong></th>
+                        <th style="text-align: center;"><strong>操作内容</strong></th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>读首段+各段首尾句，把握<strong>文章中心</strong>(2分钟)</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>阅读题干和选项，回头定位(信息句下划线)</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>信息句和选项进行对比、选最接近的。</td>
+                    </tr>
+                </table>
+                <hr>
+                <p style="text-align: center; font-size: 5vw;"> ❷ 长 阅 读 </p>
+                <p style="text-align: center; font-size: 3.5vw;">【快速定位 + 合理放弃】 </p>
+                <table border="1" style="width: 80%; text-align: center; margin: 0 auto; font-size: 3vw;">
+                    <tr>
+                        <th style="text-align: center;"><strong>步骤</strong></th>
+                        <th style="text-align: center;"><strong>操作内容</strong></th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>读首段+各段首尾句，把握<strong>文章中心</strong>(3分钟)</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>阅读题干和选项，定位时间，地点，人名等固定词</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>信息句和选项进行对比、选最接近的。</td>
+                    </tr>
+                </table>
+                <br>
+                <p style="text-align: center; font-size: 3.5vw;">①不用按顺序做，从简单的入手，一题长时间找不到先跳</p>
+                <p style="text-align: center; font-size: 3.5vw;">②优先用<strong>时间，地点，名字，陌生词</strong>定位，它们较为固定</p>
+                <p style="text-align: center; font-size: 3.5vw;">③一个段落最多被选两次，优先往一次都没选过的段落找</p>
+                <p style="text-align: center; font-size: 3.5vw;">④做出<strong>七个</strong>题目就好，时间其实挺紧的，不必全部做出来</p>
+                <hr>
+                <p style="text-align: center; font-size: 5vw;"> ❸ 选 词 填 空 </p>
+                <p style="text-align: center; font-size: 3.5vw;">【最后再做 + 放平心态】 </p>
+                <p style="text-align: center; font-size: 3.5vw;">翻译做完后，剩下的时间再留给它，但无需有压力</p>
+                <p style="text-align: center; font-size: 3.5vw;">这个题就是来搞笑的，能做出几个做几个，基本不影响分数。</p>
+                <hr>
+                <div class="card">
+                    <div class="card-body">
+                        <br>
+                        <p style="text-align: center; font-size: 4vw;">✨ 完毕，按这个流程练一练，熟能生巧 ✨</p>
+                        <br>
+                    </div>
+                </div>
+            </div>
 
-
-    <script src="{% static 'js/bootstrap/jquery-3.7.1.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap/bootstrap.min.js' %}"></script>
+            <script src="{% static 'js/bootstrap/jquery-3.7.1.min.js' %}"></script>
+            <script src="{% static 'js/bootstrap/bootstrap.min.js' %}"></script>
 </body>
 
 </html>
