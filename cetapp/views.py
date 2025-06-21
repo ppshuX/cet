@@ -15,3 +15,6 @@ def writing(request):
 
 def translate(request):
     return render(request, 'translate.html')
+
+def travel(request):
+        return render(request, 'travel.html')

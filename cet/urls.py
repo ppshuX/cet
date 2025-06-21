@@ -24,5 +24,6 @@ urlpatterns = [
     path('writing', views.writing, name='writing'),
     path('reading', views.reading, name='reading'),
     path('translate', views.translate, name='translate'),
+    path('travel', views.travel, name='travel'),
     path('admin/', admin.site.urls),
 ]
