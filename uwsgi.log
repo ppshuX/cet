@@ -3469,3 +3469,458 @@ spawned uWSGI worker 2 (pid: 140440, cores: 5)
 [pid: 140440|app: 0|req: 4/6] 106.228.125.10 () {66 vars in 1247 bytes} [Sat Jun 21 16:17:51 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 4)
 [pid: 140440|app: 0|req: 5/7] 106.228.125.10 () {64 vars in 1353 bytes} [Sat Jun 21 16:17:53 2025] GET /accounts/logout/?next=/cetapp/trip/ => generated 0 bytes in 13 msecs (HTTP/1.1 302) 11 headers in 458 bytes (1 switches on core 1)
 [pid: 140439|app: 0|req: 3/8] 106.228.125.10 () {64 vars in 1264 bytes} [Sat Jun 21 16:17:53 2025] GET /cetapp/trip/ => generated 12655 bytes in 12 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 2)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 16:20:21 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x55cf092ef6a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x55cf092ef6a0 pid: 140489 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 140489)
+spawned uWSGI worker 1 (pid: 140491, cores: 5)
+spawned uWSGI worker 2 (pid: 140492, cores: 5)
+[pid: 140491|app: 0|req: 1/1] 106.228.125.10 () {62 vars in 1242 bytes} [Sat Jun 21 16:20:31 2025] GET /cetapp/trip/ => generated 12655 bytes in 83 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 0)
+[pid: 140492|app: 0|req: 1/2] 117.136.108.50 () {58 vars in 1334 bytes} [Sat Jun 21 16:20:59 2025] GET /cetapp/trip/ => generated 12655 bytes in 79 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 0)
+Not Found: /favicon.ico
+[pid: 140492|app: 0|req: 2/3] 117.136.108.50 () {56 vars in 1268 bytes} [Sat Jun 21 16:21:02 2025] GET /favicon.ico => generated 2951 bytes in 9 msecs (HTTP/1.1 404) 6 headers in 215 bytes (1 switches on core 3)
+[pid: 140491|app: 0|req: 2/4] 117.136.108.50 () {58 vars in 1334 bytes} [Sat Jun 21 16:21:04 2025] GET /cetapp/trip/ => generated 12655 bytes in 13 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 4)
+Not Found: /favicon.ico
+[pid: 140491|app: 0|req: 3/5] 117.136.108.50 () {56 vars in 1268 bytes} [Sat Jun 21 16:21:04 2025] GET /favicon.ico => generated 2951 bytes in 8 msecs (HTTP/1.1 404) 6 headers in 215 bytes (1 switches on core 3)
+[pid: 140491|app: 0|req: 4/6] 117.136.108.50 () {58 vars in 1334 bytes} [Sat Jun 21 16:21:45 2025] GET /cetapp/trip/ => generated 12655 bytes in 13 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 1)
+Not Found: /favicon.ico
+[pid: 140491|app: 0|req: 5/7] 117.136.108.50 () {56 vars in 1268 bytes} [Sat Jun 21 16:21:46 2025] GET /favicon.ico => generated 2951 bytes in 6 msecs (HTTP/1.1 404) 6 headers in 215 bytes (1 switches on core 0)
+[pid: 140492|app: 0|req: 3/8] 106.228.125.10 () {58 vars in 1157 bytes} [Sat Jun 21 16:22:12 2025] GET /cetapp/trip/ => generated 12655 bytes in 11 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 4)
+Not Found: /favicon.ico
+[pid: 140491|app: 0|req: 6/9] 106.228.125.10 () {56 vars in 1091 bytes} [Sat Jun 21 16:22:12 2025] GET /favicon.ico => generated 2951 bytes in 6 msecs (HTTP/1.1 404) 6 headers in 215 bytes (1 switches on core 2)
+[pid: 140491|app: 0|req: 7/10] 106.228.125.10 () {62 vars in 1145 bytes} [Sat Jun 21 16:22:29 2025] POST /cetapp/trip/checkin/ => generated 20 bytes in 3 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 3)
+[pid: 140491|app: 0|req: 8/11] 106.228.125.10 () {60 vars in 1271 bytes} [Sat Jun 21 16:22:32 2025] GET /accounts/login/?next=/cetapp/trip/ => generated 1926 bytes in 10 msecs (HTTP/1.1 200) 10 headers in 470 bytes (1 switches on core 1)
+[pid: 140492|app: 0|req: 4/12] 106.228.125.10 () {62 vars in 1330 bytes} [Sat Jun 21 16:22:44 2025] GET /cetapp/register/?next=/cetapp/trip/ => generated 2120 bytes in 10 msecs (HTTP/1.1 200) 8 headers in 358 bytes (1 switches on core 2)
+[pid: 140492|app: 0|req: 5/13] 106.228.125.10 () {64 vars in 1196 bytes} [Sat Jun 21 16:22:51 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 4)
+[pid: 140491|app: 0|req: 9/14] 106.228.125.10 () {64 vars in 1196 bytes} [Sat Jun 21 16:22:52 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 0)
+[pid: 140491|app: 0|req: 10/15] 106.228.125.10 () {62 vars in 1245 bytes} [Sat Jun 21 16:22:54 2025] GET /cetapp/trip/ => generated 12655 bytes in 13 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 2)
+[pid: 140491|app: 0|req: 11/16] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:22:57 2025] POST /cetapp/trip/like/ => generated 13 bytes in 9 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 3)
+[pid: 140491|app: 0|req: 12/17] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:22:57 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 1)
+[pid: 140492|app: 0|req: 6/18] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:22:57 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 3)
+[pid: 140491|app: 0|req: 13/19] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:22:57 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 4)
+[pid: 140491|app: 0|req: 14/20] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:22:57 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 2)
+[pid: 140491|app: 0|req: 15/21] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:22:57 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 3)
+[pid: 140492|app: 0|req: 7/22] 106.228.125.10 () {62 vars in 1245 bytes} [Sat Jun 21 16:22:59 2025] GET /cetapp/trip/ => generated 12655 bytes in 13 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 4)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 16:29:12 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x564683d4e6a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x564683d4e6a0 pid: 140533 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 140533)
+spawned uWSGI worker 1 (pid: 140535, cores: 5)
+spawned uWSGI worker 2 (pid: 140536, cores: 5)
+[pid: 140535|app: 0|req: 1/1] 106.228.125.10 () {60 vars in 1214 bytes} [Sat Jun 21 16:29:19 2025] GET /cetapp/trip/ => generated 12655 bytes in 80 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 0)
+Not Found: /favicon.ico
+[pid: 140536|app: 0|req: 1/2] 106.228.125.10 () {58 vars in 1148 bytes} [Sat Jun 21 16:29:19 2025] GET /favicon.ico => generated 2951 bytes in 23 msecs (HTTP/1.1 404) 6 headers in 215 bytes (1 switches on core 0)
+[pid: 140536|app: 0|req: 2/3] 106.228.125.10 () {62 vars in 1245 bytes} [Sat Jun 21 16:29:21 2025] GET /cetapp/trip/ => generated 12655 bytes in 60 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 2)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 16:30:46 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x55c95ef7d6a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x55c95ef7d6a0 pid: 140547 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 140547)
+spawned uWSGI worker 1 (pid: 140549, cores: 5)
+spawned uWSGI worker 2 (pid: 140550, cores: 5)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 16:30:50 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x5602b678f6a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x5602b678f6a0 pid: 140559 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 140559)
+spawned uWSGI worker 1 (pid: 140561, cores: 5)
+spawned uWSGI worker 2 (pid: 140562, cores: 5)
+[pid: 140562|app: 0|req: 1/1] 106.228.125.10 () {60 vars in 1214 bytes} [Sat Jun 21 16:30:53 2025] GET /cetapp/trip/ => generated 12700 bytes in 75 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 0)
+Not Found: /favicon.ico
+[pid: 140562|app: 0|req: 2/2] 106.228.125.10 () {58 vars in 1148 bytes} [Sat Jun 21 16:30:54 2025] GET /favicon.ico => generated 2951 bytes in 10 msecs (HTTP/1.1 404) 6 headers in 215 bytes (1 switches on core 2)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 16:33:41 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x557596f016a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x557596f016a0 pid: 140573 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 140573)
+spawned uWSGI worker 1 (pid: 140575, cores: 5)
+spawned uWSGI worker 2 (pid: 140576, cores: 5)
+[pid: 140575|app: 0|req: 1/1] 106.228.125.10 () {60 vars in 1214 bytes} [Sat Jun 21 16:33:44 2025] GET /cetapp/trip/ => generated 12778 bytes in 77 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 0)
+Not Found: /favicon.ico
+[pid: 140575|app: 0|req: 2/2] 106.228.125.10 () {58 vars in 1148 bytes} [Sat Jun 21 16:33:44 2025] GET /favicon.ico => generated 2951 bytes in 8 msecs (HTTP/1.1 404) 6 headers in 215 bytes (1 switches on core 4)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 16:34:31 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x564e437ff6a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x564e437ff6a0 pid: 140587 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 140587)
+spawned uWSGI worker 1 (pid: 140589, cores: 5)
+spawned uWSGI worker 2 (pid: 140590, cores: 5)
+[pid: 140590|app: 0|req: 1/1] 106.228.125.10 () {60 vars in 1214 bytes} [Sat Jun 21 16:34:33 2025] GET /cetapp/trip/ => generated 12778 bytes in 78 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 0)
+Not Found: /favicon.ico
+[pid: 140589|app: 0|req: 1/2] 106.228.125.10 () {58 vars in 1148 bytes} [Sat Jun 21 16:34:33 2025] GET /favicon.ico => generated 2951 bytes in 27 msecs (HTTP/1.1 404) 6 headers in 215 bytes (1 switches on core 0)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 16:36:08 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x559501de66a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x559501de66a0 pid: 140603 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 140603)
+spawned uWSGI worker 1 (pid: 140605, cores: 5)
+spawned uWSGI worker 2 (pid: 140606, cores: 5)
+[pid: 140605|app: 0|req: 1/1] 106.228.125.10 () {60 vars in 1214 bytes} [Sat Jun 21 16:36:12 2025] GET /cetapp/trip/ => generated 12824 bytes in 79 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 0)
+Not Found: /favicon.ico
+[pid: 140606|app: 0|req: 1/2] 106.228.125.10 () {58 vars in 1148 bytes} [Sat Jun 21 16:36:13 2025] GET /favicon.ico => generated 2951 bytes in 27 msecs (HTTP/1.1 404) 6 headers in 215 bytes (1 switches on core 0)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 16:37:02 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x55e8c37316a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x55e8c37316a0 pid: 140621 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 140621)
+spawned uWSGI worker 1 (pid: 140623, cores: 5)
+spawned uWSGI worker 2 (pid: 140624, cores: 5)
+[pid: 140624|app: 0|req: 1/1] 106.228.125.10 () {60 vars in 1214 bytes} [Sat Jun 21 16:37:04 2025] GET /cetapp/trip/ => generated 12837 bytes in 92 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 0)
+Not Found: /favicon.ico
+[pid: 140624|app: 0|req: 2/2] 106.228.125.10 () {58 vars in 1148 bytes} [Sat Jun 21 16:37:04 2025] GET /favicon.ico => generated 2951 bytes in 8 msecs (HTTP/1.1 404) 6 headers in 215 bytes (1 switches on core 1)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 16:37:21 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x56195bee26a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x56195bee26a0 pid: 140635 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 140635)
+spawned uWSGI worker 1 (pid: 140637, cores: 5)
+spawned uWSGI worker 2 (pid: 140638, cores: 5)
+[pid: 140637|app: 0|req: 1/1] 106.228.125.10 () {60 vars in 1214 bytes} [Sat Jun 21 16:37:24 2025] GET /cetapp/trip/ => generated 12837 bytes in 77 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 0)
+Not Found: /favicon.ico
+[pid: 140638|app: 0|req: 1/2] 106.228.125.10 () {58 vars in 1148 bytes} [Sat Jun 21 16:37:24 2025] GET /favicon.ico => generated 2951 bytes in 24 msecs (HTTP/1.1 404) 6 headers in 215 bytes (1 switches on core 0)
+[pid: 140637|app: 0|req: 2/3] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:37:37 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 4)
+[pid: 140637|app: 0|req: 3/4] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:37:37 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 3)
+[pid: 140637|app: 0|req: 4/5] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:37:37 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 1)
+[pid: 140637|app: 0|req: 5/6] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:37:37 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 0)
+[pid: 140638|app: 0|req: 2/7] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:37:38 2025] POST /cetapp/trip/like/ => generated 13 bytes in 14 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 2)
+[pid: 140638|app: 0|req: 3/8] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:37:38 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 1)
+[pid: 140638|app: 0|req: 4/9] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:37:40 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 4)
+[pid: 140637|app: 0|req: 6/10] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:37:40 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 2)
+[pid: 140637|app: 0|req: 7/11] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:37:40 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 0)
+[pid: 140638|app: 0|req: 5/12] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:37:40 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 3)
+[pid: 140638|app: 0|req: 6/13] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:37:41 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 1)
+[pid: 140637|app: 0|req: 8/14] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:37:41 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 3)
+[pid: 140638|app: 0|req: 7/15] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:37:41 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 4)
+[pid: 140637|app: 0|req: 9/16] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:37:41 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 2)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 16:39:45 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x55f7e12626a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x55f7e12626a0 pid: 140660 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 140660)
+spawned uWSGI worker 1 (pid: 140662, cores: 5)
+spawned uWSGI worker 2 (pid: 140663, cores: 5)
+[pid: 140663|app: 0|req: 1/1] 106.228.125.10 () {60 vars in 1214 bytes} [Sat Jun 21 16:39:49 2025] GET /cetapp/trip/ => generated 12838 bytes in 91 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 0)
+Not Found: /favicon.ico
+[pid: 140662|app: 0|req: 1/2] 106.228.125.10 () {58 vars in 1148 bytes} [Sat Jun 21 16:39:49 2025] GET /favicon.ico => generated 2951 bytes in 23 msecs (HTTP/1.1 404) 6 headers in 215 bytes (1 switches on core 0)
+[pid: 140662|app: 0|req: 2/3] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:39:52 2025] POST /cetapp/trip/like/ => generated 13 bytes in 13 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 4)
+[pid: 140662|app: 0|req: 3/4] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:39:52 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 2)
+[pid: 140662|app: 0|req: 4/5] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:39:53 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 3)
+[pid: 140663|app: 0|req: 2/6] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:39:53 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 3)
+[pid: 140662|app: 0|req: 5/7] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:39:53 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 1)
+[pid: 140662|app: 0|req: 6/8] 106.228.125.10 () {62 vars in 1328 bytes} [Sat Jun 21 16:40:33 2025] GET /accounts/login/?next=/cetapp/trip/ => generated 2076 bytes in 48 msecs (HTTP/1.1 200) 10 headers in 470 bytes (1 switches on core 4)
+[pid: 140663|app: 0|req: 3/9] 106.228.125.10 () {62 vars in 1315 bytes} [Sat Jun 21 16:40:35 2025] GET /cetapp/register/ => generated 2120 bytes in 9 msecs (HTTP/1.1 200) 8 headers in 358 bytes (1 switches on core 2)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 16:43:10 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x559c2cddf6a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x559c2cddf6a0 pid: 140680 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 140680)
+spawned uWSGI worker 1 (pid: 140682, cores: 5)
+spawned uWSGI worker 2 (pid: 140683, cores: 5)
+[pid: 140682|app: 0|req: 1/1] 106.228.125.10 () {60 vars in 1214 bytes} [Sat Jun 21 16:43:15 2025] GET /cetapp/trip/ => generated 12848 bytes in 77 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 0)
+Not Found: /favicon.ico
+[pid: 140683|app: 0|req: 1/2] 106.228.125.10 () {58 vars in 1148 bytes} [Sat Jun 21 16:43:15 2025] GET /favicon.ico => generated 2951 bytes in 23 msecs (HTTP/1.1 404) 6 headers in 215 bytes (1 switches on core 0)
+[pid: 140683|app: 0|req: 2/3] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:43:16 2025] POST /cetapp/trip/like/ => generated 13 bytes in 15 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 2)
+[pid: 140682|app: 0|req: 2/4] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:43:16 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 2)
+[pid: 140682|app: 0|req: 3/5] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:43:16 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 1)
+[pid: 140683|app: 0|req: 3/6] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:43:17 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 3)
+[pid: 140682|app: 0|req: 4/7] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:43:18 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 0)
+[pid: 140682|app: 0|req: 5/8] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:43:18 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 4)
+[pid: 140682|app: 0|req: 6/9] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:43:18 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 3)
+[pid: 140682|app: 0|req: 7/10] 106.228.125.10 () {64 vars in 1224 bytes} [Sat Jun 21 16:43:18 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 2)
+[pid: 140682|app: 0|req: 8/11] 106.228.125.10 () {62 vars in 1328 bytes} [Sat Jun 21 16:43:49 2025] GET /accounts/login/?next=/cetapp/trip/ => generated 2076 bytes in 10 msecs (HTTP/1.1 200) 10 headers in 470 bytes (1 switches on core 1)
+[pid: 140683|app: 0|req: 4/12] 106.228.125.10 () {70 vars in 1548 bytes} [Sat Jun 21 16:44:02 2025] POST /accounts/login/?next=/cetapp/trip/ => generated 0 bytes in 418 msecs (HTTP/1.1 302) 12 headers in 640 bytes (1 switches on core 1)
+[pid: 140682|app: 0|req: 9/13] 106.228.125.10 () {64 vars in 1382 bytes} [Sat Jun 21 16:44:03 2025] GET /cetapp/trip/ => generated 12860 bytes in 14 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 0)
+[pid: 140682|app: 0|req: 10/14] 106.228.125.10 () {64 vars in 1274 bytes} [Sat Jun 21 16:44:10 2025] POST /cetapp/trip/checkin/ => generated 20 bytes in 3 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 4)
+[pid: 140682|app: 0|req: 11/15] 106.228.125.10 () {64 vars in 1268 bytes} [Sat Jun 21 16:44:13 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 3)
+[pid: 140682|app: 0|req: 12/16] 106.228.125.10 () {64 vars in 1268 bytes} [Sat Jun 21 16:44:13 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 2)
+[pid: 140683|app: 0|req: 5/17] 106.228.125.10 () {64 vars in 1268 bytes} [Sat Jun 21 16:44:13 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 2)
+[pid: 140683|app: 0|req: 6/18] 106.228.125.10 () {64 vars in 1268 bytes} [Sat Jun 21 16:44:14 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 4)
+[pid: 140682|app: 0|req: 13/19] 106.228.125.10 () {64 vars in 1268 bytes} [Sat Jun 21 16:44:14 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 1)
+[pid: 140682|app: 0|req: 14/20] 106.228.125.10 () {64 vars in 1268 bytes} [Sat Jun 21 16:44:14 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 4)
+[pid: 140682|app: 0|req: 15/21] 106.228.125.10 () {64 vars in 1268 bytes} [Sat Jun 21 16:44:14 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 3)
+[pid: 140683|app: 0|req: 7/22] 106.228.125.10 () {64 vars in 1268 bytes} [Sat Jun 21 16:44:14 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 3)
+[pid: 140683|app: 0|req: 8/23] 106.228.125.10 () {64 vars in 1268 bytes} [Sat Jun 21 16:44:14 2025] POST /cetapp/trip/like/ => generated 13 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 4)
+[pid: 140683|app: 0|req: 9/24] 106.228.125.10 () {64 vars in 1268 bytes} [Sat Jun 21 16:44:15 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 0)
+[pid: 140682|app: 0|req: 16/25] 106.228.125.10 () {64 vars in 1268 bytes} [Sat Jun 21 16:44:15 2025] POST /cetapp/trip/like/ => generated 13 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 2)
+[pid: 140683|app: 0|req: 10/26] 106.228.125.10 () {66 vars in 1443 bytes} [Sat Jun 21 16:44:34 2025] POST /cetapp/trip/add_comment/ => generated 16 bytes in 9 msecs (HTTP/1.1 200) 7 headers in 212 bytes (1 switches on core 1)
+[pid: 140682|app: 0|req: 17/27] 106.228.125.10 () {64 vars in 1360 bytes} [Sat Jun 21 16:44:34 2025] GET /cetapp/trip/ => generated 13205 bytes in 14 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 4)
+[pid: 140683|app: 0|req: 11/28] 106.228.125.10 () {62 vars in 1374 bytes} [Sat Jun 21 16:44:39 2025] GET /accounts/logout/?next=/cetapp/trip/ => generated 0 bytes in 11 msecs (HTTP/1.1 302) 11 headers in 458 bytes (1 switches on core 3)
+[pid: 140683|app: 0|req: 12/29] 106.228.125.10 () {62 vars in 1285 bytes} [Sat Jun 21 16:44:39 2025] GET /cetapp/trip/ => generated 13073 bytes in 32 msecs (HTTP/1.1 200) 7 headers in 223 bytes (1 switches on core 0)
+[pid: 140683|app: 0|req: 13/30] 106.228.125.10 () {62 vars in 1328 bytes} [Sat Jun 21 16:44:46 2025] GET /accounts/login/?next=/cetapp/trip/ => generated 2076 bytes in 9 msecs (HTTP/1.1 200) 10 headers in 470 bytes (1 switches on core 2)

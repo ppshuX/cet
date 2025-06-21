@@ -167,11 +167,12 @@ const csrftoken = getCookie('csrftoken');
 
 
     <body>
-        <h1>2025年厦门旅行计划</h1>
+        <br>
+        <h2 style="text-align:center; font-size:1.2rem;">2025年 厦门旅行计划</h2>
 
         <div style="position: absolute; top: 20px; right: 20px;">
             {% if user.is_authenticated %}
-            👋 你好，{{ user.username }}！
+            👋 你好啊，{{ user.username }}！
             <a href="{% url 'logout' %}?next={{ request.path }}">退出</a>
             {% else %}
             <a href="{% url 'login' %}?next={{ request.path }}">登录</a> /
@@ -182,17 +183,17 @@ const csrftoken = getCookie('csrftoken');
         <section>
             <h2>🌊 旅行进度条</h2>
             <div class="progress-container">
-                <div id="progressBar" class="progress-bar">加载中...</div>
+                <div id="progressBar" class="progress-bar" style="width:50%;">加载中...</div>
             </div>
         </section>
 
-        <section class="stats">
+        <section class="stats" style="text-align: center; margin-top: 1rem;">
             浏览量：<span id="views">0</span> ｜ 点赞：<span id="likes">0</span>
-            <button onclick="like()">👍 点赞</button>
+            <button onclick="like()" style="display: block; margin: 0 auto; font-size: 1.0rem;">👍 点赞</button>
         </section>
 
         <section>
-            <h2>🧭 行程概览</h2>
+            <h3>🧭 行程概览</h3>
             <p><strong>旅行时间：</strong>2025年6月22日 ~ 6月24日</p>
             <p><strong>出发地：</strong>南昌</p>
             <p><strong>目的地：</strong>厦门</p>
@@ -201,7 +202,7 @@ const csrftoken = getCookie('csrftoken');
         </section>
 
         <section>
-            <h2>📅 6月22日（Day 1）</h2>
+            <h3>📅 6月22日（Day 1）</h3>
             <ul>
                 <li>14:04 抵达厦门北站，乘地铁+打车前往酒店，预计15:30入住</li>
                 <li>吃点简餐垫肚子，稍作休整</li>
@@ -213,7 +214,7 @@ const csrftoken = getCookie('csrftoken');
         </section>
 
         <section>
-            <h2>📅 6月23日（Day 2）</h2>
+            <h3>📅 6月23日（Day 2）</h3>
             <ul>
                 <li>05:21 日出时间，建议4:20起床，前往盼归塔或白城沙滩</li>
                 <li>回酒店早餐后，游玩鼓浪屿（09:00 ~ 13:00）</li>
@@ -227,7 +228,7 @@ const csrftoken = getCookie('csrftoken');
         </section>
 
         <section>
-            <h2>📅 6月24日（Day 3）</h2>
+            <h3>📅 6月24日（Day 3）</h3>
             <ul>
                 <li>上午游览鸿山公园</li>
                 <li>离开后前往普陀寺参拜体验</li>
@@ -238,7 +239,7 @@ const csrftoken = getCookie('csrftoken');
         </section>
 
         <section>
-            <h2>💰 费用预算</h2>
+            <h3>💰 费用预算</h3>
             <table>
                 <tr>
                     <th>项目</th>
@@ -247,37 +248,37 @@ const csrftoken = getCookie('csrftoken');
                 </tr>
                 <tr>
                     <td>往返高铁</td>
-                    <td>442</td>
+                    <td>￥442</td>
                     <td>南昌—厦门 221×2</td>
                 </tr>
                 <tr>
-                    <td>植物园门票</td>
-                    <td>15</td>
+                    <td>景点门票</td>
+                    <td>￥120</td>
                     <td>学生票</td>
                 </tr>
                 <tr>
                     <td>地铁+市内交通</td>
-                    <td>100</td>
+                    <td>￥100</td>
                     <td>含地铁、短打车</td>
                 </tr>
                 <tr>
                     <td>餐饮</td>
-                    <td>120</td>
+                    <td>￥120</td>
                     <td>三天每餐约15~25元</td>
                 </tr>
                 <tr>
                     <td>住宿</td>
-                    <td>180</td>
+                    <td>￥180</td>
                     <td>2晚</td>
                 </tr>
                 <tr>
-                    <td>其他杂费</td>
-                    <td>100</td>
+                    <td>其他</td>
+                    <td>￥70</td>
                     <td>小吃、书店等</td>
                 </tr>
                 <tr class="total">
                     <td>预计总费用</td>
-                    <td>约957元</td>
+                    <td>约1032元</td>
                     <td>略有浮动</td>
                 </tr>
             </table>
