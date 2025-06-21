@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2025年厦门旅行计划</title>
-    <style>
-        body {
-            font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            line-height: 1.8;
-            background-color: #f7f9fc;
-            margin: 0;
-            padding: 2rem;
-            color: #333;
-        }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>2025年厦门旅行计划</title>
+        <style>
+body {
+    font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    line-height: 1.8;
+    background-color: #f7f9fc;
+    margin: 0;
+    padding: 2rem;
+    color: #333;
+}
 
         h1,
         h2 {
@@ -63,103 +63,261 @@
             font-weight: bold;
             background-color: #fcfcfc;
         }
-    </style>
-</head>
 
-<body>
-    <h1>2025年厦门旅行计划</h1>
+        .progress-container {
+            background: #e0e0e0;
+            border-radius: 20px;
+            overflow: hidden;
+            height: 24px;
+            margin: 1.5rem 0;
+        }
 
-    <section>
-        <h2>🧭 行程概览</h2>
-        <p><strong>旅行时间：</strong>2025年6月22日 ~ 6月24日</p>
-        <p><strong>出发地：</strong>南昌</p>
-        <p><strong>目的地：</strong>厦门</p>
-        <p><strong>交通方式：</strong>高铁往返（221元×2）</p>
-        <p><strong>住宿：</strong>南枫云居酒店（近植物园，2晚）</p>
-    </section>
+        .progress-bar {
+            background: #4caf50;
+            height: 100%;
+            width: 0%;
+            text-align: center;
+            color: white;
+            line-height: 24px;
+            font-size: 14px;
+        }
 
-    <section>
-        <h2>📅 6月22日（Day 1）</h2>
-        <ul>
-            <li>14:04 抵达厦门北站，乘地铁+打车前往酒店，预计15:30入住</li>
-            <li>吃点简餐垫肚子，稍作休整</li>
-            <li>16:00 - 18:00 前往厦门植物园（学生票 14.86 元）</li>
-            <li>🌿 <em>植物园评价：</em> 环境优美，适合拍照，傍晚光线柔和</li>
-            <li>晚餐：沙坡尾或曾厝垵区域尝试特色美食</li>
-            <li>夜间安排：海边散步 / 集市小吃 / 书店</li>
-        </ul>
-    </section>
+        .check-in {
+            display: inline-block;
+            margin: 1rem 0;
+            padding: 0.5rem 1rem;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: not-allowed;
+        }
 
-    <section>
-        <h2>📅 6月23日（Day 2）</h2>
-        <ul>
-            <li>05:21 日出时间，建议4:20起床，前往盼归塔或白城沙滩</li>
-            <li>回酒店早餐后，游玩鼓浪屿（4~5小时）</li>
-            <li>🏝️ <em>鼓浪屿评价：</em> 文艺岛屿，适合拍照与慢游</li>
-            <li>午餐：鼓浪屿海鲜或本地特色</li>
-            <li>下午：八市+中山路步行街</li>
-            <li>🛍️ <em>八市评价：</em> 烟火气浓厚，体验地道厦门</li>
-            <li>傍晚：海边沙滩看日落，拍照发动态</li>
-            <li>晚上：自由活动或补拍</li>
-        </ul>
-    </section>
+        .comments textarea {
+            width: 100%;
+            height: 80px;
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-bottom: 0.5rem;
+        }
 
-    <section>
-        <h2>📅 6月24日（Day 3）</h2>
-        <ul>
-            <li>上午游览鸿山公园</li>
-            <li>离开后前往普陀寺参拜体验</li>
-            <li>午餐：尝试性价比高的本地美食</li>
-            <li>14:00 从酒店前往厦门北站</li>
-            <li>15:54 高铁返程</li>
-        </ul>
-    </section>
+        .comments button {
+            padding: 0.5rem 1rem;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
 
-    <section>
-        <h2>💰 费用预算</h2>
-        <table>
-            <tr>
-                <th>项目</th>
-                <th>估算费用（元）</th>
-                <th>备注</th>
-            </tr>
-            <tr>
-                <td>往返高铁</td>
-                <td>442</td>
-                <td>南昌—厦门 221×2</td>
-            </tr>
-            <tr>
-                <td>植物园门票</td>
-                <td>15</td>
-                <td>学生票</td>
-            </tr>
-            <tr>
-                <td>地铁+市内交通</td>
-                <td>100</td>
-                <td>含地铁、短打车</td>
-            </tr>
-            <tr>
-                <td>餐饮</td>
-                <td>120</td>
-                <td>三天每餐约15~25元</td>
-            </tr>
-            <tr>
-                <td>住宿</td>
-                <td>180</td>
-                <td>2晚</td>
-            </tr>
-            <tr>
-                <td>其他杂费</td>
-                <td>100</td>
-                <td>小吃、书店等</td>
-            </tr>
-            <tr class="total">
-                <td>预计总费用</td>
-                <td>约957元</td>
-                <td>略有浮动</td>
-            </tr>
-        </table>
-    </section>
-</body>
+        .comment-list {
+            margin-top: 1rem;
+        }
 
-</html>
+        .comment {
+            background: #f0f0f0;
+            padding: 0.5rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .comment time {
+            display: block;
+            font-size: 12px;
+            color: #888;
+            margin-top: 0.25rem;
+        }
+
+        .comment .delete-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: none;
+            border: none;
+            color: #c0392b;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .stats {
+            margin-top: 1rem;
+            color: #555;
+        }
+        </style>
+    </head>
+
+    <body>
+        <h1>2025年厦门旅行计划</h1>
+
+        <section>
+            <h2>🌊 旅行进度条</h2>
+            <div class="progress-container">
+                <div id="progressBar" class="progress-bar">加载中...</div>
+            </div>
+        </section>
+
+        <section class="stats">
+            浏览量：<span id="views">0</span> ｜ 点赞：<span id="likes">0</span>
+            <button onclick="like()">👍 点赞</button>
+        </section>
+
+        <section>
+            <h2>🧭 行程概览</h2>
+            <p><strong>旅行时间：</strong>2025年6月22日 ~ 6月24日</p>
+            <p><strong>出发地：</strong>南昌</p>
+            <p><strong>目的地：</strong>厦门</p>
+            <p><strong>交通方式：</strong>高铁往返（221元×2）</p>
+            <p><strong>住宿：</strong>南枫云居酒店（近植物园，2晚）</p>
+        </section>
+
+        <section>
+            <h2>📅 6月22日（Day 1）</h2>
+            <ul>
+                <li>14:04 抵达厦门北站，乘地铁+打车前往酒店，预计15:30入住</li>
+                <li>吃点简餐垫肚子，稍作休整</li>
+                <li>16:00 - 18:00 前往厦门植物园（学生票 14.86 元）</li>
+                <li>🌿 <em>植物园评价：</em> 环境优美，适合拍照，傍晚光线柔和</li>
+                <li>晚餐：沙坡尾或曾厝垵区域尝试特色美食</li>
+                <li>夜间安排：海边散步 / 集市小吃 / 书店</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>📅 6月23日（Day 2）</h2>
+            <ul>
+                <li>05:21 日出时间，建议4:20起床，前往盼归塔或白城沙滩</li>
+                <li>回酒店早餐后，游玩鼓浪屿（09:00 ~ 13:00）</li>
+                <li>🏝️ <em>鼓浪屿评价：</em> 文艺岛屿，适合拍照与慢游</li>
+                <li>午餐：鼓浪屿海鲜或本地特色</li>
+                <li>下午：八市+中山路步行街（14:30 ~ 17:30）</li>
+                <li>🛍️ <em>八市评价：</em> 烟火气浓厚，体验地道厦门</li>
+                <li>傍晚：海边沙滩看日落，拍照发动态</li>
+                <li>晚上：自由活动或补拍</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>📅 6月24日（Day 3）</h2>
+            <ul>
+                <li>上午游览鸿山公园</li>
+                <li>离开后前往普陀寺参拜体验</li>
+                <li>午餐：尝试性价比高的本地美食</li>
+                <li>14:00 从酒店前往厦门北站</li>
+                <li>15:54 高铁返程</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>💰 费用预算</h2>
+            <table>
+                <tr>
+                    <th>项目</th>
+                    <th>估算费用（元）</th>
+                    <th>备注</th>
+                </tr>
+                <tr>
+                    <td>往返高铁</td>
+                    <td>442</td>
+                    <td>南昌—厦门 221×2</td>
+                </tr>
+                <tr>
+                    <td>植物园门票</td>
+                    <td>15</td>
+                    <td>学生票</td>
+                </tr>
+                <tr>
+                    <td>地铁+市内交通</td>
+                    <td>100</td>
+                    <td>含地铁、短打车</td>
+                </tr>
+                <tr>
+                    <td>餐饮</td>
+                    <td>120</td>
+                    <td>三天每餐约15~25元</td>
+                </tr>
+                <tr>
+                    <td>住宿</td>
+                    <td>180</td>
+                    <td>2晚</td>
+                </tr>
+                <tr>
+                    <td>其他杂费</td>
+                    <td>100</td>
+                    <td>小吃、书店等</td>
+                </tr>
+                <tr class="total">
+                    <td>预计总费用</td>
+                    <td>约957元</td>
+                    <td>略有浮动</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="comments">
+            <h2>📍 打卡与留言</h2>
+            <button class="check-in" disabled>📍 已打卡</button>
+            <textarea id="commentInput" placeholder="写下你的留言或建议..."></textarea>
+            <button onclick="submitComment()">💬 发表评论</button>
+            <div class="comment-list" id="commentList"></div>
+        </section>
+        <script>
+            let views = localStorage.getItem("views") || 0;
+let likes = localStorage.getItem("likes") || 0;
+document.getElementById("views").innerText = ++views;
+document.getElementById("likes").innerText = likes;
+localStorage.setItem("views", views);
+
+function like() {
+    likes++;
+    document.getElementById("likes").innerText = likes;
+    localStorage.setItem("likes", likes);
+}
+
+function updateProgressBar() {
+    const now = new Date();
+    const start = new Date('2025-06-22T09:32:00');
+    const end = new Date('2025-06-24T15:54:00');
+    const total = end - start;
+    const passed = now - start;
+    let percentage = Math.min(Math.max((passed / total) * 100, 0), 100);
+    document.getElementById("progressBar").style.width = percentage + "%";
+    let label = Math.round(percentage) + "% - ";
+    if (percentage < 2) label += '🚄 出发前';
+    else if (percentage < 15) label += '🛏️ 入住酒店';
+    else if (percentage < 30) label += '🌿 植物园游玩';
+    else if (percentage < 50) label += '🏝️ 鼓浪屿中';
+    else if (percentage < 70) label += '🛍️ 八市中山路';
+    else if (percentage < 90) label += '🙏 普陀寺参拜';
+    else label += '🏁 旅程即将结束';
+    document.getElementById("progressBar").innerText = label;
+}
+updateProgressBar();
+setInterval(updateProgressBar, 60000);
+
+function submitComment() {
+    const input = document.getElementById("commentInput");
+    const text = input.value.trim();
+    if (text !== "") {
+        const commentList = document.getElementById("commentList");
+        const comment = document.createElement("div");
+        comment.className = "comment";
+        const timestamp = new Date().toLocaleString();
+        comment.innerHTML = `<strong>驻波评论：</strong> ${text}<time>${timestamp}</time><button class="delete-btn" onclick="this.parentElement.remove()">🗑️</button>`;
+        commentList.appendChild(comment);
+        input.value = "";
+    }
+}
+
+function toggleCheckIn() {
+    const btn = document.getElementById("checkInBtn");
+    if (!btn.classList.contains("checked")) {
+        btn.classList.add("checked");
+        btn.innerText = "📍 已打卡";
+        btn.disabled = true;
+    }
+}
+        </script>
+    </body>
+
