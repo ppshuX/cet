@@ -1,0 +1,410 @@
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 14:17:30 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x560a4ea0a6a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x560a4ea0a6a0 pid: 139658 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 139658)
+spawned uWSGI worker 1 (pid: 139660, cores: 5)
+spawned uWSGI worker 2 (pid: 139661, cores: 5)
+[pid: 139660|app: 0|req: 1/1] 106.228.125.10 () {60 vars in 1136 bytes} [Sat Jun 21 14:17:41 2025] GET /cetapp/trip/ => generated 145 bytes in 83 msecs (HTTP/1.1 500) 7 headers in 240 bytes (1 switches on core 0)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 14:18:48 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x55ead504c6a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x55ead504c6a0 pid: 139674 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 139674)
+spawned uWSGI worker 1 (pid: 139676, cores: 5)
+spawned uWSGI worker 2 (pid: 139677, cores: 5)
+Internal Server Error: /cetapp/trip/
+Traceback (most recent call last):
+  File "/home/acs/.local/lib/python3.8/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/acs/.local/lib/python3.8/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/acs/cet/./cetapp/views.py", line 33, in trip_page
+    return render(request, 'cetapp/trip.html', {
+  File "/home/acs/.local/lib/python3.8/site-packages/django/shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/acs/.local/lib/python3.8/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/home/acs/.local/lib/python3.8/site-packages/django/template/loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: cetapp/trip.html
+[pid: 139677|app: 0|req: 1/1] 106.228.125.10 () {60 vars in 1136 bytes} [Sat Jun 21 14:18:53 2025] GET /cetapp/trip/ => generated 70135 bytes in 94 msecs (HTTP/1.1 500) 7 headers in 242 bytes (1 switches on core 0)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 14:20:45 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x55e10d10a6a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x55e10d10a6a0 pid: 139695 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 139695)
+spawned uWSGI worker 1 (pid: 139697, cores: 5)
+spawned uWSGI worker 2 (pid: 139698, cores: 5)
+[pid: 139697|app: 0|req: 1/1] 106.228.125.10 () {60 vars in 1136 bytes} [Sat Jun 21 14:20:48 2025] GET /cetapp/trip/ => generated 11094 bytes in 41 msecs (HTTP/1.1 200) 6 headers in 209 bytes (1 switches on core 0)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 14:21:59 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x56492b3c06a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x56492b3c06a0 pid: 139707 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 139707)
+spawned uWSGI worker 1 (pid: 139709, cores: 5)
+spawned uWSGI worker 2 (pid: 139710, cores: 5)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 14:22:05 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x5613882896a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x5613882896a0 pid: 139719 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 139719)
+spawned uWSGI worker 1 (pid: 139721, cores: 5)
+spawned uWSGI worker 2 (pid: 139722, cores: 5)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 2 seconds
+worker 2 buried after 2 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 14:23:07 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x555658e016a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x555658e016a0 pid: 139740 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 139740)
+spawned uWSGI worker 1 (pid: 139742, cores: 5)
+spawned uWSGI worker 2 (pid: 139743, cores: 5)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 14:23:12 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x563cc41e96a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x563cc41e96a0 pid: 139777 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 139777)
+spawned uWSGI worker 1 (pid: 139779, cores: 5)
+spawned uWSGI worker 2 (pid: 139780, cores: 5)
+[pid: 139779|app: 0|req: 1/1] 106.228.125.10 () {58 vars in 1114 bytes} [Sat Jun 21 14:23:16 2025] GET /cetapp/trip/ => generated 11094 bytes in 36 msecs (HTTP/1.1 200) 6 headers in 209 bytes (1 switches on core 0)
+[pid: 139779|app: 0|req: 2/2] 106.228.125.10 () {60 vars in 1041 bytes} [Sat Jun 21 14:23:18 2025] POST /like/ => generated 179 bytes in 2 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 1)
+[pid: 139779|app: 0|req: 3/3] 106.228.125.10 () {64 vars in 1094 bytes} [Sat Jun 21 14:23:29 2025] POST /like/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 4)
+[pid: 139780|app: 0|req: 1/4] 106.228.125.10 () {64 vars in 1094 bytes} [Sat Jun 21 14:23:34 2025] POST /like/ => generated 179 bytes in 19 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 0)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 14:30:53 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x55fcdbfc76a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x55fcdbfc76a0 pid: 139804 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 139804)
+spawned uWSGI worker 1 (pid: 139806, cores: 5)
+spawned uWSGI worker 2 (pid: 139807, cores: 5)
+[pid: 139807|app: 0|req: 1/1] 106.228.125.10 () {60 vars in 1136 bytes} [Sat Jun 21 14:30:59 2025] GET /cetapp/trip/ => generated 11098 bytes in 41 msecs (HTTP/1.1 200) 6 headers in 209 bytes (1 switches on core 0)
+[pid: 139807|app: 0|req: 2/2] 106.228.125.10 () {64 vars in 1128 bytes} [Sat Jun 21 14:31:01 2025] POST /cetapp/trip/trip/like/ => generated 179 bytes in 2 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 2)
+[pid: 139806|app: 0|req: 1/3] 106.228.125.10 () {64 vars in 1128 bytes} [Sat Jun 21 14:31:02 2025] POST /cetapp/trip/trip/like/ => generated 179 bytes in 18 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 0)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 14:32:05 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x555af15346a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x555af15346a0 pid: 139819 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 139819)
+spawned uWSGI worker 1 (pid: 139821, cores: 5)
+spawned uWSGI worker 2 (pid: 139822, cores: 5)
+[pid: 139822|app: 0|req: 1/1] 106.228.125.10 () {60 vars in 1136 bytes} [Sat Jun 21 14:32:08 2025] GET /cetapp/trip/ => generated 11106 bytes in 39 msecs (HTTP/1.1 200) 6 headers in 209 bytes (1 switches on core 0)
+[pid: 139821|app: 0|req: 1/2] 106.228.125.10 () {64 vars in 1118 bytes} [Sat Jun 21 14:32:10 2025] POST /cetapp/trip/like/ => generated 12 bytes in 22 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 0)
+[pid: 139821|app: 0|req: 2/3] 106.228.125.10 () {64 vars in 1118 bytes} [Sat Jun 21 14:32:11 2025] POST /cetapp/trip/like/ => generated 12 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 1)
+[pid: 139821|app: 0|req: 3/4] 106.228.125.10 () {64 vars in 1118 bytes} [Sat Jun 21 14:32:11 2025] POST /cetapp/trip/like/ => generated 12 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 2)
+[pid: 139822|app: 0|req: 2/5] 106.228.125.10 () {64 vars in 1118 bytes} [Sat Jun 21 14:32:11 2025] POST /cetapp/trip/like/ => generated 12 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 4)
+[pid: 139821|app: 0|req: 4/6] 106.228.125.10 () {64 vars in 1118 bytes} [Sat Jun 21 14:32:12 2025] POST /cetapp/trip/like/ => generated 12 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 3)
+[pid: 139822|app: 0|req: 3/7] 106.228.125.10 () {64 vars in 1100 bytes} [Sat Jun 21 14:32:15 2025] POST /checkin/ => generated 179 bytes in 3 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 0)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 14:33:43 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x55577b5cd6a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x55577b5cd6a0 pid: 139834 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 139834)
+spawned uWSGI worker 1 (pid: 139836, cores: 5)
+spawned uWSGI worker 2 (pid: 139837, cores: 5)
+[pid: 139837|app: 0|req: 1/1] 106.228.125.10 () {60 vars in 1136 bytes} [Sat Jun 21 14:33:46 2025] GET /cetapp/trip/ => generated 11130 bytes in 38 msecs (HTTP/1.1 200) 6 headers in 209 bytes (1 switches on core 0)
+[pid: 139837|app: 0|req: 2/2] 106.228.125.10 () {64 vars in 1118 bytes} [Sat Jun 21 14:33:49 2025] POST /cetapp/trip/like/ => generated 12 bytes in 9 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 2)
+[pid: 139837|app: 0|req: 3/3] 106.228.125.10 () {64 vars in 1124 bytes} [Sat Jun 21 14:33:52 2025] POST /cetapp/trip/checkin/ => generated 20 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 1)
+[pid: 139836|app: 0|req: 1/4] 106.228.125.10 () {66 vars in 1293 bytes} [Sat Jun 21 14:34:07 2025] POST /cetapp/trip/add_comment/ => generated 16 bytes in 21 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 0)
+[pid: 139837|app: 0|req: 4/5] 106.228.125.10 () {62 vars in 1207 bytes} [Sat Jun 21 14:34:07 2025] GET /cetapp/trip/ => generated 11460 bytes in 10 msecs (HTTP/1.1 200) 6 headers in 209 bytes (1 switches on core 3)
+[pid: 139837|app: 0|req: 5/6] 106.228.125.10 () {58 vars in 1321 bytes} [Sat Jun 21 14:34:46 2025] GET /travel => generated 179 bytes in 27 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 0)
+[pid: 139837|app: 0|req: 6/7] 106.228.125.10 () {56 vars in 1261 bytes} [Sat Jun 21 14:34:51 2025] GET /favicon.ico => generated 179 bytes in 1 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 2)
+[pid: 139837|app: 0|req: 7/8] 106.228.125.10 () {58 vars in 1321 bytes} [Sat Jun 21 14:34:59 2025] GET /travel => generated 179 bytes in 1 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 1)
+[pid: 139836|app: 0|req: 2/9] 106.228.125.10 () {56 vars in 1261 bytes} [Sat Jun 21 14:35:04 2025] GET /favicon.ico => generated 179 bytes in 9 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 2)
+[pid: 139837|app: 0|req: 8/10] 106.228.125.10 () {48 vars in 991 bytes} [Sat Jun 21 14:35:33 2025] GET /cetapp/trip/ => generated 11460 bytes in 9 msecs (HTTP/1.1 200) 6 headers in 209 bytes (1 switches on core 4)
+[pid: 139837|app: 0|req: 9/11] 106.228.125.10 () {48 vars in 950 bytes} [Sat Jun 21 14:35:34 2025] GET /favicon.ico => generated 179 bytes in 1 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 0)
+[pid: 139836|app: 0|req: 3/12] 106.228.125.10 () {56 vars in 1161 bytes} [Sat Jun 21 14:35:39 2025] POST /cetapp/trip/add_comment/ => generated 16 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 0)
+[pid: 139837|app: 0|req: 10/13] 106.228.125.10 () {54 vars in 1118 bytes} [Sat Jun 21 14:35:40 2025] GET /cetapp/trip/ => generated 11784 bytes in 9 msecs (HTTP/1.1 200) 6 headers in 209 bytes (1 switches on core 2)
+[pid: 139836|app: 0|req: 4/14] 180.163.29.234 () {36 vars in 659 bytes} [Sat Jun 21 14:35:47 2025] GET /travel => generated 179 bytes in 1 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 3)
+[pid: 139837|app: 0|req: 11/15] 106.228.125.10 () {58 vars in 1333 bytes} [Sat Jun 21 14:35:51 2025] GET /cetapp/trip/ => generated 11784 bytes in 11 msecs (HTTP/1.1 200) 6 headers in 209 bytes (1 switches on core 3)
+[pid: 139836|app: 0|req: 5/16] 106.228.125.10 () {56 vars in 1267 bytes} [Sat Jun 21 14:35:55 2025] GET /favicon.ico => generated 179 bytes in 1 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 3)
+[pid: 139836|app: 0|req: 6/17] 106.228.125.10 () {58 vars in 1333 bytes} [Sat Jun 21 14:35:57 2025] GET /cetapp/trip/ => generated 11784 bytes in 46 msecs (HTTP/1.1 200) 6 headers in 209 bytes (1 switches on core 1)
+[pid: 139837|app: 0|req: 12/18] 106.228.125.10 () {56 vars in 1267 bytes} [Sat Jun 21 14:36:02 2025] GET /favicon.ico => generated 179 bytes in 1 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 0)
+[pid: 139837|app: 0|req: 13/19] 106.228.125.10 () {62 vars in 1293 bytes} [Sat Jun 21 14:36:05 2025] POST /cetapp/trip/like/ => generated 12 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 2)
+[pid: 139836|app: 0|req: 7/20] 106.228.125.10 () {62 vars in 1293 bytes} [Sat Jun 21 14:36:05 2025] POST /cetapp/trip/like/ => generated 12 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 0)
+[pid: 139836|app: 0|req: 8/21] 106.228.125.10 () {62 vars in 1299 bytes} [Sat Jun 21 14:36:07 2025] POST /cetapp/trip/checkin/ => generated 20 bytes in 3 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 3)
+[pid: 139837|app: 0|req: 14/22] 106.228.125.10 () {64 vars in 1468 bytes} [Sat Jun 21 14:36:16 2025] POST /cetapp/trip/add_comment/ => generated 16 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 198 bytes (1 switches on core 4)
+[pid: 139836|app: 0|req: 9/23] 106.228.125.10 () {62 vars in 1435 bytes} [Sat Jun 21 14:36:16 2025] GET /cetapp/trip/ => generated 12120 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 209 bytes (1 switches on core 1)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Jun 21 14:36:59 2025] ***
+compiled with version: 9.3.0 on 28 October 2021 05:02:51
+os: Linux-5.4.0-181-generic #201-Ubuntu SMP Thu Mar 28 15:39:01 UTC 2024
+nodename: 28793a6aea65
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/acs/cet
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/acs/cet
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.8.10 (default, Mar 18 2025, 20:04:55)  [GCC 9.4.0]
+Python main interpreter initialized at 0x559ca995b6a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 344232 bytes (336 KB) for 10 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x559ca995b6a0 pid: 139849 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 139849)
+spawned uWSGI worker 1 (pid: 139851, cores: 5)
+spawned uWSGI worker 2 (pid: 139852, cores: 5)
+[pid: 139852|app: 0|req: 1/1] 106.228.125.10 () {62 vars in 1207 bytes} [Sat Jun 21 14:37:02 2025] GET /cetapp/trip/ => generated 12120 bytes in 43 msecs (HTTP/1.1 200) 6 headers in 209 bytes (1 switches on core 0)
+[pid: 139852|app: 0|req: 2/2] 148.153.56.62 () {36 vars in 498 bytes} [Sat Jun 21 14:39:42 2025] GET /KBuZ => generated 179 bytes in 2 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 3)
+[pid: 139851|app: 0|req: 1/3] 148.153.56.62 () {36 vars in 498 bytes} [Sat Jun 21 14:39:42 2025] GET /7jVf => generated 179 bytes in 21 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 0)
+[pid: 139851|app: 0|req: 2/4] 148.153.56.62 () {36 vars in 498 bytes} [Sat Jun 21 14:39:43 2025] GET /aab8 => generated 179 bytes in 1 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 2)
+[pid: 139851|app: 0|req: 3/5] 148.153.56.62 () {36 vars in 538 bytes} [Sat Jun 21 14:39:46 2025] GET /jquery-3.3.1.slim.min.js => generated 179 bytes in 1 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 3)
+[pid: 139851|app: 0|req: 4/6] 148.153.56.62 () {36 vars in 498 bytes} [Sat Jun 21 14:39:49 2025] GET /aab9 => generated 179 bytes in 1 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 1)
+[pid: 139851|app: 0|req: 5/7] 148.153.56.62 () {36 vars in 538 bytes} [Sat Jun 21 14:39:51 2025] GET /jquery-3.3.2.slim.min.js => generated 179 bytes in 1 msecs (HTTP/1.1 404) 6 headers in 214 bytes (1 switches on core 4)

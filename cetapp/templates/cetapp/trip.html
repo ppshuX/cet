@@ -146,7 +146,25 @@ body {
             color: #555;
         }
         </style>
+        <script>
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+const csrftoken = getCookie('csrftoken');
+        </script>
     </head>
+
 
     <body>
         <h1>2025年厦门旅行计划</h1>
@@ -254,70 +272,108 @@ body {
                 </tr>
             </table>
         </section>
-
         <section class="comments">
             <h2>📍 打卡与留言</h2>
-            <button class="check-in" disabled>📍 已打卡</button>
+            <button id="checkInBtn" class="check-in" onclick="checkIn()">📍 去打卡</button>
             <textarea id="commentInput" placeholder="写下你的留言或建议..."></textarea>
             <button onclick="submitComment()">💬 发表评论</button>
-            <div class="comment-list" id="commentList"></div>
+            <div class="comment-list" id="commentList">
+                {% for comment in comments %}
+                <div class="comment">
+                    <strong>匿名评论：</strong> {{ comment.content|linebreaksbr }}
+                    <time>{{ comment.timestamp|date:"Y-m-d H:i" }}</time>
+                    {% if comment.is_owner %}
+                    <button class="delete-btn" onclick="deleteComment(this)">🗑️</button>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
         </section>
+
         <script>
-            let views = localStorage.getItem("views") || 0;
-let likes = localStorage.getItem("likes") || 0;
-document.getElementById("views").innerText = ++views;
-document.getElementById("likes").innerText = likes;
-localStorage.setItem("views", views);
+            document.getElementById("views").innerText = {{ stats.views }};
+document.getElementById("likes").innerText = {{ stats.likes }};
 
 function like() {
-    likes++;
-    document.getElementById("likes").innerText = likes;
-    localStorage.setItem("likes", likes);
+    fetch("/cetapp/trip/like/", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrftoken,
+        },
+    })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("likes").innerText = data.likes;
+        });
+}
+
+function checkIn() {
+    fetch("/cetapp/trip/checkin/", {
+        method: "POST",
+        headers: { "X-CSRFToken": csrftoken },
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.checked_in) {
+                const btn = document.getElementById("checkInBtn");
+                btn.innerText = "📍 已打卡";
+                btn.disabled = true;
+            }
+        });
+}
+
+ const isAuthenticated = {{ request.user.is_authenticated|yesno:"true,false" }};
+
+function submitComment() {
+    const input = document.getElementById("commentInput");
+    const content = input.value.trim();
+    if (content) {
+        const formData = new FormData();
+        formData.append("content", content);
+
+        fetch("/cetapp/trip/add_comment/", {
+            method: "POST",
+            headers: { "X-CSRFToken": csrftoken },
+            body: formData,
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "ok") {
+                    location.reload();
+                }
+            });
+    }
+}
+
+function deleteComment(btn) {
+    btn.parentElement.remove(); // 前端删除，后端待扩展
 }
 
 function updateProgressBar() {
     const now = new Date();
-    const start = new Date('2025-06-22T09:32:00');
-    const end = new Date('2025-06-24T15:54:00');
+    const start = new Date("2025-06-22T09:32:00");
+    const end = new Date("2025-06-24T15:54:00");
     const total = end - start;
     const passed = now - start;
-    let percentage = Math.min(Math.max((passed / total) * 100, 0), 100);
-    document.getElementById("progressBar").style.width = percentage + "%";
+    const percentage = Math.min(Math.max((passed / total) * 100, 0), 100);
+
+    const progressBar = document.getElementById("progressBar");
+    progressBar.style.width = percentage + "%";
+
     let label = Math.round(percentage) + "% - ";
-    if (percentage < 2) label += '🚄 出发前';
-    else if (percentage < 15) label += '🛏️ 入住酒店';
-    else if (percentage < 30) label += '🌿 植物园游玩';
-    else if (percentage < 50) label += '🏝️ 鼓浪屿中';
-    else if (percentage < 70) label += '🛍️ 八市中山路';
-    else if (percentage < 90) label += '🙏 普陀寺参拜';
-    else label += '🏁 旅程即将结束';
-    document.getElementById("progressBar").innerText = label;
+    if (percentage < 2) label += "🚄 出发前";
+    else if (percentage < 15) label += "🛏️ 入住酒店";
+    else if (percentage < 30) label += "🌿 植物园游玩";
+    else if (percentage < 50) label += "🏝️ 鼓浪屿中";
+    else if (percentage < 70) label += "🛍️ 八市中山路";
+    else if (percentage < 90) label += "🙏 普陀寺参拜";
+    else label += "🏁 旅程即将结束";
+
+    progressBar.innerText = label;
 }
+
 updateProgressBar();
 setInterval(updateProgressBar, 60000);
-
-function submitComment() {
-    const input = document.getElementById("commentInput");
-    const text = input.value.trim();
-    if (text !== "") {
-        const commentList = document.getElementById("commentList");
-        const comment = document.createElement("div");
-        comment.className = "comment";
-        const timestamp = new Date().toLocaleString();
-        comment.innerHTML = `<strong>驻波评论：</strong> ${text}<time>${timestamp}</time><button class="delete-btn" onclick="this.parentElement.remove()">🗑️</button>`;
-        commentList.appendChild(comment);
-        input.value = "";
-    }
-}
-
-function toggleCheckIn() {
-    const btn = document.getElementById("checkInBtn");
-    if (!btn.classList.contains("checked")) {
-        btn.classList.add("checked");
-        btn.innerText = "📍 已打卡";
-        btn.disabled = true;
-    }
-}
         </script>
     </body>
 
