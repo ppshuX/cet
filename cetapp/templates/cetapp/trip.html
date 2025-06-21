@@ -169,6 +169,16 @@ const csrftoken = getCookie('csrftoken');
     <body>
         <h1>2025年厦门旅行计划</h1>
 
+        <div style="position: absolute; top: 20px; right: 20px;">
+            {% if user.is_authenticated %}
+            👋 你好，{{ user.username }}！
+            <a href="{% url 'logout' %}?next={{ request.path }}">退出</a>
+            {% else %}
+            <a href="{% url 'login' %}?next={{ request.path }}">登录</a> /
+            <a href="{% url 'register' %}?next={{ request.path }}">注册</a>
+            {% endif %}
+        </div>
+
         <section>
             <h2>🌊 旅行进度条</h2>
             <div class="progress-container">
@@ -272,6 +282,14 @@ const csrftoken = getCookie('csrftoken');
                 </tr>
             </table>
         </section>
+
+        {% if not user.is_authenticated %}
+        <p>
+        请 <a href="{% url 'login' %}?next={{ request.path }}">登录</a> 或
+        <a href="{% url 'register' %}?next={{ request.path }}">注册</a> 后发表评论。
+        </p>
+        {% endif %}
+
         <section class="comments">
             <h2>📍 打卡与留言</h2>
             <button id="checkInBtn" class="check-in" onclick="checkIn()">📍 去打卡</button>
@@ -280,10 +298,10 @@ const csrftoken = getCookie('csrftoken');
             <div class="comment-list" id="commentList">
                 {% for comment in comments %}
                 <div class="comment">
-                    <strong>匿名评论：</strong> {{ comment.content|linebreaksbr }}
+                    <strong>{{ comment.user.username }} : &nbsp; </strong> {{ comment.content|linebreaksbr }}
                     <time>{{ comment.timestamp|date:"Y-m-d H:i" }}</time>
-                    {% if comment.is_owner %}
-                    <button class="delete-btn" onclick="deleteComment(this)">🗑️</button>
+                    {% if comment.user == request.user or request.user.is_superuser %}
+                    <button class="delete-btn" onclick="deleteComment(this, {{ comment.id }})">🗑️ </button>
                     {% endif %}
                 </div>
                 {% endfor %}
@@ -322,9 +340,16 @@ function checkIn() {
         });
 }
 
- const isAuthenticated = {{ request.user.is_authenticated|yesno:"true,false" }};
+const isAuthenticated = {{ request.user.is_authenticated|yesno:"true,false" }};
 
 function submitComment() {
+    if (!isAuthenticated) {
+        // 自动跳转登录页，登录后回到当前页面
+        const currentPath = window.location.pathname;
+        window.location.href = `/accounts/login/?next=${currentPath}`;
+        return;
+    }
+
     const input = document.getElementById("commentInput");
     const content = input.value.trim();
     if (content) {
@@ -345,8 +370,21 @@ function submitComment() {
     }
 }
 
-function deleteComment(btn) {
-    btn.parentElement.remove(); // 前端删除，后端待扩展
+function deleteComment(btn, commentId) {
+    fetch(`/cetapp/trip/delete_comment/${commentId}/`, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrftoken
+        },
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                btn.parentElement.remove();  // 确认后再删除 DOM
+             } else {
+                alert("无权限删除该评论");
+             }
+        });
 }
 
 function updateProgressBar() {

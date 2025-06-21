@@ -25,5 +25,6 @@ urlpatterns = [
     path('reading', views.reading, name='reading'),
     path('translate', views.translate, name='translate'),
     path('cetapp/', include('cetapp.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),  # 关键：启用登录/登出路由
     path('admin/', admin.site.urls),
 ]
