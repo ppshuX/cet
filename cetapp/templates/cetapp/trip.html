@@ -306,22 +306,42 @@ const csrftoken = getCookie('csrftoken');
             {% endif %}
             <div class="comment-list" id="commentList">
                 {% for comment in comments %}
-                <div class="comment">
-                    <strong>{{ comment.user.username }} : &nbsp; </strong> {{ comment.content|linebreaksbr }}
+                <div class="comment" style="margin-bottom: 24px; position: relative;">
+                    <strong>{{ comment.user.username }} : &nbsp;</strong>
+                    {{ comment.content|linebreaksbr }}
+
                     {% if comment.image %}
-                    <br><img src="{{ comment.image.url }}" alt="comment image" style="display: block; margin: 12px auto; max-width: 100%; max-height: 600px; border-radius: 12px; box-shadow: 0 6px 16px rgba(0,0,0,0.15);transition: all 0.3s ease;">
+                    <div style="margin-top: 10px; text-align: center;">
+                        <img src="{{ comment.image.url }}"
+                             alt="comment image"
+                             style="display: inline-block;
+                                    max-width: 100%;
+                                    max-height: 600px;
+                                    border-radius: 12px;
+                                    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+                                    transition: all 0.3s ease;">
+                    </div>
                     {% endif %}
-                    <time style="float: right; color: #888; font-size: 12px;">{{ comment.timestamp|date:"Y-m-d H:i" }}</time>
+
+                    <!-- 评论时间统一放这里 -->
+                    <div style="color: #aaa; font-size: 12px; margin-top: 6px; text-align: right;">
+                        {{ comment.timestamp|date:"Y-m-d H:i" }}
+                    </div>
+
                     {% if comment.user == request.user or request.user.is_superuser %}
-                    <button class="delete-btn" onclick="deleteComment(this, {{ comment.id }})">🗑️ </button>
+                    <button class="delete-btn" onclick="deleteComment(this, {{ comment.id }})"
+                                               style="position: absolute; top: 0; right: 0;">
+                        🗑️
+                    </button>
                     {% endif %}
                 </div>
                 {% endfor %}
             </div>
+
         </section>
 
         <script>
-document.getElementById("views").innerText = {{ stats.views }};
+            document.getElementById("views").innerText = {{ stats.views }};
 document.getElementById("likes").innerText = {{ stats.likes }};
 
 function like() {
@@ -439,19 +459,19 @@ document.addEventListener("DOMContentLoaded", function () {
                     'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
                 }
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === "ok") {
-                    alert("✅ 评论成功！");
-                    location.reload();
-                } else {
-                    alert("评论失败，请填写内容或上传图片。");
-                }
-            })
-            .catch(error => {
-                console.error("评论错误：", error);
-                alert("提交失败，请稍后再试。");
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "ok") {
+                        alert("✅ 评论成功！");
+                        location.reload();
+                    } else {
+                        alert("评论失败，请填写内容或上传图片。");
+                    }
+                })
+                .catch(error => {
+                    console.error("评论错误：", error);
+                    alert("提交失败，请稍后再试。");
+                });
         });
     }
 });
