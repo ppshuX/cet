@@ -9,7 +9,7 @@
 body {
     font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
     line-height: 1.8;
-    background-color: #f7f9fc;
+    background-color: #f0e68c;
     margin: 0;
     padding: 2rem;
     color: #333;
@@ -287,20 +287,31 @@ const csrftoken = getCookie('csrftoken');
         {% if not user.is_authenticated %}
         <p>
         请 <a href="{% url 'login' %}?next={{ request.path }}">登录</a> 或
-        <a href="{% url 'register' %}?next={{ request.path }}">注册</a> 后发表评论。
+        <a href="{% url 'register' %}?next={{ request.path }}">注册</a> 后发表评论(功能暂时关闭)。
         </p>
         {% endif %}
 
         <section class="comments">
             <h2>📍 打卡与留言</h2>
             <button id="checkInBtn" class="check-in" onclick="checkIn()">📍 去打卡</button>
-            <textarea id="commentInput" placeholder="写下你的留言或建议..."></textarea>
-            <button onclick="submitComment()">💬 发表评论</button>
+            {% if request.user.is_superuser %}
+            <form id="commentForm" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <textarea id="commentInput" name="content" placeholder="写下你的留言或建议..."></textarea>
+                <input type="file" name="image" accept="image/*">
+                <button type="submit">💬 发表评论</button>
+            </form>
+            {% else %}
+            <p style="color: gray;">🛡️ 当前仅站主可发表评论，欢迎打卡浏览。</p>
+            {% endif %}
             <div class="comment-list" id="commentList">
                 {% for comment in comments %}
                 <div class="comment">
                     <strong>{{ comment.user.username }} : &nbsp; </strong> {{ comment.content|linebreaksbr }}
-                    <time>{{ comment.timestamp|date:"Y-m-d H:i" }}</time>
+                    {% if comment.image %}
+                    <br><img src="{{ comment.image.url }}" alt="comment image" style="display: block; margin: 12px auto; max-width: 100%; max-height: 600px; border-radius: 12px; box-shadow: 0 6px 16px rgba(0,0,0,0.15);transition: all 0.3s ease;">
+                    {% endif %}
+                    <time style="float: right; color: #888; font-size: 12px;">{{ comment.timestamp|date:"Y-m-d H:i" }}</time>
                     {% if comment.user == request.user or request.user.is_superuser %}
                     <button class="delete-btn" onclick="deleteComment(this, {{ comment.id }})">🗑️ </button>
                     {% endif %}
@@ -310,7 +321,7 @@ const csrftoken = getCookie('csrftoken');
         </section>
 
         <script>
-            document.getElementById("views").innerText = {{ stats.views }};
+document.getElementById("views").innerText = {{ stats.views }};
 document.getElementById("likes").innerText = {{ stats.likes }};
 
 function like() {
@@ -382,9 +393,9 @@ function deleteComment(btn, commentId) {
         .then(data => {
             if (data.status === 'ok') {
                 btn.parentElement.remove();  // 确认后再删除 DOM
-             } else {
+            } else {
                 alert("无权限删除该评论");
-             }
+            }
         });
 }
 
@@ -413,6 +424,37 @@ function updateProgressBar() {
 
 updateProgressBar();
 setInterval(updateProgressBar, 60000);
+
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("commentForm");
+    if (form) {
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();  // 阻止默认提交
+
+            let formData = new FormData(this);
+            fetch("{% url 'add_comment' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "ok") {
+                    alert("✅ 评论成功！");
+                    location.reload();
+                } else {
+                    alert("评论失败，请填写内容或上传图片。");
+                }
+            })
+            .catch(error => {
+                console.error("评论错误：", error);
+                alert("提交失败，请稍后再试。");
+            });
+        });
+    }
+});
         </script>
     </body>
 

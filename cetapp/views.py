@@ -1,3 +1,6 @@
+import os
+import uuid
+import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -8,7 +11,6 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
 from .models import Comment, SiteStat
 from django.utils import timezone
-import json
 
 # Create your views here.
 def index(request):
@@ -52,12 +54,23 @@ def trip_page(request):
 @csrf_exempt
 @login_required
 def add_comment(request):
+    if not request.user.is_superuser:
+        return JsonResponse({'error': '仅管理员可发表评论'}, status=403)
+
     if request.method == 'POST':
         content = request.POST.get('content', '').strip()
-        if content:
-            Comment.objects.create(content=content, user=request.user)
+        image = request.FILES.get('image')
+
+       # 处理图片中文名的问题
+        if image:
+            ext = os.path.splitext(image.name)[-1]  # 获取扩展名
+            image.name = f"{uuid.uuid4().hex}{ext}"  # 使用随机名避免中文 
+
+        if content or image:
+            Comment.objects.create(content=content,image=image, user=request.user)
             return JsonResponse({'status':'ok'})
-    return JsonResponse({'status': 'fail'})
+
+    return JsonResponse({'status': 'fail', 'message': '只支持POST请求'})
 
 @csrf_exempt
 def like_view(request):
