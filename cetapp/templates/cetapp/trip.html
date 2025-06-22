@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>2025年厦门旅行计划</title>
-        <style>
-body {
-    font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-    line-height: 1.8;
-    background-color: #f0e68c;
-    margin: 0;
-    padding: 2rem;
-    color: #333;
-}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025年厦门旅行计划</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.8;
+            background-color: #f0e68c;
+            margin: 0;
+            padding: 2rem;
+            color: #333;
+        }
 
         h1,
         h2 {
@@ -145,336 +145,370 @@ body {
             margin-top: 1rem;
             color: #555;
         }
-        </style>
-        <script>
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
+    </style>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
                     }
                 }
-                return cookieValue;
             }
-const csrftoken = getCookie('csrftoken');
-        </script>
-    </head>
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+    </script>
+</head>
 
 
-    <body>
-        <br>
-        <h2 style="text-align:center; font-size:1.2rem;">2025年 厦门旅行计划</h2>
+<body>
+    <br>
+    <h2 style="text-align:center; font-size:1.2rem;">2025年 厦门旅行计划</h2>
 
-        <div style="position: absolute; top: 20px; right: 20px;">
-            {% if user.is_authenticated %}
-            👋 你好啊，{{ user.username }}！
-            <a href="{% url 'logout' %}?next={{ request.path }}">退出</a>
-            {% else %}
-            <a href="{% url 'login' %}?next={{ request.path }}">登录</a> /
-            <a href="{% url 'register' %}?next={{ request.path }}">注册</a>
-            {% endif %}
+    <div style="position: absolute; top: 20px; right: 20px;">
+        {% if user.is_authenticated %}
+        👋 你好啊，{{ user.username }}！
+        <a href="{% url 'logout' %}?next={{ request.path }}">退出</a>
+        {% else %}
+        <a href="{% url 'login' %}?next={{ request.path }}">登录</a> /
+        <a href="{% url 'register' %}?next={{ request.path }}">注册</a>
+        {% endif %}
+    </div>
+
+    <section>
+        <h2>🌊 旅行进度条</h2>
+        <div class="progress-container">
+            <div id="progressBar" class="progress-bar" style="width:50%;">加载中...</div>
         </div>
+    </section>
 
-        <section>
-            <h2>🌊 旅行进度条</h2>
-            <div class="progress-container">
-                <div id="progressBar" class="progress-bar" style="width:50%;">加载中...</div>
-            </div>
-        </section>
+    <audio id="bg-music" autoplay loop muted>
+        <source src="{% static 'music/rain.mp3' %}" type="audio/mpeg">
+        您的浏览器不支持音频播放。
+    </audio>
 
-        <section class="stats" style="text-align: center; margin-top: 1rem;">
-            浏览量：<span id="views">0</span> ｜ 点赞：<span id="likes">0</span>
-            <button onclick="like()" style="display: block; margin: 0 auto; font-size: 1.0rem;">👍 点赞</button>
-        </section>
+    <!-- 控制按钮 -->
+    <button id="music-toggle" style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(255,255,255,0.8);
+        border: none;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        cursor: pointer;
+        font-size: 20px;
+        z-index: 9999;
+    ">🔇</button>
 
-        <section>
-            <h3>🧭 行程概览</h3>
-            <p><strong>旅行时间：</strong>2025年6月22日 ~ 6月24日</p>
-            <p><strong>出发地：</strong>南昌</p>
-            <p><strong>目的地：</strong>厦门</p>
-            <p><strong>交通方式：</strong>高铁往返（221元×2）</p>
-            <p><strong>住宿：</strong>南枫云居酒店（近植物园，2晚）</p>
-        </section>
+    <section class="stats" style="text-align: center; margin-top: 1rem;">
+        浏览量：<span id="views">0</span> ｜ 点赞：<span id="likes">0</span>
+        <button onclick="like()" style="display: block; margin: 0 auto; font-size: 1.0rem;">👍 点赞</button>
+    </section>
 
-        <section>
-            <h3>📅 6月22日（Day 1）</h3>
-            <ul>
-                <li>14:04 抵达厦门北站，乘地铁+打车前往酒店，预计15:30入住</li>
-                <li>吃点简餐垫肚子，稍作休整</li>
-                <li>16:00 - 18:00 前往厦门植物园（学生票 14.86 元）</li>
-                <li>🌿 <em>植物园评价：</em> 环境优美，适合拍照，傍晚光线柔和</li>
-                <li>晚餐：沙坡尾或曾厝垵区域尝试特色美食</li>
-                <li>夜间安排：海边散步 / 集市小吃 / 书店</li>
-            </ul>
-        </section>
+    <section>
+        <h3>🧭 行程概览</h3>
+        <p><strong>旅行时间：</strong>2025年6月22日 ~ 6月24日</p>
+        <p><strong>出发地：</strong>南昌</p>
+        <p><strong>目的地：</strong>厦门</p>
+        <p><strong>交通方式：</strong>高铁往返（221元×2）</p>
+        <p><strong>住宿：</strong>南枫云居酒店（近植物园，2晚）</p>
+    </section>
 
-        <section>
-            <h3>📅 6月23日（Day 2）</h3>
-            <ul>
-                <li>05:21 日出时间，建议4:20起床，前往盼归塔或白城沙滩</li>
-                <li>回酒店早餐后，游玩鼓浪屿（09:00 ~ 13:00）</li>
-                <li>🏝️ <em>鼓浪屿评价：</em> 文艺岛屿，适合拍照与慢游</li>
-                <li>午餐：鼓浪屿海鲜或本地特色</li>
-                <li>下午：八市+中山路步行街（14:30 ~ 17:30）</li>
-                <li>🛍️ <em>八市评价：</em> 烟火气浓厚，体验地道厦门</li>
-                <li>傍晚：海边沙滩看日落，拍照发动态</li>
-                <li>晚上：自由活动或补拍</li>
-            </ul>
-        </section>
+    <section>
+        <h3>📅 6月22日（Day 1）</h3>
+        <ul>
+            <li>14:04 抵达厦门北站，乘地铁+打车前往酒店，预计15:30入住</li>
+            <li>吃点简餐垫肚子，稍作休整</li>
+            <li>16:00 - 18:00 前往厦门植物园（学生票 14.86 元）</li>
+            <li>🌿 <em>植物园评价：</em> 环境优美，适合拍照，傍晚光线柔和</li>
+            <li>晚餐：沙坡尾或曾厝垵区域尝试特色美食</li>
+            <li>夜间安排：海边散步 / 集市小吃 / 书店</li>
+        </ul>
+    </section>
 
-        <section>
-            <h3>📅 6月24日（Day 3）</h3>
-            <ul>
-                <li>上午游览鸿山公园</li>
-                <li>离开后前往普陀寺参拜体验</li>
-                <li>午餐：尝试性价比高的本地美食</li>
-                <li>14:00 从酒店前往厦门北站</li>
-                <li>15:54 高铁返程</li>
-            </ul>
-        </section>
+    <section>
+        <h3>📅 6月23日（Day 2）</h3>
+        <ul>
+            <li>05:21 日出时间，建议4:20起床，前往盼归塔或白城沙滩</li>
+            <li>回酒店早餐后，游玩鼓浪屿（09:00 ~ 13:00）</li>
+            <li>🏝️ <em>鼓浪屿评价：</em> 文艺岛屿，适合拍照与慢游</li>
+            <li>午餐：鼓浪屿海鲜或本地特色</li>
+            <li>下午：八市+中山路步行街（14:30 ~ 17:30）</li>
+            <li>🛍️ <em>八市评价：</em> 烟火气浓厚，体验地道厦门</li>
+            <li>傍晚：海边沙滩看日落，拍照发动态</li>
+            <li>晚上：自由活动或补拍</li>
+        </ul>
+    </section>
 
-        <section>
-            <h3>💰 费用预算</h3>
-            <table>
-                <tr>
-                    <th>项目</th>
-                    <th>估算费用（元）</th>
-                    <th>备注</th>
-                </tr>
-                <tr>
-                    <td>往返高铁</td>
-                    <td>￥442</td>
-                    <td>南昌—厦门 221×2</td>
-                </tr>
-                <tr>
-                    <td>景点门票</td>
-                    <td>￥120</td>
-                    <td>学生票</td>
-                </tr>
-                <tr>
-                    <td>地铁+市内交通</td>
-                    <td>￥100</td>
-                    <td>含地铁、短打车</td>
-                </tr>
-                <tr>
-                    <td>餐饮</td>
-                    <td>￥120</td>
-                    <td>三天每餐约15~25元</td>
-                </tr>
-                <tr>
-                    <td>住宿</td>
-                    <td>￥180</td>
-                    <td>2晚</td>
-                </tr>
-                <tr>
-                    <td>其他</td>
-                    <td>￥70</td>
-                    <td>小吃、书店等</td>
-                </tr>
-                <tr class="total">
-                    <td>预计总费用</td>
-                    <td>约1032元</td>
-                    <td>略有浮动</td>
-                </tr>
-            </table>
-        </section>
+    <section>
+        <h3>📅 6月24日（Day 3）</h3>
+        <ul>
+            <li>上午游览鸿山公园</li>
+            <li>离开后前往普陀寺参拜体验</li>
+            <li>午餐：尝试性价比高的本地美食</li>
+            <li>14:00 从酒店前往厦门北站</li>
+            <li>15:54 高铁返程</li>
+        </ul>
+    </section>
 
-        {% if not user.is_authenticated %}
-        <p>
+    <section>
+        <h3>💰 费用预算</h3>
+        <table>
+            <tr>
+                <th>项目</th>
+                <th>估算费用（元）</th>
+                <th>备注</th>
+            </tr>
+            <tr>
+                <td>往返高铁</td>
+                <td>￥442</td>
+                <td>南昌—厦门 221×2</td>
+            </tr>
+            <tr>
+                <td>景点门票</td>
+                <td>￥120</td>
+                <td>学生票</td>
+            </tr>
+            <tr>
+                <td>地铁+市内交通</td>
+                <td>￥100</td>
+                <td>含地铁、短打车</td>
+            </tr>
+            <tr>
+                <td>餐饮</td>
+                <td>￥120</td>
+                <td>三天每餐约15~25元</td>
+            </tr>
+            <tr>
+                <td>住宿</td>
+                <td>￥180</td>
+                <td>2晚</td>
+            </tr>
+            <tr>
+                <td>其他</td>
+                <td>￥70</td>
+                <td>小吃、书店等</td>
+            </tr>
+            <tr class="total">
+                <td>预计总费用</td>
+                <td>约1032元</td>
+                <td>略有浮动</td>
+            </tr>
+        </table>
+    </section>
+
+    {% if not user.is_authenticated %}
+    <p>
         请 <a href="{% url 'login' %}?next={{ request.path }}">登录</a> 或
         <a href="{% url 'register' %}?next={{ request.path }}">注册</a> 后发表评论(功能暂时关闭)。
-        </p>
+    </p>
+    {% endif %}
+
+    <section class="comments">
+        <h2>📍 打卡与留言</h2>
+        <button id="checkInBtn" class="check-in" onclick="checkIn()">📍 去打卡</button>
+        {% if request.user.is_superuser %}
+        <form id="commentForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <textarea id="commentInput" name="content" placeholder="写下你的留言或建议..."></textarea>
+            <input type="file" name="image" accept="image/*">
+            <button type="submit">💬 发表评论</button>
+        </form>
+        {% else %}
+        <p style="color: gray;">🛡️ 当前仅站主可发表评论，欢迎打卡浏览。</p>
         {% endif %}
+        <div class="comment-list" id="commentList">
+            {% for comment in comments %}
+            <div class="comment" style="margin-bottom: 24px; position: relative;">
+                <strong>{{ comment.user.username }} : &nbsp;</strong>
+                {{ comment.content|linebreaksbr }}
 
-        <section class="comments">
-            <h2>📍 打卡与留言</h2>
-            <button id="checkInBtn" class="check-in" onclick="checkIn()">📍 去打卡</button>
-            {% if request.user.is_superuser %}
-            <form id="commentForm" method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <textarea id="commentInput" name="content" placeholder="写下你的留言或建议..."></textarea>
-                <input type="file" name="image" accept="image/*">
-                <button type="submit">💬 发表评论</button>
-            </form>
-            {% else %}
-            <p style="color: gray;">🛡️ 当前仅站主可发表评论，欢迎打卡浏览。</p>
-            {% endif %}
-            <div class="comment-list" id="commentList">
-                {% for comment in comments %}
-                <div class="comment" style="margin-bottom: 24px; position: relative;">
-                    <strong>{{ comment.user.username }} : &nbsp;</strong>
-                    {{ comment.content|linebreaksbr }}
-
-                    {% if comment.image %}
-                    <div style="margin-top: 10px; text-align: center;">
-                        <img src="{{ comment.image.url }}"
-                             alt="comment image"
-                             style="display: inline-block;
+                {% if comment.image %}
+                <div style="margin-top: 10px; text-align: center;">
+                    <img src="{{ comment.image.url }}" alt="comment image" style="display: inline-block;
                                     max-width: 100%;
                                     max-height: 600px;
                                     border-radius: 12px;
                                     box-shadow: 0 6px 16px rgba(0,0,0,0.15);
                                     transition: all 0.3s ease;">
-                    </div>
-                    {% endif %}
-
-                    <!-- 评论时间统一放这里 -->
-                    <div style="color: #aaa; font-size: 12px; margin-top: 6px; text-align: right;">
-                        {{ comment.timestamp|date:"Y-m-d H:i" }}
-                    </div>
-
-                    {% if comment.user == request.user or request.user.is_superuser %}
-                    <button class="delete-btn" onclick="deleteComment(this, {{ comment.id }})"
-                                               style="position: absolute; top: 0; right: 0;">
-                        🗑️
-                    </button>
-                    {% endif %}
                 </div>
-                {% endfor %}
+                {% endif %}
+
+                <!-- 评论时间统一放这里 -->
+                <div style="color: #aaa; font-size: 12px; margin-top: 6px; text-align: right;">
+                    {{ comment.timestamp|date:"Y-m-d H:i" }}
+                </div>
+
+                {% if comment.user == request.user or request.user.is_superuser %}
+                <button class="delete-btn" onclick="deleteComment(this, {{ comment.id }})"
+                    style="position: absolute; top: 0; right: 0;">
+                    🗑️
+                </button>
+                {% endif %}
             </div>
+            {% endfor %}
+        </div>
 
-        </section>
+    </section>
 
-        <script>
-            document.getElementById("views").innerText = {{ stats.views }};
-document.getElementById("likes").innerText = {{ stats.likes }};
+    <script>
+        document.getElementById("views").innerText = {{ stats.views }};
+        document.getElementById("likes").innerText = {{ stats.likes }};
 
-function like() {
-    fetch("/cetapp/trip/like/", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": csrftoken,
-        },
-    })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("likes").innerText = data.likes;
-        });
-}
-
-function checkIn() {
-    fetch("/cetapp/trip/checkin/", {
-        method: "POST",
-        headers: { "X-CSRFToken": csrftoken },
-    })
-        .then(res => res.json())
-        .then(data => {
-            if (data.checked_in) {
-                const btn = document.getElementById("checkInBtn");
-                btn.innerText = "📍 已打卡";
-                btn.disabled = true;
-            }
-        });
-}
-
-const isAuthenticated = {{ request.user.is_authenticated|yesno:"true,false" }};
-
-function submitComment() {
-    if (!isAuthenticated) {
-        // 自动跳转登录页，登录后回到当前页面
-        const currentPath = window.location.pathname;
-        window.location.href = `/accounts/login/?next=${currentPath}`;
-        return;
-    }
-
-    const input = document.getElementById("commentInput");
-    const content = input.value.trim();
-    if (content) {
-        const formData = new FormData();
-        formData.append("content", content);
-
-        fetch("/cetapp/trip/add_comment/", {
-            method: "POST",
-            headers: { "X-CSRFToken": csrftoken },
-            body: formData,
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === "ok") {
-                    location.reload();
-                }
-            });
-    }
-}
-
-function deleteComment(btn, commentId) {
-    fetch(`/cetapp/trip/delete_comment/${commentId}/`, {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": csrftoken
-        },
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'ok') {
-                btn.parentElement.remove();  // 确认后再删除 DOM
-            } else {
-                alert("无权限删除该评论");
-            }
-        });
-}
-
-function updateProgressBar() {
-    const now = new Date();
-    const start = new Date("2025-06-22T09:32:00");
-    const end = new Date("2025-06-24T15:54:00");
-    const total = end - start;
-    const passed = now - start;
-    const percentage = Math.min(Math.max((passed / total) * 100, 0), 100);
-
-    const progressBar = document.getElementById("progressBar");
-    progressBar.style.width = percentage + "%";
-
-    let label = Math.round(percentage) + "% - ";
-    if (percentage < 2) label += "🚄 出发前";
-    else if (percentage < 15) label += "🛏️ 入住酒店";
-    else if (percentage < 30) label += "🌿 植物园游玩";
-    else if (percentage < 50) label += "🏝️ 鼓浪屿中";
-    else if (percentage < 70) label += "🛍️ 八市中山路";
-    else if (percentage < 90) label += "🙏 普陀寺参拜";
-    else label += "🏁 旅程即将结束";
-
-    progressBar.innerText = label;
-}
-
-updateProgressBar();
-setInterval(updateProgressBar, 60000);
-
-document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("commentForm");
-    if (form) {
-        form.addEventListener("submit", function (e) {
-            e.preventDefault();  // 阻止默认提交
-
-            let formData = new FormData(this);
-            fetch("{% url 'add_comment' %}", {
+        function like() {
+            fetch("/cetapp/trip/like/", {
                 method: "POST",
-                body: formData,
                 headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                }
+                    "X-CSRFToken": csrftoken,
+                },
             })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.status === "ok") {
-                        alert("✅ 评论成功！");
-                        location.reload();
-                    } else {
-                        alert("评论失败，请填写内容或上传图片。");
-                    }
-                })
-                .catch(error => {
-                    console.error("评论错误：", error);
-                    alert("提交失败，请稍后再试。");
+                    document.getElementById("likes").innerText = data.likes;
                 });
-        });
-    }
-});
-        </script>
-    </body>
+        }
 
+        function checkIn() {
+            fetch("/cetapp/trip/checkin/", {
+                method: "POST",
+                headers: { "X-CSRFToken": csrftoken },
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.checked_in) {
+                        const btn = document.getElementById("checkInBtn");
+                        btn.innerText = "📍 已打卡";
+                        btn.disabled = true;
+                    }
+                });
+        }
+
+        const isAuthenticated = {{ request.user.is_authenticated| yesno: "true,false" }};
+
+        function submitComment() {
+            if (!isAuthenticated) {
+                // 自动跳转登录页，登录后回到当前页面
+                const currentPath = window.location.pathname;
+                window.location.href = `/accounts/login/?next=${currentPath}`;
+                return;
+            }
+
+            const input = document.getElementById("commentInput");
+            const content = input.value.trim();
+            if (content) {
+                const formData = new FormData();
+                formData.append("content", content);
+
+                fetch("/cetapp/trip/add_comment/", {
+                    method: "POST",
+                    headers: { "X-CSRFToken": csrftoken },
+                    body: formData,
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === "ok") {
+                            location.reload();
+                        }
+                    });
+            }
+        }
+
+        function deleteComment(btn, commentId) {
+            fetch(`/cetapp/trip/delete_comment/${commentId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrftoken
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        btn.parentElement.remove();  // 确认后再删除 DOM
+                    } else {
+                        alert("无权限删除该评论");
+                    }
+                });
+        }
+
+        function updateProgressBar() {
+            const now = new Date();
+            const start = new Date("2025-06-22T09:32:00");
+            const end = new Date("2025-06-24T15:54:00");
+            const total = end - start;
+            const passed = now - start;
+            const percentage = Math.min(Math.max((passed / total) * 100, 0), 100);
+
+            const progressBar = document.getElementById("progressBar");
+            progressBar.style.width = percentage + "%";
+
+            let label = Math.round(percentage) + "% - ";
+            if (percentage < 2) label += "🚄 出发前";
+            else if (percentage < 15) label += "🛏️ 入住酒店";
+            else if (percentage < 30) label += "🌿 植物园游玩";
+            else if (percentage < 50) label += "🏝️ 鼓浪屿中";
+            else if (percentage < 70) label += "🛍️ 八市中山路";
+            else if (percentage < 90) label += "🙏 普陀寺参拜";
+            else label += "🏁 旅程即将结束";
+
+            progressBar.innerText = label;
+        }
+
+        updateProgressBar();
+        setInterval(updateProgressBar, 60000);
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("commentForm");
+            if (form) {
+                form.addEventListener("submit", function (e) {
+                    e.preventDefault();  // 阻止默认提交
+
+                    let formData = new FormData(this);
+                    fetch("{% url 'add_comment' %}", {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === "ok") {
+                                alert("✅ 评论成功！");
+                                location.reload();
+                            } else {
+                                alert("评论失败，请填写内容或上传图片。");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("评论错误：", error);
+                            alert("提交失败，请稍后再试。");
+                        });
+                });
+            }
+        });
+    </script>
+
+    <script>
+        const audio = document.getElementById("bg-music");
+        const toggleBtn = document.getElementById("music-toggle");
+
+        toggleBtn.addEventListener("click", function () {
+            if (audio.muted) {
+                audio.muted = false;
+                toggleBtn.textContent = "🔊";
+            } else {
+                audio.muted = true;
+                toggleBtn.textContent = "🔇";
+            }
+        });
+    </script>
+
+</body>
