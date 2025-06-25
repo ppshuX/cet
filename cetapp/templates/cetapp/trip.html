@@ -311,6 +311,9 @@
 
     <section class="comments">
         <h2>📍 打卡与留言</h2>
+        <div style="text-align: left; margin-bottom: 10px;">
+            <button id="toggleOrderBtn" class="btn btn-secondary">🔃 切换评论顺序</button>
+        </div>
         <button id="checkInBtn" class="check-in" onclick="checkIn()">📍 去打卡</button>
         {% if request.user.is_superuser %}
         <form id="commentForm" method="POST" enctype="multipart/form-data">
@@ -322,7 +325,7 @@
         {% else %}
         <p style="color: gray;">🛡️ 当前仅站主可发表评论，欢迎打卡浏览。</p>
         {% endif %}
-        <div class="comment-list" id="commentList">
+        <div class="comment-list" id="commentList" data-order="asc">
             {% for comment in comments %}
             <div class="comment" style="margin-bottom: 24px; position: relative;">
                 <strong>{{ comment.user.username }} : &nbsp;</strong>
@@ -331,11 +334,11 @@
                 {% if comment.image %}
                 <div style="margin-top: 10px; text-align: center;">
                     <img src="{{ comment.image.url }}" alt="comment image" style="display: inline-block;
-                                    max-width: 100%;
-                                    max-height: 600px;
-                                    border-radius: 12px;
-                                    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-                                    transition: all 0.3s ease;">
+                                                      max-width: 100%;
+                                                      max-height: 600px;
+                                                      border-radius: 12px;
+                                                      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+                                                      transition: all 0.3s ease;">
                 </div>
                 {% endif %}
 
@@ -346,7 +349,7 @@
 
                 {% if comment.user == request.user or request.user.is_superuser %}
                 <button class="delete-btn" onclick="deleteComment(this, {{ comment.id }})"
-                    style="position: absolute; top: 0; right: 0;">
+                                           style="position: absolute; top: 0; right: 0;">
                     🗑️
                 </button>
                 {% endif %}
@@ -358,35 +361,35 @@
 
     <script>
         document.getElementById("views").innerText = {{ stats.views }};
-        document.getElementById("likes").innerText = {{ stats.likes }};
+document.getElementById("likes").innerText = {{ stats.likes }};
 
-        function like() {
-            fetch("/cetapp/trip/like/", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": csrftoken,
-                },
-            })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("likes").innerText = data.likes;
-                });
-        }
+function like() {
+    fetch("/cetapp/trip/like/", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrftoken,
+        },
+    })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("likes").innerText = data.likes;
+        });
+}
 
-        function checkIn() {
-            fetch("/cetapp/trip/checkin/", {
-                method: "POST",
-                headers: { "X-CSRFToken": csrftoken },
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.checked_in) {
-                        const btn = document.getElementById("checkInBtn");
-                        btn.innerText = "📍 已打卡";
-                        btn.disabled = true;
-                    }
-                });
-        }
+function checkIn() {
+    fetch("/cetapp/trip/checkin/", {
+        method: "POST",
+        headers: { "X-CSRFToken": csrftoken },
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.checked_in) {
+                const btn = document.getElementById("checkInBtn");
+                btn.innerText = "📍 已打卡";
+                btn.disabled = true;
+            }
+        });
+}
 
 const isAuthenticated = "{{ request.user.is_authenticated|yesno:'true,false' }}" === "true";
 
@@ -453,7 +456,7 @@ function updateProgressBar() {
     else if (percentage < 50) label += "🏝️ 鼓浪屿中";
     else if (percentage < 70) label += "🛍️ 八市中山路";
     else if (percentage < 90) label += "🙏 普陀寺参拜";
-    else label += "🏁 旅程即将结束";
+    else label += "🏁 旅程结束啦";
 
     progressBar.innerText = label;
 }
@@ -495,23 +498,43 @@ document.addEventListener("DOMContentLoaded", function () {
 
     <script>
         const audio = document.getElementById("bg-music");
-        const toggleBtn = document.getElementById("music-toggle");
-        let isPlaying = false;
+const toggleBtn = document.getElementById("music-toggle");
+let isPlaying = false;
 
-        toggleBtn.addEventListener("click", () => {
-            if (isPlaying) {
-                audio.pause();
-                toggleBtn.textContent = "🔇";
-            } else {
-                audio.volume = 1.0;
-                audio.play().then(() => {
-                    toggleBtn.textContent = "🔊";
-                }).catch(err => {
-                    console.error("播放失败：", err);
-                    toggleBtn.textContent = "❌";
-                });
-            }
-            isPlaying = !isPlaying;
+toggleBtn.addEventListener("click", () => {
+    if (isPlaying) {
+        audio.pause();
+        toggleBtn.textContent = "🔇";
+    } else {
+        audio.volume = 1.0;
+        audio.play().then(() => {
+            toggleBtn.textContent = "🔊";
+        }).catch(err => {
+            console.error("播放失败：", err);
+            toggleBtn.textContent = "❌";
         });
+    }
+    isPlaying = !isPlaying;
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const toggleBtn = document.getElementById("toggleOrderBtn");
+    if (toggleBtn) {
+        toggleBtn.addEventListener("click", function () {
+            const commentList = document.getElementById("commentList");
+            const currentOrder = commentList.dataset.order || "asc";
+            const comments = Array.from(commentList.children);
+
+            commentList.innerHTML = "";
+
+            comments.reverse();
+            commentList.dataset.order = currentOrder === "asc" ? "desc" : "asc";
+
+            comments.forEach(comment => commentList.appendChild(comment));
+        });
+    }
+});
+
     </script>
+
 </body>
