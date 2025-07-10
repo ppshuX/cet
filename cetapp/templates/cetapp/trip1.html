@@ -223,7 +223,7 @@
                 {% endif %}
                 <div style="display:flex; align-items:center; justify-content: flex-end; margin-top: 1.2rem;">
                     <div style="color: #aaa; font-size: 13px; margin-right: 1.2rem;">
-                    {{ comment.timestamp|date:"Y-m-d H:i" }}
+                        {{ comment.timestamp|date:"Y-m-d H:i" }}
                     </div>
                     {% if comment.user == request.user or request.user.is_superuser %}
                     <button class="delete-btn" onclick="deleteComment(this, {{ comment.id }})"
@@ -452,6 +452,23 @@
                 });
             }
             isPlaying = !isPlaying;
+        });
+    </script>
+    <script>
+        // 切换评论顺序功能
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggleBtn = document.getElementById("toggleOrderBtn");
+            if (toggleBtn) {
+                toggleBtn.addEventListener("click", function () {
+                    const commentList = document.getElementById("commentList");
+                    const currentOrder = commentList.dataset.order || "asc";
+                    const comments = Array.from(commentList.children);
+                    commentList.innerHTML = "";
+                    comments.reverse();
+                    commentList.dataset.order = currentOrder === "asc" ? "desc" : "asc";
+                    comments.forEach(comment => commentList.appendChild(comment));
+                });
+            }
         });
     </script>
 </body>
