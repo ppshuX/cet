@@ -1,0 +1,425 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三岔河一日游计划</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.8;
+            background-color: #f0e68c;
+            margin: 0;
+            padding: 2rem;
+            color: #333;
+        }
+
+        h1,
+        h2 {
+            color: #2c3e50;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        section {
+            background: #fff;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        ul {
+            padding-left: 1.2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ccc;
+        }
+
+        th,
+        td {
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        .total {
+            font-weight: bold;
+            background-color: #fcfcfc;
+        }
+    </style>
+</head>
+
+<body>
+    <br>
+    <h2 style="text-align:center; font-size:1.2rem;">三岔河一日游计划</h2>
+    <div style="position: absolute; top: 20px; right: 20px;">
+        {% if user.is_authenticated %}
+        👋 你好啊，{{ user.username }}！
+        <form id="logoutForm" action="{% url 'logout' %}?next=/cetapp/trip1/" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit"
+                style="background:none; border:none; color:#2366b4; cursor:pointer; font-size:1rem;">退出</button>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}?next={{ request.path }}">登录</a> /
+        <a href="{% url 'register' %}?next={{ request.path }}">注册</a>
+        {% endif %}
+    </div>
+    <section
+        style="background: #fff; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 2rem; margin-bottom: 2rem;">
+        <h3 style="font-weight: bold; color: #2366b4; margin-bottom: 1.2rem;">
+            <span style="font-size:1.5rem;vertical-align:middle;">🌊</span>
+            旅行进度条
+        </h3>
+        <div id="trip-progress-bar"
+            style="width: 100%; background: #e6e6e6; border-radius: 24px; height: 28px; position: relative; margin-bottom: 0.8rem;">
+            <div id="trip-progress-inner"
+                style="background: #4caf50; height: 28px; border-radius: 24px; position: absolute; left: 0; top: 0; display: flex; align-items: center; justify-content: flex-end; transition: width 0.5s; width:0;">
+                <span id="trip-progress-label"
+                    style="color: #fff; font-weight: bold; padding-right: 18px; font-size: 1.1rem; white-space:nowrap;">
+                    0% - 行程未开始
+                </span>
+            </div>
+            <!-- 当前节点标记 -->
+            <div id="trip-progress-node"></div>
+        </div>
+    </section>
+    <section>
+        <h3>📍 三岔河旅行（两段式轻旅行）</h3>
+        <p><strong>成员：</strong>W ૧ H 和 Leo Winston</p>
+        <p><strong>出发地：</strong>三岔河亲戚家</p>
+        <p><strong>预算：</strong>约 80 元</p>
+
+        <h4>📅 行程安排</h4>
+        <table>
+            <tr>
+                <th>时间段</th>
+                <th>地点 / 活动</th>
+                <th>备注</th>
+            </tr>
+            <tr>
+                <td>07:30</td>
+                <td>起床 + 早餐</td>
+                <td>吃早餐(烧饵块)，准备干粮（零食）和装备</td>
+            </tr>
+            <tr>
+                <td>08:30 – 10:00</td>
+                <td>龙海山 · 龙凤寺</td>
+                <td>徒步登山，拍照打卡</td>
+            </tr>
+            <tr>
+                <td>10:00 – 11:30</td>
+                <td>白水塘</td>
+                <td>荷花、野餐、吹风</td>
+            </tr>
+            <tr>
+                <td>11:30 – 13:00</td>
+                <td>午饭 + 休息</td>
+                <td>回家吃饭或附近小吃</td>
+            </tr>
+            <tr>
+                <td>13:30 – 15:00</td>
+                <td>紫溪湿地公园</td>
+                <td>赏景、拍照、轻松散步</td>
+            </tr>
+            <tr>
+                <td>15:00 – 16:00</td>
+                <td>回程 + 小零食</td>
+                <td>买奶茶奖励一下自己</td>
+            </tr>
+            <tr>
+                <td>19:00 – 20:30</td>
+                <td>逛三岔河镇</td>
+                <td>吃完晚饭后散步、夜游、感受当地人文</td>
+            </tr>
+            <tr>
+                <td>第二天 07:30 – 09:00</td>
+                <td>早起收拾 + 早餐</td>
+                <td>准备离开，可做简单总结</td>
+            </tr>
+        </table>
+    </section>
+    <div
+        style="background: #fff; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 1.2rem 2rem; margin-bottom: 2rem; text-align:center; font-size:1.08rem;">
+        浏览量：<span id="views">0</span> ｜ 点赞：<span id="likes">0</span>
+        <button id="like-btn"
+            style="margin-left: 1.2rem; font-size:1.1rem; border-radius:8px; border:1.5px solid #b5b5b5; background:#f5f5f5; color:#234; padding:0.3rem 1.2rem; cursor:pointer;">👍
+            点赞</button>
+    </div>
+    <section class="comments"
+        style="background: #fff; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 2.5rem 2.5rem 2rem 2.5rem; margin-bottom: 2rem;">
+        <h2
+            style="font-size:2rem; font-weight:700; color:#234; margin-bottom:1.5rem; display:flex; align-items:center;">
+            <span style="font-size:2.1rem; margin-right:0.5rem;">📍</span> 打卡与留言
+        </h2>
+        <div style="display:flex; gap:1.2rem; align-items:center; margin-bottom:1.2rem; flex-wrap:wrap;">
+            <!-- 切换评论顺序按钮 -->
+            <button id="toggleOrderBtn" class="btn btn-success"
+                style="font-size:1rem; padding:0.5rem 1.2rem; border-radius:8px; border:1.5px solid #b5b5b5; background:#f5f5f5; color:#234; cursor:pointer;">
+                <span style="font-size:1.2rem; vertical-align:middle;">🔄</span> 切换评论顺序
+            </button>
+        </div>
+        <div style="display:flex; gap:1.2rem; align-items:center; margin-bottom:1.2rem; flex-wrap:wrap;">
+            <!-- 去打卡按钮 -->
+            <button id="checkInBtn" class="btn btn-success"
+                style="font-size:1rem; padding:0.5rem 1.2rem; border-radius:8px; border:1.5px solid #b5b5b5; background:#f5f5f5; color:#234; cursor:pointer;">
+                <span style="font-size:1.2rem; vertical-align:middle;">📍</span> 去打卡
+            </button>
+        </div>
+        {% if request.user.is_superuser %}
+        <form id="commentForm" method="POST" enctype="multipart/form-data" style="margin-bottom:1.2rem;">
+            {% csrf_token %}
+            <textarea id="commentInput" name="content" placeholder="写下你的留言或建议..."
+                style="width:100%; min-height:100px; border-radius:8px; border:1px solid #ccc; padding:0.8rem; margin-bottom:1rem; resize:vertical;"></textarea>
+            <div style="display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
+                <label style="margin-bottom:0;">
+                    <input type="file" name="image" accept="image/*" style="display:none;"
+                        onchange="document.getElementById('fileName').innerText=this.files[0]?this.files[0].name:'未选择任何文件';">
+                    <span
+                        style="display:inline-block; padding:0.4rem 1.1rem; background:#f5f5f5; border-radius:6px; border:1px solid #ccc; cursor:pointer;">选择文件</span>
+                </label>
+                <span id="fileName" style="color:#888;">未选择任何文件</span>
+                <input type="hidden" name="page" value="trip1">
+                <!-- 发表评论按钮 -->
+                <button type="submit" class="btn btn-success"
+                    style="font-size:1rem; padding:0.5rem 1.5rem; border-radius:8px; border:1.5px solid #b5b5b5; background:#f5f5f5; color:#234; cursor:pointer; margin-left:auto;">
+                    <span style="font-size:1.2rem; vertical-align:middle;">💬</span> 发表评论
+                </button>
+            </div>
+        </form>
+        {% else %}
+        <p style="color: gray;">🛡️ 当前仅站主可发表评论，欢迎打卡浏览。</p>
+        {% endif %}
+        <div class="comment-list" id="commentList" data-order="asc">
+            {% for comment in comments %}
+            <div class="comment" style="margin-bottom: 24px; position: relative;">
+                <strong>{{ comment.user.username }} : &nbsp;</strong>
+                {{ comment.content|linebreaksbr }}
+                {% if comment.image %}
+                <div style="margin-top: 10px; text-align: center;">
+                    <img src="{{ comment.image.url }}" alt="comment image" style="display: inline-block;
+                                                      max-width: 100%;
+                                                      max-height: 600px;
+                                                      border-radius: 12px;
+                                                      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+                                                      transition: all 0.3s ease;">
+                </div>
+                {% endif %}
+                <div style="color: #aaa; font-size: 12px; margin-top: 6px; text-align: right;">
+                    {{ comment.timestamp|date:"Y-m-d H:i" }}
+                </div>
+                {% if comment.user == request.user or request.user.is_superuser %}
+                <button class="delete-btn" onclick="deleteComment(this, {{ comment.id }})"
+                    style="position: absolute; top: 0; right: 0; cursor:pointer;">
+                    🗑️
+                </button>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+        // trip1专属接口
+        function updateViewsLikes() {
+            fetch('/cetapp/trip1/views_likes/')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('views').innerText = data.views;
+                    document.getElementById('likes').innerText = data.likes;
+                });
+        }
+        document.getElementById('like-btn').onclick = function () {
+            fetch('/cetapp/trip1/like/', { method: 'POST', headers: { 'X-CSRFToken': (window.csrftoken || csrftoken) } })
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('likes').innerText = data.likes;
+                });
+        };
+        updateViewsLikes();
+        // 评论表单
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("commentForm");
+            if (form) {
+                form.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    let formData = new FormData(this);
+                    formData.set('page', 'trip1');
+                    fetch("/cetapp/trip1/add_comment/", {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === "ok") {
+                                alert("✅ 评论成功！");
+                                location.reload();
+                            } else {
+                                alert("评论失败，请填写内容或上传图片。");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("评论错误：", error);
+                            alert("提交失败，请稍后再试。");
+                        });
+                });
+            }
+        });
+        // 删除评论
+        function deleteComment(btn, commentId) {
+            if (!confirm('确定要删除这条评论吗？')) return;
+            fetch(`/cetapp/trip1/delete_comment/${commentId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrftoken
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        btn.parentElement.remove();
+                    } else {
+                        alert("无权限删除该评论");
+                    }
+                });
+        }
+    </script>
+    <script>
+        // 时间节点
+        const startTime = new Date("2025-07-11T07:00:00");
+        const endTime = new Date("2025-07-12T09:00:00");
+        const nodes = [
+            { time: new Date("2025-07-11T08:30:00"), label: "龙凤寺" },
+            { time: new Date("2025-07-11T10:30:00"), label: "白水塘" },
+            { time: new Date("2025-07-11T15:00:00"), label: "紫溪湿地" },
+            { time: new Date("2025-07-11T19:00:00"), label: "镇上散步" }
+        ];
+
+        function getProgress(now) {
+            if (now <= startTime) return 0;
+            if (now >= endTime) return 1;
+            return (now - startTime) / (endTime - startTime);
+        }
+
+        function getCurrentNode(now) {
+            if (now < nodes[0].time) return { idx: 0, label: "出发中" };
+            for (let i = 0; i < nodes.length; i++) {
+                if (now < nodes[i].time) return { idx: i, label: nodes[i - 1]?.label || "出发中" };
+            }
+            if (now < endTime) return { idx: nodes.length, label: nodes[nodes.length - 1].label };
+            return { idx: nodes.length, label: "🟢 行程结束啦" };
+        }
+
+        function updateProgressBar() {
+            const now = new Date();
+            const progress = getProgress(now);
+            const percent = Math.round(progress * 100);
+            const bar = document.getElementById("trip-progress-inner");
+            const label = document.getElementById("trip-progress-label");
+            bar.style.width = (progress * 100) + "%";
+
+            // 当前节点
+            const nodeInfo = getCurrentNode(now);
+            let status = "";
+            if (progress <= 0) {
+                status = "行程未开始";
+            } else if (progress >= 1) {
+                status = "🟢 行程结束啦";
+            } else {
+                status = nodeInfo.label;
+            }
+            label.innerHTML = percent + "% - " + status;
+            label.style.color = "#fff";
+            label.style.position = "";
+            label.style.left = "";
+            label.style.transform = "";
+            label.style.fontWeight = "bold";
+            label.style.paddingRight = "18px";
+            label.style.paddingLeft = "0";
+
+            // 只显示当前节点
+            const nodeDiv = document.getElementById("trip-progress-node");
+            nodeDiv.innerHTML = "";
+            if (progress > 0 && progress < 1) {
+                let nodeTime = nodeInfo.idx === 0 ? startTime : nodes[nodeInfo.idx - 1].time;
+                let left = ((nodeTime - startTime) / (endTime - startTime)) * 100;
+                if (nodeInfo.idx === 0) left = 0;
+                if (nodeInfo.idx === nodes.length) left = 100;
+                const marker = document.createElement("div");
+                marker.style.position = "absolute";
+                marker.style.left = `calc(${left}% - 12px)`;
+                marker.style.top = "-18px";
+                marker.style.width = "24px";
+                marker.style.height = "24px";
+                marker.style.background = "#fff";
+                marker.style.border = "3px solid #4caf50";
+                marker.style.borderRadius = "50%";
+                marker.style.boxShadow = "0 2px 8px rgba(76,175,80,0.12)";
+                marker.style.display = "flex";
+                marker.style.alignItems = "center";
+                marker.style.justifyContent = "center";
+                marker.style.zIndex = "2";
+                marker.innerHTML = `<span style=\"color:#4caf50;font-weight:bold;font-size:1.1rem;\">${nodeInfo.idx === nodes.length ? nodes.length : nodeInfo.idx + 1}</span>`;
+                // 标签
+                const labelDiv = document.createElement("div");
+                labelDiv.style.position = "absolute";
+                labelDiv.style.top = "28px";
+                labelDiv.style.left = "50%";
+                labelDiv.style.transform = "translateX(-50%)";
+                labelDiv.style.whiteSpace = "nowrap";
+                labelDiv.style.fontSize = "0.95rem";
+                labelDiv.style.color = "#2366b4";
+                labelDiv.style.fontWeight = "bold";
+                labelDiv.innerText = status;
+                marker.appendChild(labelDiv);
+                nodeDiv.appendChild(marker);
+                nodeDiv.style.position = "absolute";
+                nodeDiv.style.left = "0";
+                nodeDiv.style.top = "0";
+                nodeDiv.style.width = "100%";
+                nodeDiv.style.height = "100%";
+                nodeDiv.style.pointerEvents = "none";
+            }
+        }
+
+        updateProgressBar();
+        setInterval(updateProgressBar, 60 * 1000); // 每分钟刷新一次
+    </script>
+</body>
+
+</html>

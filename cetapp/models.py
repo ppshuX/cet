@@ -10,6 +10,7 @@ class Comment(models.Model):
     content = models.TextField()
     image = models.ImageField(upload_to='comment_images/', blank=True, null=True)  # 新增的图片字段
     timestamp = models.DateTimeField(auto_now_add=True)
+    page = models.CharField(max_length=16, default='trip')  # 新增字段，区分trip和trip1
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)  # 先保存以获得路径
@@ -41,3 +42,4 @@ class SiteStat(models.Model):
     views = models.PositiveIntegerField(default=0)
     likes = models.PositiveIntegerField(default=0)
     checked_in = models.BooleanField(default=False)
+    page = models.CharField(max_length=16, default='trip')  # 新增字段，区分trip和trip1

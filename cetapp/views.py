@@ -35,18 +35,32 @@ def register(request):
         if form.is_valid():
             user = form.save()  # 创建用户
             login(request, user)
-            return redirect('/cetapp/trip')  # 注册完跳转到登录页
+            return redirect('/cetapp/trip1/')  # 注册完跳转到trip1
     else:
         form = CustomRegisterForm()
     return render(request, 'cetapp/register.html', {'form': form})
 
 
 def trip_page(request):
-    stats, _ = SiteStat.objects.get_or_create(id=1)
+    stats = SiteStat.objects.filter(page='trip').first()
+    if not stats:
+        stats = SiteStat.objects.create(page='trip')
     stats.views += 1
     stats.save()
-    comments = Comment.objects.order_by('-timestamp')
+    comments = Comment.objects.filter(page='trip').order_by('-timestamp')
     return render(request, 'cetapp/trip.html', {
+        'comments': comments,
+        'stats': stats,
+    })
+
+def trip1(request):
+    stats = SiteStat.objects.filter(page='trip1').first()
+    if not stats:
+        stats = SiteStat.objects.create(page='trip1')
+    stats.views += 1
+    stats.save()
+    comments = Comment.objects.filter(page='trip1').order_by('-timestamp')
+    return render(request, 'cetapp/trip1.html', {
         'comments': comments,
         'stats': stats,
     })
@@ -56,28 +70,26 @@ def trip_page(request):
 def add_comment(request):
     if not request.user.is_superuser:
         return JsonResponse({'error': '仅管理员可发表评论'}, status=403)
-
     if request.method == 'POST':
         content = request.POST.get('content', '').strip()
         image = request.FILES.get('image')
-
-       # 处理图片中文名的问题
+        page = request.POST.get('page', 'trip')
         if image:
-            ext = os.path.splitext(image.name)[-1]  # 获取扩展名
-            image.name = f"{uuid.uuid4().hex}{ext}"  # 使用随机名避免中文 
-
+            ext = os.path.splitext(image.name)[-1]
+            image.name = f"{uuid.uuid4().hex}{ext}"
         if content or image:
-            Comment.objects.create(content=content,image=image, user=request.user)
-            return JsonResponse({'status':'ok'})
-
+            Comment.objects.create(content=content, image=image, user=request.user, page=page)
+            return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'fail', 'message': '只支持POST请求'})
 
 @csrf_exempt
 def like_view(request):
-    stats = SiteStat.objects.get(id=1)
+    stats = SiteStat.objects.filter(page='trip').first()
+    if not stats:
+        stats = SiteStat.objects.create(page='trip')
     stats.likes += 1
     stats.save()
-    return JsonResponse({'likes':stats.likes})
+    return JsonResponse({'likes': stats.likes})
 
 @csrf_exempt
 def checkin_view(request):
@@ -93,8 +105,8 @@ def checkin_view(request):
 def delete_comment(request, comment_id):
     try:
         comment = Comment.objects.get(id=comment_id)
-
-        # 权限判断：本人 或 超级用户 才能删除
+        if comment.page != 'trip':
+            return JsonResponse({'status': 'forbidden'}, status=403)
         if comment.user == request.user or request.user.is_superuser:
             comment.delete()
             return JsonResponse({'status': 'ok'})
@@ -102,3 +114,56 @@ def delete_comment(request, comment_id):
             return JsonResponse({'status': 'forbidden'}, status=403)
     except Comment.DoesNotExist:
         return JsonResponse({'status': 'fail'}, status=404)
+
+def trip_views_likes(request):
+    stats = SiteStat.objects.filter(page='trip').first()
+    if not stats:
+        stats = SiteStat.objects.create(page='trip')
+    return JsonResponse({'views': stats.views, 'likes': stats.likes})
+
+@csrf_exempt
+def trip1_like_view(request):
+    stats = SiteStat.objects.filter(page='trip1').first()
+    if not stats:
+        stats = SiteStat.objects.create(page='trip1')
+    stats.likes += 1
+    stats.save()
+    return JsonResponse({'likes': stats.likes})
+
+@csrf_exempt
+@login_required
+def trip1_add_comment(request):
+    if not request.user.is_superuser:
+        return JsonResponse({'error': '仅管理员可发表评论'}, status=403)
+    if request.method == 'POST':
+        content = request.POST.get('content', '').strip()
+        image = request.FILES.get('image')
+        if image:
+            ext = os.path.splitext(image.name)[-1]
+            image.name = f"{uuid.uuid4().hex}{ext}"
+        if content or image:
+            Comment.objects.create(content=content, image=image, user=request.user, page='trip1')
+            return JsonResponse({'status': 'ok'})
+    return JsonResponse({'status': 'fail', 'message': '只支持POST请求'})
+
+@csrf_exempt
+@require_POST
+@login_required
+def trip1_delete_comment(request, comment_id):
+    try:
+        comment = Comment.objects.get(id=comment_id)
+        if comment.page != 'trip1':
+            return JsonResponse({'status': 'forbidden'}, status=403)
+        if comment.user == request.user or request.user.is_superuser:
+            comment.delete()
+            return JsonResponse({'status': 'ok'})
+        else:
+            return JsonResponse({'status': 'forbidden'}, status=403)
+    except Comment.DoesNotExist:
+        return JsonResponse({'status': 'fail'}, status=404)
+
+def trip1_views_likes(request):
+    stats = SiteStat.objects.filter(page='trip1').first()
+    if not stats:
+        stats = SiteStat.objects.create(page='trip1')
+    return JsonResponse({'views': stats.views, 'likes': stats.likes})

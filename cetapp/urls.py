@@ -7,6 +7,12 @@ urlpatterns = [
     path('trip/like/', views.like_view, name='like_view'),
     path('trip/checkin/', views.checkin_view, name='checkin_view'),
     path('trip/delete_comment/<int:comment_id>/', views.delete_comment, name='delete_comment'),
+    path('trip/views_likes/', views.trip_views_likes, name='trip_views_likes'),
+    path('trip1/', views.trip1, name='trip1'),
+    path('trip1/views_likes/', views.trip1_views_likes, name='trip1_views_likes'),
+    path('trip1/like/', views.trip1_like_view, name='trip1_like_view'),
+    path('trip1/add_comment/', views.trip1_add_comment, name='trip1_add_comment'),
+    path('trip1/delete_comment/<int:comment_id>/', views.trip1_delete_comment, name='trip1_delete_comment'),
      path('register/', views.register, name='register'),
 ]
 
