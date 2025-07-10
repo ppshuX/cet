@@ -420,6 +420,40 @@
         updateProgressBar();
         setInterval(updateProgressBar, 60 * 1000); // 每分钟刷新一次
     </script>
+    <audio id="bg-music" src="{% static 'music/windy.mp3' %}" preload="auto" loop></audio>
+    <button id="music-toggle" style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(255,255,255,0.8);
+        border: none;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        cursor: pointer;
+        font-size: 20px;
+        z-index: 9999;">🔇</button>
+    <script>
+        const audio = document.getElementById("bg-music");
+        const toggleBtn = document.getElementById("music-toggle");
+        let isPlaying = false;
+        toggleBtn.addEventListener("click", () => {
+            if (isPlaying) {
+                audio.pause();
+                toggleBtn.textContent = "🔇";
+            } else {
+                audio.volume = 1.0;
+                audio.play().then(() => {
+                    toggleBtn.textContent = "🔊";
+                }).catch(err => {
+                    console.error("播放失败：", err);
+                    toggleBtn.textContent = "❌";
+                });
+            }
+            isPlaying = !isPlaying;
+        });
+    </script>
 </body>
 
 </html>
