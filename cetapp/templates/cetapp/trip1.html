@@ -116,7 +116,7 @@
                 <th>备注</th>
             </tr>
             <tr>
-                <td>7月11日   07:30</td>
+                <td>7月11日 07:30</td>
                 <td>起床 + 早餐</td>
                 <td>吃早餐(烧饵块)，准备干粮（零食）和装备</td>
             </tr>
@@ -151,7 +151,7 @@
                 <td>吃完晚饭后散步、夜游、感受当地人文</td>
             </tr>
             <tr>
-                <td>7月12日   07:30 – 09:00</td>
+                <td>7月12日 07:30 – 09:00</td>
                 <td>早起收拾 + 早餐</td>
                 <td>准备离开，可做简单总结</td>
             </tr>
@@ -217,8 +217,8 @@
                 </div>
                 {% if comment.image %}
                 <div style="margin: 10px 0 0 0; text-align: left;">
-                    <img src="{{ comment.image.url }}" alt="comment image"
-                        style="display: inline-block; max-width: 100%; max-height: 320px; border-radius: 12px; box-shadow: 0 6px 16px rgba(0,0,0,0.13); transition: all 0.3s ease;" />
+                    <img src="{{ comment.image.url }}" alt="comment image" onclick="showImageModal(this.src)"
+                        style="display: inline-block; max-width: 100%; max-height: 320px; border-radius: 12px; box-shadow: 0 6px 16px rgba(0,0,0,0.13); transition: all 0.3s ease; cursor: pointer;" />
                 </div>
                 {% endif %}
                 <div style="display:flex; align-items:center; justify-content: flex-end; margin-top: 1.2rem;">
@@ -236,6 +236,45 @@
             {% endfor %}
         </div>
     </section>
+
+    <!-- 图片查看模态框 -->
+    <div id="imageModal" style="
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.9);
+        backdrop-filter: blur(5px);">
+        <div style="
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;">
+            <img id="modalImage" src="" alt="大图" style="
+                max-width: 95%;
+                max-height: 95%;
+                object-fit: contain;
+                border-radius: 8px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+            <button id="closeModal" style="
+                position: absolute;
+                top: 20px;
+                right: 30px;
+                color: #f1f1f1;
+                font-size: 40px;
+                font-weight: bold;
+                background: none;
+                border: none;
+                cursor: pointer;
+                z-index: 10001;">&times;</button>
+        </div>
+    </div>
+
     <script>
         function getCookie(name) {
             let cookieValue = null;
@@ -325,8 +364,10 @@
         const endTime = new Date("2025-07-12T09:00:00");
         const nodes = [
             { time: new Date("2025-07-11T08:30:00"), label: "龙凤寺" },
-            { time: new Date("2025-07-11T10:30:00"), label: "白水塘" },
-            { time: new Date("2025-07-11T15:00:00"), label: "紫溪湿地" },
+            { time: new Date("2025-07-11T10:00:00"), label: "白水塘" },
+            { time: new Date("2025-07-11T11:30:00"), label: "午饭+休息" },
+            { time: new Date("2025-07-11T13:30:00"), label: "紫溪湿地" },
+            { time: new Date("2025-07-11T15:00:00"), label: "回程" },
             { time: new Date("2025-07-11T19:00:00"), label: "镇上散步" }
         ];
 
@@ -395,18 +436,6 @@
                 marker.style.justifyContent = "center";
                 marker.style.zIndex = "2";
                 marker.innerHTML = `<span style=\"color:#4caf50;font-weight:bold;font-size:1.1rem;\">${nodeInfo.idx === nodes.length ? nodes.length : nodeInfo.idx + 1}</span>`;
-                // 标签
-                const labelDiv = document.createElement("div");
-                labelDiv.style.position = "absolute";
-                labelDiv.style.top = "28px";
-                labelDiv.style.left = "50%";
-                labelDiv.style.transform = "translateX(-50%)";
-                labelDiv.style.whiteSpace = "nowrap";
-                labelDiv.style.fontSize = "0.95rem";
-                labelDiv.style.color = "#2366b4";
-                labelDiv.style.fontWeight = "bold";
-                labelDiv.innerText = status;
-                marker.appendChild(labelDiv);
                 nodeDiv.appendChild(marker);
                 nodeDiv.style.position = "absolute";
                 nodeDiv.style.left = "0";
@@ -452,6 +481,43 @@
                 });
             }
             isPlaying = !isPlaying;
+        });
+
+        // 图片查看模态框功能
+        function showImageModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modalImg.src = imageSrc;
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // 防止背景滚动
+        }
+
+        // 关闭模态框
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('imageModal');
+            const closeBtn = document.getElementById('closeModal');
+
+            // 点击关闭按钮
+            closeBtn.onclick = function () {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+
+            // 点击模态框背景关闭
+            modal.onclick = function (e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            }
+
+            // ESC键关闭
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && modal.style.display === 'block') {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
         });
     </script>
     <script>
