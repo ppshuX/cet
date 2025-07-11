@@ -364,8 +364,10 @@
         const endTime = new Date("2025-07-12T09:00:00");
         const nodes = [
             { time: new Date("2025-07-11T08:30:00"), label: "龙凤寺" },
-            { time: new Date("2025-07-11T10:30:00"), label: "白水塘" },
-            { time: new Date("2025-07-11T15:00:00"), label: "紫溪湿地" },
+            { time: new Date("2025-07-11T10:00:00"), label: "白水塘" },
+            { time: new Date("2025-07-11T11:30:00"), label: "午饭+休息" },
+            { time: new Date("2025-07-11T13:30:00"), label: "紫溪湿地" },
+            { time: new Date("2025-07-11T15:00:00"), label: "回程" },
             { time: new Date("2025-07-11T19:00:00"), label: "镇上散步" }
         ];
 
@@ -434,18 +436,6 @@
                 marker.style.justifyContent = "center";
                 marker.style.zIndex = "2";
                 marker.innerHTML = `<span style=\"color:#4caf50;font-weight:bold;font-size:1.1rem;\">${nodeInfo.idx === nodes.length ? nodes.length : nodeInfo.idx + 1}</span>`;
-                // 标签
-                const labelDiv = document.createElement("div");
-                labelDiv.style.position = "absolute";
-                labelDiv.style.top = "28px";
-                labelDiv.style.left = "50%";
-                labelDiv.style.transform = "translateX(-50%)";
-                labelDiv.style.whiteSpace = "nowrap";
-                labelDiv.style.fontSize = "0.95rem";
-                labelDiv.style.color = "#2366b4";
-                labelDiv.style.fontWeight = "bold";
-                labelDiv.innerText = status;
-                marker.appendChild(labelDiv);
                 nodeDiv.appendChild(marker);
                 nodeDiv.style.position = "absolute";
                 nodeDiv.style.left = "0";
