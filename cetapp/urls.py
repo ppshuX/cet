@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .utils import add_trip_page_urls
 
 urlpatterns = [
     path('trip/', views.trip_page, name='trip_page'),
@@ -13,6 +14,9 @@ urlpatterns = [
     path('trip1/like/', views.trip1_like_view, name='trip1_like_view'),
     path('trip1/add_comment/', views.trip1_add_comment, name='trip1_add_comment'),
     path('trip1/delete_comment/<int:comment_id>/', views.trip1_delete_comment, name='trip1_delete_comment'),
-     path('register/', views.register, name='register'),
+    path('register/', views.register, name='register'),
 ]
+
+# 动态添加 trip2 路由
+urlpatterns.extend(add_trip_page_urls('trip2'))
 

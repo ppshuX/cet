@@ -167,3 +167,65 @@ def trip1_views_likes(request):
     if not stats:
         stats = SiteStat.objects.create(page='trip1')
     return JsonResponse({'views': stats.views, 'likes': stats.likes})
+
+
+def trip_page_generic(request, page_name):
+    stats = SiteStat.objects.filter(page=page_name).first()
+    if not stats:
+        stats = SiteStat.objects.create(page=page_name)
+    stats.views += 1
+    stats.save()
+    comments = Comment.objects.filter(page=page_name).order_by('-timestamp')
+    return render(request, f'cetapp/{page_name}.html', {
+        'comments': comments,
+        'stats': stats,
+        'page_name': page_name,
+    })
+
+@csrf_exempt
+def views_likes_generic(request, page_name):
+    stats = SiteStat.objects.filter(page=page_name).first()
+    if not stats:
+        stats = SiteStat.objects.create(page=page_name)
+    return JsonResponse({'views': stats.views, 'likes': stats.likes})
+
+@csrf_exempt
+@login_required
+def add_comment_generic(request, page_name):
+    if not request.user.is_superuser:
+        return JsonResponse({'error': '仅管理员可发表评论'}, status=403)
+    if request.method == 'POST':
+        content = request.POST.get('content', '').strip()
+        image = request.FILES.get('image')
+        if image:
+            ext = os.path.splitext(image.name)[-1]
+            image.name = f"{uuid.uuid4().hex}{ext}"
+        if content or image:
+            Comment.objects.create(content=content, image=image, user=request.user, page=page_name)
+            return JsonResponse({'status': 'ok'})
+    return JsonResponse({'status': 'fail', 'message': '只支持POST请求'})
+
+@csrf_exempt
+def like_view_generic(request, page_name):
+    stats = SiteStat.objects.filter(page=page_name).first()
+    if not stats:
+        stats = SiteStat.objects.create(page=page_name)
+    stats.likes += 1
+    stats.save()
+    return JsonResponse({'likes': stats.likes})
+
+@csrf_exempt
+@require_POST
+@login_required
+def delete_comment_generic(request, page_name, comment_id):
+    try:
+        comment = Comment.objects.get(id=comment_id)
+        if comment.page != page_name:
+            return JsonResponse({'status': 'forbidden'}, status=403)
+        if comment.user == request.user or request.user.is_superuser:
+            comment.delete()
+            return JsonResponse({'status': 'ok'})
+        else:
+            return JsonResponse({'status': 'forbidden'}, status=403)
+    except Comment.DoesNotExist:
+        return JsonResponse({'status': 'fail'}, status=404)
