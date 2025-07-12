@@ -277,6 +277,20 @@
             <div id="progressBar" class="progress-bar" style="width:50%;">加载中...</div>
         </div>
     </section>
+    <audio id="bg-music" src="{% static 'music/windy.mp3' %}" preload="auto" loop></audio>
+    <button id="music-toggle" style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(255,255,255,0.8);
+        border: none;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        cursor: pointer;
+        font-size: 20px;
+        z-index: 9999;">🔇</button>
 
     <!-- 行程计划内容 -->
     <section class="trip-plan">
@@ -664,6 +678,21 @@
             const fileName = input.files[0] ? input.files[0].name : '未选择任何文件';
             document.getElementById('fileName').textContent = fileName;
         }
+
+        // 背景音乐播放/暂停
+        const music = document.getElementById('bg-music');
+        const musicBtn = document.getElementById('music-toggle');
+        let playing = false;
+        musicBtn.onclick = function () {
+            if (playing) {
+                music.pause();
+                musicBtn.textContent = '🔇';
+            } else {
+                music.play();
+                musicBtn.textContent = '🎵';
+            }
+            playing = !playing;
+        };
     </script>
 </body>
 
