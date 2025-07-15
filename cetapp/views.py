@@ -233,5 +233,14 @@ def delete_comment_generic(request, page_name, comment_id):
     except Comment.DoesNotExist:
         return JsonResponse({'status': 'fail'}, status=404)
 
+@csrf_exempt
+def checkin_view_generic(request, page_name):
+    stats = SiteStat.objects.filter(page=page_name).first()
+    if not stats:
+        stats = SiteStat.objects.create(page=page_name)
+    stats.checked_in = True
+    stats.save()
+    return JsonResponse({'checked_in': True})
+
 def trip2(request):
     return trip_page_generic(request, 'trip2')

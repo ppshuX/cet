@@ -1,0 +1,659 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>昆明三天两夜旅行挑战</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.8;
+            background-color: #f0e68c;
+            margin: 0;
+            padding: 2rem;
+            color: #333;
+        }
+
+        h1,
+        h2 {
+            color: #2c3e50;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        section {
+            background: #fff;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        ul {
+            padding-left: 1.2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ccc;
+        }
+
+        th,
+        td {
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        .total {
+            font-weight: bold;
+            background-color: #fcfcfc;
+        }
+
+        .progress-container {
+            background: #e0e0e0;
+            border-radius: 20px;
+            overflow: hidden;
+            height: 24px;
+            margin: 1.5rem 0;
+        }
+
+        .progress-bar {
+            background: #4caf50;
+            height: 100%;
+            width: 0%;
+            text-align: center;
+            color: white;
+            line-height: 24px;
+            font-size: 14px;
+        }
+
+        .check-in {
+            display: inline-block;
+            margin: 1rem 0;
+            padding: 0.5rem 1rem;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .comments textarea {
+            width: 100%;
+            height: 80px;
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-bottom: 0.5rem;
+        }
+
+        .comments button {
+            padding: 0.5rem 1rem;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .comment-list {
+            margin-top: 1rem;
+        }
+
+        .comment {
+            background: #f0f0f0;
+            padding: 0.5rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .comment time {
+            display: block;
+            font-size: 12px;
+            color: #888;
+            margin-top: 0.25rem;
+        }
+
+        .comment .delete-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: none;
+            border: none;
+            color: #c0392b;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .stats {
+            margin-top: 1rem;
+            color: #555;
+        }
+
+        .current-row {
+            background: #e3f2fd !important;
+            transition: background 0.3s;
+        }
+
+        .trip-plan {
+            background: #fff;
+            color: #234;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .trip-plan h3 {
+            color: #2366b4;
+            font-weight: bold;
+            margin-bottom: 1.2rem;
+        }
+
+        .trip-plan p strong {
+            color: #e67e22;
+        }
+
+        .trip-plan p {
+            margin-bottom: 0.7rem;
+            font-size: 1.08rem;
+        }
+
+        .schedule-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin: 2rem 0;
+        }
+
+        .schedule-table table {
+            margin: 0;
+        }
+
+        .schedule-table th {
+            background: #667eea;
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        .schedule-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .schedule-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .time-slot {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .location {
+            color: #333;
+        }
+
+        .notes {
+            color: #666;
+            font-style: italic;
+        }
+
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .schedule-table {
+                font-size: 0.9rem;
+            }
+
+            .schedule-table td,
+            .schedule-table th {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+    </script>
+</head>
+
+<body>
+    <br>
+    <h2 style="text-align:center; font-size:1.2rem;">昆明三天两夜旅行挑战</h2>
+    <div style="position: absolute; top: 20px; right: 20px;">
+        {% if user.is_authenticated %}
+        👋 你好啊，{{ user.username }}！
+        <form id="logoutForm" action="{% url 'logout' %}?next=/cetapp/trip3/" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit"
+                style="background:none; border:none; color:#2366b4; cursor:pointer; font-size:1rem;">退出</button>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}?next={{ request.path }}">登录</a> /
+        <a href="{% url 'register' %}?next={{ request.path }}">注册</a>
+        {% endif %}
+    </div>
+    <section>
+        <h2>🌊 旅行进度条</h2>
+        <div class="progress-container">
+            <div id="progressBar" class="progress-bar" style="width:50%;">加载中...</div>
+        </div>
+    </section>
+    <audio id="bg-music" src="{% static 'music/rain.mp3' %}" preload="auto" loop></audio>
+    <button id="music-toggle"
+        style="position: fixed; bottom: 20px; right: 20px; background: rgba(255,255,255,0.8); border: none; border-radius: 50%; width: 48px; height: 48px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; font-size: 20px; z-index: 9999;">🔇</button>
+    <section class="trip-plan">
+        <h3><span class="emoji">📍</span> 昆明三天两夜旅行挑战 </h3>
+        <p><strong>出发时间：</strong>2025年7月17日早上 8:00</p>
+        <p><strong>返程时间：</strong>第三天下午 14:30 ~ 18:00 间</p>
+        <p><strong>出行方式：</strong>以地铁/公交为主，步行为辅</p>
+        <p><strong>预算范围：</strong>尽量节省，总体不超过 450 元/人</p>
+    </section>
+    <section>
+        <h4><span class="emoji">📅</span> 行程安排</h4>
+        <div class="schedule-table">
+            <table id="schedule-table">
+                <thead>
+                    <tr>
+                        <th>时间段</th>
+                        <th>地点 / 活动</th>
+                        <th>备注</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="day-split">
+                        <td colspan="3" style="text-align:center;"><strong>第一天（城市文艺线）</strong></td>
+                    </tr>
+                    <tr data-start="2025-07-17 08:00" data-end="2025-07-17 12:00">
+                        <td>08:00 – 12:00</td>
+                        <td>出发 + 抵达昆明 + 地铁前往西南联大</td>
+                        <td>建议从昆明站/客运站中转</td>
+                    </tr>
+                    <tr data-start="2025-07-17 12:00" data-end="2025-07-17 13:00">
+                        <td>12:00 – 13:00</td>
+                        <td>午餐（文林街）</td>
+                        <td>尝试米线、烧烤</td>
+                    </tr>
+                    <tr data-start="2025-07-17 13:00" data-end="2025-07-17 15:00">
+                        <td>13:00 – 15:00</td>
+                        <td>西南联大旧址 & 云南大学</td>
+                        <td>拍照打卡，校园历史氛围</td>
+                    </tr>
+                    <tr data-start="2025-07-17 15:00" data-end="2025-07-17 17:00">
+                        <td>15:00 – 17:00</td>
+                        <td>文林街 + 文化巷 + 翠湖公园</td>
+                        <td>文艺街区、湖边漫步拍照</td>
+                    </tr>
+                    <tr data-start="2025-07-17 17:00" data-end="2025-07-17 18:00">
+                        <td>17:00 – 18:00</td>
+                        <td>陆军讲武堂</td>
+                        <td>历史红墙建筑</td>
+                    </tr>
+                    <tr data-start="2025-07-17 18:00" data-end="2025-07-17 19:30">
+                        <td>18:00 – 19:30</td>
+                        <td>晚餐（附近餐馆）</td>
+                        <td>经济实惠本地馆子</td>
+                    </tr>
+                    <tr data-start="2025-07-17 20:00" data-end="2025-07-17 21:30">
+                        <td>20:00 – 21:30</td>
+                        <td>捞鱼河湿地看日落🌅</td>
+                        <td>傍晚最佳氛围</td>
+                    </tr>
+                    <tr data-start="2025-07-17 22:00" data-end="2025-07-18 07:00">
+                        <td>22:00 –</td>
+                        <td>入住酒店（经济型）</td>
+                        <td>提前预定靠近地铁站</td>
+                    </tr>
+                    <tr class="day-split">
+                        <td colspan="3" style="text-align:center;"><strong>第二天（山水自然线）</strong></td>
+                    </tr>
+                    <tr data-start="2025-07-18 07:00" data-end="2025-07-18 08:00">
+                        <td>07:00 – 08:00</td>
+                        <td>早餐（酒店周边）</td>
+                        <td>豆浆+烧饵块、小锅米线</td>
+                    </tr>
+                    <tr data-start="2025-07-18 08:00" data-end="2025-07-18 12:30">
+                        <td>08:00 – 12:30</td>
+                        <td>西山风景区（龙门）</td>
+                        <td>地铁3号线+索道俯瞰滇池</td>
+                    </tr>
+                    <tr data-start="2025-07-18 12:30" data-end="2025-07-18 13:30">
+                        <td>12:30 – 13:30</td>
+                        <td>午餐（西山附近）</td>
+                        <td>注意能量补充</td>
+                    </tr>
+                    <tr data-start="2025-07-18 14:00" data-end="2025-07-18 16:00">
+                        <td>14:00 – 16:00</td>
+                        <td>滇池边漫步（海埂公园）</td>
+                        <td>拍照看海鸥</td>
+                    </tr>
+                    <tr data-start="2025-07-18 16:30" data-end="2025-07-18 18:00">
+                        <td>16:30 – 18:00</td>
+                        <td>公园1903</td>
+                        <td>欧式建筑、摩天轮</td>
+                    </tr>
+                    <tr data-start="2025-07-18 18:30" data-end="2025-07-18 20:00">
+                        <td>18:30 – 20:00</td>
+                        <td>晚餐（地铁沿线）</td>
+                        <td>炸洋芋、烧烤</td>
+                    </tr>
+                    <tr data-start="2025-07-18 20:30" data-end="2025-07-19 07:30">
+                        <td>20:30 – 22:00</td>
+                        <td>返回酒店休息</td>
+                        <td>可看电影、买夜宵</td>
+                    </tr>
+                    <tr class="day-split">
+                        <td colspan="3" style="text-align:center;"><strong>第三天（悠闲市井线）</strong></td>
+                    </tr>
+                    <tr data-start="2025-07-19 07:30" data-end="2025-07-19 08:30">
+                        <td>07:30 – 08:30</td>
+                        <td>早餐 + 退房准备</td>
+                        <td>整理物品</td>
+                    </tr>
+                    <tr data-start="2025-07-19 09:00" data-end="2025-07-19 11:00">
+                        <td>09:00 – 11:00</td>
+                        <td>东南亚风情市场 + 湖滨生态湿地公园</td>
+                        <td>市井生活慢游拍照</td>
+                    </tr>
+                    <tr data-start="2025-07-19 11:30" data-end="2025-07-19 13:00">
+                        <td>11:30 – 13:00</td>
+                        <td>午饭（就近安排）</td>
+                        <td>靠近地铁站选择</td>
+                    </tr>
+                    <tr data-start="2025-07-19 13:00" data-end="2025-07-19 14:30">
+                        <td>13:00 – 14:30</td>
+                        <td>自由活动 / 补拍打卡 / 伴手礼</td>
+                        <td>自由选择</td>
+                    </tr>
+                    <tr data-start="2025-07-19 14:30" data-end="2025-07-19 18:00">
+                        <td>14:30 – 18:00</td>
+                        <td>返程回陆良</td>
+                        <td>注意交通时间</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <div
+        style="background: #fff; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 1.2rem 2rem; margin-bottom: 2rem; text-align:center; font-size:1.08rem;">
+        浏览量：<span id="views">0</span> ｜ 点赞：<span id="likes">0</span>
+        <button id="like-btn"
+            style="margin-left: 1.2rem; font-size:1.1rem; border-radius:8px; border:1.5px solid #b5b5b5; background:#f5f5f5; color:#234; padding:0.3rem 1.2rem; cursor:pointer;">👍
+            点赞</button>
+    </div>
+    <section class="comments">
+        <h2>📍 打卡与留言</h2>
+        <div style="text-align: left; margin-bottom: 10px;">
+            <button id="toggleOrderBtn" class="btn btn-secondary">🔃 切换评论顺序</button>
+        </div>
+        <button id="checkInBtn" class="check-in" onclick="checkIn()">📍 去打卡</button>
+        {% if user.is_superuser %}
+        <form id="commentForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <textarea id="commentInput" name="content" placeholder="写下你的留言或建议..."></textarea>
+            <input type="file" name="image" accept="image/*">
+            <button type="submit">💬 发表评论</button>
+        </form>
+        {% else %}
+        <p style="color: gray;">🛡️ 当前仅站主可发表评论，欢迎打卡浏览。</p>
+        {% endif %}
+        <div class="comment-list" id="commentList" data-order="asc">
+            {% for comment in comments %}
+            <div class="comment" style="margin-bottom: 24px; position: relative;">
+                <strong>{{ comment.user.username }} : &nbsp;</strong>
+                {{ comment.content|linebreaksbr }}
+                {% if comment.image %}
+                <div style="margin-top: 10px; text-align: center;">
+                    <img src="{{ comment.image.url }}" alt="comment image" onclick="showImageModal(this.src)"
+                        style="display: inline-block; max-width: 100%; max-height: 600px; border-radius: 12px; box-shadow: 0 6px 16px rgba(0,0,0,0.15); transition: all 0.3s ease; cursor: pointer;">
+                </div>
+                {% endif %}
+                <div style="color: #aaa; font-size: 12px; margin-top: 6px; text-align: right;">
+                    {{ comment.timestamp|date:"Y-m-d H:i" }}
+                </div>
+                {% if comment.user == user or user.is_superuser %}
+                <button class="delete-btn" onclick="deleteComment(this, {{ comment.id }})"
+                    style="position: absolute; top: 0; right: 0;">🗑️</button>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    <div id="imageModal"
+        style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); backdrop-filter: blur(5px);">
+        <div
+            style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+            <img id="modalImage" src="" alt="大图"
+                style="max-width: 95%; max-height: 95%; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+            <button id="closeModal"
+                style="position: absolute; top: 20px; right: 30px; color: #f1f1f1; font-size: 40px; font-weight: bold; background: none; border: none; cursor: pointer; z-index: 10001;">&times;</button>
+        </div>
+    </div>
+    <script>
+        window.addEventListener('load', function () {
+            fetch('/cetapp/trip3/views_likes/')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('views').textContent = data.views;
+                    document.getElementById('likes').textContent = data.likes;
+                });
+        });
+        document.getElementById('like-btn').addEventListener('click', function () {
+            fetch('/cetapp/trip3/like/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('likes').textContent = data.likes;
+                });
+        });
+        function checkIn() {
+            fetch('/cetapp/trip3/checkin/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.checked_in) {
+                        alert('打卡成功！');
+                        document.getElementById('checkInBtn').disabled = true;
+                        document.getElementById('checkInBtn').textContent = '✅ 已打卡';
+                    } else {
+                        alert('打卡失败或已打卡。');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking in:', error);
+                    alert('打卡失败，请稍后再试。');
+                });
+        }
+        const isAuthenticated = "{{ request.user.is_authenticated|yesno:'true,false' }}" === "true";
+        function submitComment() {
+            if (!isAuthenticated) {
+                const currentPath = window.location.pathname;
+                window.location.href = `/accounts/login/?next=${currentPath}`;
+                return;
+            }
+            const input = document.getElementById("commentInput");
+            const content = input.value.trim();
+            if (content) {
+                const formData = new FormData();
+                formData.append("content", content);
+                fetch("/cetapp/trip3/add_comment/", {
+                    method: "POST",
+                    headers: { "X-CSRFToken": csrftoken },
+                    body: formData,
+                })
+                    .then(res => res.json())
+                    .then(data => { if (data.status === "ok") { location.reload(); } });
+            }
+        }
+        function deleteComment(btn, commentId) {
+            if (confirm('确定要删除这条评论吗？')) {
+                fetch(`/cetapp/trip3/delete_comment/${commentId}/`, {
+                    method: "POST",
+                    headers: { "X-CSRFToken": csrftoken },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'ok') {
+                            btn.parentElement.remove();
+                        } else {
+                            alert("无权限删除该评论");
+                        }
+                    });
+            }
+        }
+        function updateProgressBar() {
+            const now = new Date();
+            const start = new Date("2025-07-17T08:00:00");
+            const end = new Date("2025-07-19T18:00:00");
+            const total = end - start;
+            const passed = now - start;
+            const percentage = Math.min(Math.max((passed / total) * 100, 0), 100);
+            const progressBar = document.getElementById("progressBar");
+            progressBar.style.width = percentage + "%";
+            let label = Math.round(percentage) + "% - ";
+            if (percentage < 10) label += "🚄 出发前";
+            else if (percentage < 30) label += "🏫 联大/云大";
+            else if (percentage < 50) label += "🌳 翠湖/讲武堂";
+            else if (percentage < 70) label += "🌄 寥廓山/湿地";
+            else if (percentage < 90) label += "🏞️ 滇池西山";
+            else label += "🏁 旅程结束啦";
+            progressBar.innerText = label;
+        }
+        updateProgressBar();
+        setInterval(updateProgressBar, 60000);
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("commentForm");
+            if (form) {
+                form.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    let formData = new FormData(this);
+                    fetch("/cetapp/trip3/add_comment/", {
+                        method: "POST",
+                        body: formData,
+                        headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === "ok") {
+                                alert("✅ 评论成功！");
+                                location.reload();
+                            } else {
+                                alert("评论失败，请填写内容或上传图片。");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("评论错误：", error);
+                            alert("提交失败，请稍后再试。");
+                        });
+                });
+            }
+        });
+    </script>
+    <script>
+        const audio = document.getElementById("bg-music");
+        const toggleBtn = document.getElementById("music-toggle");
+        let isPlaying = false;
+        toggleBtn.addEventListener("click", () => {
+            if (isPlaying) {
+                audio.pause();
+                toggleBtn.textContent = "🔇";
+            } else {
+                audio.volume = 1.0;
+                audio.play().then(() => {
+                    toggleBtn.textContent = "🔊";
+                }).catch(err => {
+                    console.error("播放失败：", err);
+                    toggleBtn.textContent = "❌";
+                });
+            }
+            isPlaying = !isPlaying;
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggleBtn = document.getElementById("toggleOrderBtn");
+            if (toggleBtn) {
+                toggleBtn.addEventListener("click", function () {
+                    const commentList = document.getElementById("commentList");
+                    const currentOrder = commentList.dataset.order || "asc";
+                    const comments = Array.from(commentList.children);
+                    commentList.innerHTML = "";
+                    comments.reverse();
+                    commentList.dataset.order = currentOrder === "asc" ? "desc" : "asc";
+                    comments.forEach(comment => commentList.appendChild(comment));
+                });
+            }
+        });
+        function showImageModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modalImg.src = imageSrc;
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('imageModal');
+            const closeBtn = document.getElementById('closeModal');
+            closeBtn.onclick = function () {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+            modal.onclick = function (e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            }
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && modal.style.display === 'block') {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
