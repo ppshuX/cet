@@ -1,0 +1,277 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅行主菜单</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0e7ff 0%, #f0f4f8 100%);
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .main-header {
+            text-align: center;
+            margin-top: 36px;
+            margin-bottom: 10px;
+        }
+
+        .main-header .title {
+            font-size: 2.1rem;
+            color: #2366b4;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .welcome {
+            text-align: center;
+            color: #234;
+            font-size: 1.08rem;
+            margin-bottom: 18px;
+        }
+
+        .vine-container {
+            position: relative;
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto 40px auto;
+            min-height: 520px;
+        }
+
+        .vine-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: linear-gradient(to bottom, #7ec850 0%, #2366b4 100%);
+            border-radius: 3px;
+            z-index: 0;
+            transform: translateX(-50%);
+        }
+
+        .fruit {
+            position: absolute;
+            left: 50%;
+            width: 320px;
+            max-width: 95vw;
+            background: #fff;
+            border-radius: 50px;
+            box-shadow: 0 4px 24px rgba(35, 102, 180, 0.10);
+            padding: 1.7rem 1.5rem 1.5rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.3rem;
+            transition: box-shadow 0.18s, transform 0.18s;
+            cursor: pointer;
+        }
+
+        .fruit:hover {
+            box-shadow: 0 8px 32px rgba(35, 102, 180, 0.18);
+            transform: scale(1.06);
+        }
+
+        .fruit .icon {
+            font-size: 2.5rem;
+            flex-shrink: 0;
+        }
+
+        .fruit .info {
+            flex: 1;
+        }
+
+        .fruit .title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #234;
+            margin-bottom: 0.25rem;
+        }
+
+        .fruit .desc {
+            color: #666;
+            font-size: 1.08rem;
+        }
+
+        .fruit .date {
+            color: #2366b4;
+            font-size: 1.02rem;
+            font-weight: 500;
+            margin-top: 0.3rem;
+            display: block;
+        }
+
+        /* 交错布局 */
+        .fruit.fruit-1 {
+            top: 40px;
+            transform: translate(-120%, 0);
+        }
+
+        .fruit.fruit-2 {
+            top: 210px;
+            transform: translate(20%, 0);
+        }
+
+        .fruit.fruit-3 {
+            top: 380px;
+            transform: translate(-120%, 0);
+        }
+
+        @media (max-width: 600px) {
+            .vine-container {
+                min-height: 600px;
+            }
+
+            .fruit {
+                left: 50%;
+                transform: translate(-50%, 0) !important;
+                width: 98vw;
+                max-width: 98vw;
+                padding: 1.2rem 0.7rem 1.1rem 0.7rem;
+            }
+
+            .fruit.fruit-1,
+            .fruit.fruit-2,
+            .fruit.fruit-3 {
+                top: unset;
+            }
+
+            .fruit.fruit-1 {
+                top: 30px;
+            }
+
+            .fruit.fruit-2 {
+                top: 140px;
+            }
+
+            .fruit.fruit-3 {
+                top: 250px;
+            }
+
+            .fruit .icon {
+                font-size: 2rem;
+            }
+
+            .fruit .title {
+                font-size: 1.05rem;
+            }
+
+            .fruit .desc {
+                font-size: 0.95rem;
+            }
+
+            .fruit .date {
+                font-size: 0.93rem;
+            }
+        }
+
+        .auth-links {
+            position: absolute;
+            top: 18px;
+            right: 16px;
+            font-size: 1rem;
+        }
+
+        .auth-links a,
+        .auth-links button {
+            color: #2366b4;
+            text-decoration: none;
+            margin: 0 0.7rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .auth-links a:hover,
+        .auth-links button:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            text-align: center;
+            color: #aaa;
+            font-size: 0.98rem;
+            margin-top: 60px;
+            padding-bottom: 18px;
+        }
+
+        @media (max-width: 480px) {
+            .main-header .title {
+                font-size: 1.3rem;
+            }
+
+            .footer {
+                font-size: 0.85rem;
+                margin-top: 30px;
+            }
+
+            .auth-links {
+                top: 8px;
+                right: 6px;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-links">
+        {% if user.is_authenticated %}
+        👋 你好，{{ user.username }}！
+        <form id="logoutForm" action="{% url 'logout' %}?next=/cetapp/" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit">退出</button>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}?next={{ request.path }}">登录</a>
+        <a href="{% url 'register' %}?next={{ request.path }}">注册</a>
+        {% endif %}
+    </div>
+    <div class="main-header">
+        <span class="title">旅行主菜单</span>
+    </div>
+    <div class="welcome">
+        欢迎来到旅行计划与交流平台！<br>
+        发现精彩行程，记录美好旅途，和朋友一起分享旅行故事。
+    </div>
+    <div class="vine-container">
+        <div class="vine-line"></div>
+        <a href="{% url 'trip_page' %}" class="fruit fruit-1">
+            <span class="icon">🏖️</span>
+            <span class="info">
+                <span class="title">2025年厦门旅行计划</span><br>
+                <span class="desc">三天两晚畅游厦门植物园、鼓浪屿、八市等地，体验闽南风情与美食。</span>
+                <span class="date">结束日期：2025-06-24</span>
+            </span>
+        </a>
+        <a href="{% url 'trip1' %}" class="fruit fruit-2">
+            <span class="icon">🌊</span>
+            <span class="info">
+                <span class="title">三岔河一日游</span><br>
+                <span class="desc">龙凤寺、白水塘、紫溪湿地，亲近自然，轻松徒步，适合家庭和好友结伴。</span>
+                <span class="date">结束日期：2025-07-12</span>
+            </span>
+        </a>
+        <a href="{% url 'trip2' %}" class="fruit fruit-3">
+            <span class="icon">🏙️</span>
+            <span class="info">
+                <span class="title">曲靖市区两日游</span><br>
+                <span class="desc">龙潭公园、麒麟公园、夜市美食、寥廓山日出，深度体验曲靖本地生活。</span>
+                <span class="date">结束日期：2025-07-14</span>
+            </span>
+        </a>
+    </div>
+    <div class="footer">
+        &copy; 2025 旅行计划平台 | 旅行社区<br>
+        技术支持：Django + Bootstrap | 联系方式：2064747320@qq.com
+    </div>
+</body>
+
+</html>

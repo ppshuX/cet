@@ -3,6 +3,7 @@ from . import views
 from .utils import add_trip_page_urls
 
 urlpatterns = [
+    path('', views.main_menu, name='cetapp_main_menu'),
     path('trip/', views.trip_page, name='trip_page'),
     path('trip/add_comment/', views.add_comment, name='add_comment'),
     path('trip/like/', views.like_view, name='like_view'),

@@ -16,6 +16,9 @@ from django.utils import timezone
 def index(request):
     return render(request, 'index.html')
 
+def main_menu(request):
+    return render(request, 'cetapp/index.html')
+
 def listening(request):
     return render(request, 'listening.html')
 
@@ -229,3 +232,6 @@ def delete_comment_generic(request, page_name, comment_id):
             return JsonResponse({'status': 'forbidden'}, status=403)
     except Comment.DoesNotExist:
         return JsonResponse({'status': 'fail'}, status=404)
+
+def trip2(request):
+    return trip_page_generic(request, 'trip2')
