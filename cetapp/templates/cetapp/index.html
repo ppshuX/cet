@@ -42,7 +42,8 @@
             width: 100%;
             max-width: 520px;
             margin: 0 auto 40px auto;
-            min-height: 650px;
+            min-height: 600px;
+            /* PC端不设置背景色，保持透明 */
         }
 
         .vine-line {
@@ -112,28 +113,38 @@
 
         /* 交错布局 */
         .fruit.fruit-1 {
-            top: 40px;
+            top: 30px;
             transform: translate(-120%, 0);
         }
 
         .fruit.fruit-2 {
-            top: 210px;
+            top: 150px;
             transform: translate(20%, 0);
         }
 
         .fruit.fruit-3 {
-            top: 380px;
+            top: 270px;
             transform: translate(-120%, 0);
         }
 
         .fruit.fruit-4 {
-            top: 440px;
+            top: 390px;
             transform: translate(20%, 0);
+        }
+
+        .fruit.fruit-5 {
+            top: 470px;
+            transform: translate(-120%, 0);
+            background: #f8f8ff;
+            color: #aaa;
         }
 
         @media (max-width: 600px) {
             .vine-container {
                 min-height: 800px;
+                background: linear-gradient(135deg, #e0e7ff 0%, #f0f4f8 100%);
+                border-radius: 32px;
+                box-shadow: 0 4px 24px rgba(35, 102, 180, 0.08);
             }
 
             .fruit {
@@ -164,6 +175,11 @@
 
             .fruit.fruit-4 {
                 top: 360px;
+            }
+
+            .fruit.fruit-5 {
+                top: 480px;
+                transform: translate(-50%, 0) !important;
             }
 
             .fruit .icon {
@@ -290,6 +306,14 @@
                 <span class="title">昆明三天两夜旅行挑战</span><br>
                 <span class="desc">西南联大、翠湖、寥廓山、滇池西山等地，地铁公交畅游昆明，预算900元内。</span>
                 <span class="date">结束日期：2025-07-21</span>
+            </span>
+        </a>
+        <a href="#" class="fruit fruit-5" style="pointer-events:none; opacity:0.7;">
+            <span class="icon">⏳</span>
+            <span class="info">
+                <span class="title">敬请期待</span><br>
+                <span class="desc">更多精彩行程即将上线，欢迎持续关注！</span>
+                <span class="date">Coming soon...</span>
             </span>
         </a>
     </div>
