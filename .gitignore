@@ -1,4 +1,6 @@
 **.swp
 **.pyc
 __pycache__/
-media/comment_images/db.sqlite3
+media/comment_images/
+db.sqlite3
+
