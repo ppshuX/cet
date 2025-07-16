@@ -2,3 +2,4 @@
 **.pyc
 __pycache__/
 media/comment_images/
+db.sqlite3
