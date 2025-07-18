@@ -227,6 +227,75 @@
             color: #a18cd1;
             font-weight: bold;
         }
+
+        .like-btn-pretty {
+            display: inline-flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5em;
+            background: linear-gradient(135deg, #ffe4ec 0%, #fff0f5 100%);
+            color: #d6336c;
+            border: none;
+            border-radius: 18px;
+            font-size: 1.13rem;
+            font-weight: 500;
+            padding: 0.45em 1.3em 0.45em 1.1em;
+            box-shadow: 0 2px 10px 0 rgba(214, 51, 108, 0.08);
+            cursor: pointer;
+            transition: background 0.18s, box-shadow 0.18s, color 0.18s, transform 0.18s;
+            outline: none;
+            margin: 0.5em auto 0.2em auto;
+            user-select: none;
+            line-height: 1.1;
+        }
+
+        .like-btn-pretty span.emoji {
+            font-size: 1.25em;
+            margin-bottom: 0;
+            line-height: 1;
+        }
+
+        .like-btn-pretty span.text {
+            font-size: 1.08em;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+        }
+
+        .like-btn-pretty:hover,
+        .like-btn-pretty:focus {
+            background: linear-gradient(135deg, #ffd6e0 0%, #ffe4ec 100%);
+            color: #b81b5c;
+            box-shadow: 0 6px 18px rgba(214, 51, 108, 0.13);
+            transform: scale(1.04) translateY(-1px);
+            outline: none;
+        }
+
+        .like-btn-pretty:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px #ffe4ec, 0 6px 18px rgba(214, 51, 108, 0.13);
+        }
+
+        .like-info-box {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1.2rem 2rem 1.3rem 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-size: 1.08rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.7em;
+        }
+
+        .like-stats {
+            margin-bottom: 0.2em;
+            color: #222;
+            font-size: 1.08em;
+            letter-spacing: 0.02em;
+        }
     </style>
     <script>
         function getCookie(name) {
@@ -444,13 +513,39 @@
             </table>
         </div>
     </section>
-    <div
-        style="background: #fff; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 1.2rem 2rem; margin-bottom: 2rem; text-align:center; font-size:1.08rem;">
-        浏览量：<span id="views">0</span> ｜ 点赞：<span id="likes">0</span>
-        <button id="like-btn"
-            style="margin-left: 1.2rem; font-size:1.1rem; border-radius:8px; border:1.5px solid #b5b5b5; background:#f5f5f5; color:#234; padding:0.3rem 1.2rem; cursor:pointer;">👍
-            点赞</button>
+    <div class="like-info-box">
+        <div class="like-stats">
+            浏览量：<span id="views">0</span> ｜ 点赞：<span id="likes">0</span>
+        </div>
+        <button class="like-btn-pretty" onclick="like()">
+            <span class="emoji">👍</span>
+            <span class="text">点赞</span>
+        </button>
     </div>
+    <script>
+        document.getElementById("views").innerText = {{ stats.views }};
+        document.getElementById("likes").innerText = {{ stats.likes }};
+        function like() {
+            const btn = document.querySelector('.like-btn-pretty');
+            fetch("/cetapp/trip3/like/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrftoken,
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("likes").innerText = data.likes;
+                    // 点赞时按钮缩放归位，然后自动恢复悬浮动画
+                    if (btn) {
+                        btn.style.transform = 'none';
+                        setTimeout(() => {
+                            btn.style.transform = '';
+                        }, 200);
+                    }
+                });
+        }
+    </script>
     <section class="comments">
         <h2>📍 打卡与留言</h2>
         <div style="text-align: left; margin-bottom: 10px;">
@@ -505,18 +600,6 @@
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('views').textContent = data.views;
-                    document.getElementById('likes').textContent = data.likes;
-                });
-        });
-        document.getElementById('like-btn').addEventListener('click', function () {
-            fetch('/cetapp/trip3/like/', {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrftoken
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
                     document.getElementById('likes').textContent = data.likes;
                 });
         });
