@@ -308,7 +308,7 @@
             <div id="progressBar" class="progress-bar" style="width:50%;">加载中...</div>
         </div>
     </section>
-    <audio id="bg-music" src="{% static 'music/rain.mp3' %}" preload="auto" loop></audio>
+    <audio id="bg-music" src="{% static 'music/road.mp3' %}" preload="auto" loop></audio>
     <button id="music-toggle"
         style="position: fixed; bottom: 20px; right: 20px; background: rgba(255,255,255,0.8); border: none; border-radius: 50%; width: 48px; height: 48px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; font-size: 20px; z-index: 9999;">🔇</button>
     <section class="trip-plan">
@@ -395,7 +395,7 @@
                     <tr data-start="2025-07-20 14:00" data-end="2025-07-20 16:00">
                         <td>14:00 – 16:00</td>
                         <td>滇池边漫步（海埂公园）</td>
-                        <td>拍照看海鸥</td>
+                        <td>拍照看风景</td>
                     </tr>
                     <tr data-start="2025-07-20 16:30" data-end="2025-07-20 18:00">
                         <td>16:30 – 18:00</td>
@@ -465,7 +465,7 @@
             <button type="submit">💬 发表评论</button>
         </form>
         {% else %}
-        <p style="color: gray;">🛡️ 当前仅站主可发表评论，欢迎打卡浏览。</p>
+        <p style="color: gray;">🛡️ 当前仅站主授权后可发表评论，欢迎打卡浏览。</p>
         {% endif %}
         <div class="comment-list" id="commentList" data-order="asc">
             {% for comment in comments %}
@@ -589,12 +589,29 @@
             const progressBar = document.getElementById("progressBar");
             progressBar.style.width = percentage + "%";
             let label = Math.round(percentage) + "% - ";
-            if (percentage < 10) label += "🚄 出发前";
-            else if (percentage < 30) label += "🏫 联大/云大";
-            else if (percentage < 50) label += "🌳 翠湖/讲武堂";
-            else if (percentage < 70) label += "🌄 寥廓山/湿地";
-            else if (percentage < 90) label += "🏞️ 滇池西山";
-            else label += "🏁 旅程结束啦";
+            if (percentage < 5) {
+                label += "🎒 整装待发 | 期待启程";
+            } else if (percentage < 15) {
+                label += "🚄 出发中 | 前往昆明";
+            } else if (percentage < 25) {
+                label += "🏫 联大/云大 | 校园历史打卡";
+            } else if (percentage < 35) {
+                label += "🌳 翠湖/讲武堂 | 文艺漫步";
+            } else if (percentage < 45) {
+                label += "🍜 文林街美食 | 午餐补给";
+            } else if (percentage < 55) {
+                label += "🌅 捞鱼河湿地 | 日落拍照";
+            } else if (percentage < 65) {
+                label += "🏨 入住酒店 | 休息调整";
+            } else if (percentage < 75) {
+                label += "⛰️ 西山龙门 | 俯瞰滇池";
+            } else if (percentage < 85) {
+                label += "🦢 滇池/海埂 | 看风景";
+            } else if (percentage < 95) {
+                label += "🛍️ 市井慢游 | 伴手礼采购";
+            } else {
+                label += "🏁 旅程结束啦 | 满载而归";
+            }
             progressBar.innerText = label;
         }
         updateProgressBar();
@@ -687,6 +704,32 @@
                 }
             });
         });
+    </script>
+    <script>
+        function parseTime(str) {
+            if (!str) return null;
+            if (str.length <= 5) {
+                const today = new Date();
+                str = today.getFullYear() + '-' + (today.getMonth() + 1).toString().padStart(2, '0') + '-' + today.getDate().toString().padStart(2, '0') + ' ' + str;
+            }
+            return new Date(str.replace(/-/g, '/'));
+        }
+        function updateScheduleHighlight() {
+            const rows = document.querySelectorAll('#schedule-table tr[data-start]');
+            if (rows.length === 0) return;
+            const now = new Date();
+            rows.forEach(row => row.classList.remove('current-row'));
+            for (let i = 0; i < rows.length; i++) {
+                const s = parseTime(rows[i].dataset.start);
+                const e = parseTime(rows[i].dataset.end);
+                if (now >= s && now < e) {
+                    rows[i].classList.add('current-row');
+                    break;
+                }
+            }
+        }
+        setInterval(updateScheduleHighlight, 60 * 1000);
+        updateScheduleHighlight();
     </script>
 </body>
 
