@@ -266,10 +266,27 @@
         z-index: 9999;
     ">🔇</button>
 
-    <section class="stats" style="text-align: center; margin-top: 1rem;">
+    <div
+        style="background: #fff; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 1.2rem 2rem; margin-bottom: 2rem; text-align:center; font-size:1.08rem;">
         浏览量：<span id="views">0</span> ｜ 点赞：<span id="likes">0</span>
         <button onclick="like()" style="display: block; margin: 0 auto; font-size: 1.0rem;">👍 点赞</button>
-    </section>
+    </div>
+    <script>
+        document.getElementById("views").innerText = {{ stats.views }};
+        document.getElementById("likes").innerText = {{ stats.likes }};
+        function like() {
+            fetch("/cetapp/trip/like/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrftoken,
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("likes").innerText = data.likes;
+                });
+        }
+    </script>
 
     <section>
         <h3>🧭 行程概览</h3>

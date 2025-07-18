@@ -271,9 +271,11 @@
             outline: none;
         }
 
-        .like-btn-pretty:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px #ffe4ec, 0 6px 18px rgba(214, 51, 108, 0.13);
+        .like-btn-pretty:focus,
+        .like-btn-pretty:active {
+            outline: none !important;
+            box-shadow: 0 6px 18px rgba(214, 51, 108, 0.13) !important;
+            border: none !important;
         }
 
         .like-info-box {
@@ -513,20 +515,15 @@
             </table>
         </div>
     </section>
-    <div class="like-info-box">
-        <div class="like-stats">
-            浏览量：<span id="views">0</span> ｜ 点赞：<span id="likes">0</span>
-        </div>
-        <button class="like-btn-pretty" onclick="like()">
-            <span class="emoji">👍</span>
-            <span class="text">点赞</span>
-        </button>
+    <div
+        style="background: #fff; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 1.2rem 2rem; margin-bottom: 2rem; text-align:center; font-size:1.08rem;">
+        浏览量：<span id="views">0</span> ｜ 点赞：<span id="likes">0</span>
+        <button onclick="like()" style="display: block; margin: 0 auto; font-size: 1.0rem;">👍 点赞</button>
     </div>
     <script>
         document.getElementById("views").innerText = {{ stats.views }};
         document.getElementById("likes").innerText = {{ stats.likes }};
         function like() {
-            const btn = document.querySelector('.like-btn-pretty');
             fetch("/cetapp/trip3/like/", {
                 method: "POST",
                 headers: {
@@ -536,13 +533,6 @@
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("likes").innerText = data.likes;
-                    // 点赞时按钮缩放归位，然后自动恢复悬浮动画
-                    if (btn) {
-                        btn.style.transform = 'none';
-                        setTimeout(() => {
-                            btn.style.transform = '';
-                        }, 200);
-                    }
                 });
         }
     </script>
