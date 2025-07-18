@@ -242,5 +242,23 @@ def checkin_view_generic(request, page_name):
     stats.save()
     return JsonResponse({'checked_in': True})
 
+@csrf_exempt
+def trip2_like_view(request):
+    stats = SiteStat.objects.filter(page='trip2').first()
+    if not stats:
+        stats = SiteStat.objects.create(page='trip2')
+    stats.likes += 1
+    stats.save()
+    return JsonResponse({'likes': stats.likes})
+
+@csrf_exempt
+def trip3_like_view(request):
+    stats = SiteStat.objects.filter(page='trip3').first()
+    if not stats:
+        stats = SiteStat.objects.create(page='trip3')
+    stats.likes += 1
+    stats.save()
+    return JsonResponse({'likes': stats.likes})
+
 def trip2(request):
     return trip_page_generic(request, 'trip2')
