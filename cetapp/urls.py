@@ -16,6 +16,8 @@ urlpatterns = [
     path('trip1/add_comment/', views.trip1_add_comment, name='trip1_add_comment'),
     path('trip1/delete_comment/<int:comment_id>/', views.trip1_delete_comment, name='trip1_delete_comment'),
     path('register/', views.register, name='register'),
+    path('trip2/like/', views.trip2_like_view, name='trip2_like_view'),
+    path('trip3/like/', views.trip3_like_view, name='trip3_like_view'),
 ]
 
 # 动态添加 trip2 路由
