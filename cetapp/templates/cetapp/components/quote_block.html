@@ -1,23 +1,23 @@
 <style>
     .quote-card {
-      max-width: 700px;
-      margin: 2rem auto;
+      width: 100%;
+      background: #fffaf0;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
       padding: 1.5rem 2rem;
-      background: #fdf7dc;
-      border-radius: 1rem;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
       font-family: "Georgia", serif;
       color: #333;
       transition: all 0.3s ease;
+      box-sizing: border-box;
     }
   
     .quote-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
     }
   
     .quote-content {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       font-style: italic;
       text-align: center;
       margin-bottom: 1rem;
@@ -30,10 +30,12 @@
     }
   </style>
   
-  <div class="quote-card">
-    <p id="quote-content" class="quote-content">加载中...</p>
-    <p id="quote-author" class="quote-author"></p>
-  </div>
+  <section>
+    <div class="quote-card">
+      <p id="quote-content" class="quote-content">加载中...</p>
+      <p id="quote-author" class="quote-author"></p>
+    </div>
+  </section>
   
   <script>
     fetch("https://api.quotable.io/random")
