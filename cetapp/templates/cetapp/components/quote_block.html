@@ -1,0 +1,49 @@
+<style>
+    .quote-card {
+      max-width: 700px;
+      margin: 2rem auto;
+      padding: 1.5rem 2rem;
+      background: #fdf7dc;
+      border-radius: 1rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      font-family: "Georgia", serif;
+      color: #333;
+      transition: all 0.3s ease;
+    }
+  
+    .quote-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+  
+    .quote-content {
+      font-size: 1.3rem;
+      font-style: italic;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+  
+    .quote-author {
+      text-align: right;
+      font-weight: bold;
+      color: #555;
+    }
+  </style>
+  
+  <div class="quote-card">
+    <p id="quote-content" class="quote-content">加载中...</p>
+    <p id="quote-author" class="quote-author"></p>
+  </div>
+  
+  <script>
+    fetch("https://api.quotable.io/random")
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("quote-content").innerText = `“${data.content}”`;
+        document.getElementById("quote-author").innerText = `—— ${data.author}`;
+      })
+      .catch(error => {
+        document.getElementById("quote-content").innerText = "无法加载名言，请稍后再试。";
+      });
+  </script>
+  
