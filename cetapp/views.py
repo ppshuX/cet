@@ -45,22 +45,19 @@ def register(request):
         form = CustomRegisterForm()
     return render(request, 'cetapp/register.html', {'form': form})
 
-# 关闭 SSL 警告（可选但推荐）
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
 def get_quote(request):
     try:
-        response = requests.get("https://api.quotable.io/random", timeout=5, verify=False)
-        data = response.json()
+        response = requests.get("https://zenquotes.io/api/random", timeout=5)
+        data = response.json()[0]  # 它返回的是数组
         return JsonResponse({
-            "content": data.get("content", "无内容"),
-            "author": data.get("author", "佚名")
+            "content": data.get("q", "No content."),
+            "author": data.get("a", "Anonymous"),
         })
-    except Exception:
+    except Exception as e:
         return JsonResponse({
             "content": "We travel not to escape life, but for life not to escape us.",
-            "author": "Anonymous"
-})
+            "author": "Anonymous",
+        })
 
 def trip_page(request):
     stats = SiteStat.objects.filter(page='trip').first()
