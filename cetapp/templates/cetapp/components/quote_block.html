@@ -38,13 +38,15 @@
 </section>
 
 <script>
-    fetch("https://api.quotable.io/random")
+    fetch('/cetapp/get_quote/')
         .then(response => response.json())
         .then(data => {
-            document.getElementById("quote-content").innerText = `“${data.content}”`;
+            document.getElementById("quote-content").innerText = `"${data.content}"`;
             document.getElementById("quote-author").innerText = `—— ${data.author}`;
         })
-        .catch(error => {
-            document.getElementById("quote-content").innerText = " “I travel not to go anywhere, but to go. I travel for travel's sake. The great affair is to move.”     —— Robert Louis Stevenson";
+        .catch(() => {
+            document.getElementById("quote-content").innerText = `"We travel not to escape life, but for life not to escape us."`;
+            document.getElementById("quote-author").innerText = `—— Anonymous`;
         });
+
 </script>

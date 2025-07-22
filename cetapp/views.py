@@ -1,6 +1,8 @@
 import os
 import uuid
 import json
+import urllib3
+import requests
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -43,6 +45,22 @@ def register(request):
         form = CustomRegisterForm()
     return render(request, 'cetapp/register.html', {'form': form})
 
+# 关闭 SSL 警告（可选但推荐）
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+def get_quote(request):
+    try:
+        response = requests.get("https://api.quotable.io/random", timeout=5, verify=False)
+        data = response.json()
+        return JsonResponse({
+            "content": data.get("content", "无内容"),
+            "author": data.get("author", "佚名")
+        })
+    except Exception:
+        return JsonResponse({
+            "content": "We travel not to escape life, but for life not to escape us.",
+            "author": "Anonymous"
+})
 
 def trip_page(request):
     stats = SiteStat.objects.filter(page='trip').first()
