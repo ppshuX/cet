@@ -280,3 +280,12 @@ def trip2(request):
 
 def trip4(request):
     return trip_page_generic(request, 'trip4')
+
+@csrf_exempt
+def trip4_like_view(request):
+    stats = SiteStat.objects.filter(page='trip4').first()
+    if not stats:
+        stats = SiteStat.objects.create(page='trip4')
+    stats.likes += 1
+    stats.save()
+    return JsonResponse({'likes': stats.likes})

@@ -16,14 +16,19 @@ def add_trip_page_urls(page_name):
     from django.urls import path
     from . import views
     
-    return [
+    urls = [
         path(f'{page_name}/', lambda request: views.trip_page_generic(request, page_name), name=f'{page_name}'),
         path(f'{page_name}/add_comment/', lambda request: views.add_comment_generic(request, page_name), name=f'{page_name}_add_comment'),
-        path(f'{page_name}/like/', lambda request: views.like_view_generic(request, page_name), name=f'{page_name}_like'),
         path(f'{page_name}/delete_comment/<int:comment_id>/', lambda request, comment_id: views.delete_comment_generic(request, page_name, comment_id), name=f'{page_name}_delete_comment'),
         path(f'{page_name}/views_likes/', lambda request: views.views_likes_generic(request, page_name), name=f'{page_name}_views_likes'),
         path(f'{page_name}/checkin/', lambda request: views.checkin_view_generic(request, page_name), name=f'{page_name}_checkin'),
     ]
+    
+    # trip4使用专门的点赞函数，不使用通用函数
+    if page_name != 'trip4':
+        urls.append(path(f'{page_name}/like/', lambda request: views.like_view_generic(request, page_name), name=f'{page_name}_like'))
+    
+    return urls
 
 def create_trip_page_template(page_name, title="新页面"):
     """

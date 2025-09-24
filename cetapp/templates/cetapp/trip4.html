@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>长沙3天2夜慢旅行</title>
+    <link rel="icon" type="image/png" href="{% static 'favicon.png' %}">
     <style>
         body {
             font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
@@ -716,15 +717,36 @@
         document.getElementById("views").innerText = {{ stats.views }};
         document.getElementById("likes").innerText = {{ stats.likes }};
         function like() {
+            const likeBtn = document.querySelector('button[onclick="like()"]');
+            const originalText = likeBtn.textContent;
+
+            // 立即反馈
+            likeBtn.textContent = "👍 点赞中...";
+            likeBtn.disabled = true;
+
             fetch("/cetapp/trip4/like/", {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": csrftoken,
                 },
             })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     document.getElementById("likes").innerText = data.likes;
+                    likeBtn.textContent = "👍 已点赞";
+                    likeBtn.style.background = "#28a745";
+                    likeBtn.style.color = "white";
+                })
+                .catch(error => {
+                    console.error('点赞失败:', error);
+                    likeBtn.textContent = originalText;
+                    likeBtn.disabled = false;
+                    alert("点赞失败，请稍后再试");
                 });
         }
     </script>

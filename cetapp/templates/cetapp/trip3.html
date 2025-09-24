@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>昆明三天两夜旅行</title>
+    <link rel="icon" type="image/png" href="{% static 'favicon.png' %}">
     <style>
         body {
             font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
@@ -588,7 +589,7 @@
     {% block quote %}
     {% include 'cetapp/components/quote_block.html' %}
     {% endblock %}
-    
+
     <script>
         window.addEventListener('load', function () {
             fetch('/cetapp/trip3/views_likes/')

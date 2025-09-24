@@ -19,6 +19,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('trip2/like/', views.trip2_like_view, name='trip2_like_view'),
     path('trip3/like/', views.trip3_like_view, name='trip3_like_view'),
+    path('trip4/like/', views.trip4_like_view, name='trip4_like_view'),
 ]
 
 # 动态添加 trip2 路由
