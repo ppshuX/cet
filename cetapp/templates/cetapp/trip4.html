@@ -1,0 +1,1045 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>长沙3天2夜慢旅行计划（2025年10月6日-10月8日）</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.8;
+            background-color: #f0e68c;
+            margin: 0;
+            padding: 2rem;
+            color: #333;
+        }
+
+        h1,
+        h2 {
+            color: #2c3e50;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        section {
+            background: #fff;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        ul {
+            padding-left: 1.2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ccc;
+        }
+
+        th,
+        td {
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        .total {
+            font-weight: bold;
+            background-color: #fcfcfc;
+        }
+
+        .progress-container {
+            background: #e0e0e0;
+            border-radius: 20px;
+            overflow: hidden;
+            height: 24px;
+            margin: 1.5rem 0;
+        }
+
+        .progress-bar {
+            background: #4caf50;
+            height: 100%;
+            width: 0%;
+            text-align: center;
+            color: white;
+            line-height: 24px;
+            font-size: 14px;
+        }
+
+        /* 长沙特色样式 */
+        .changsha-special {
+            background: linear-gradient(135deg, #e8f4fd 0%, #d1ecf1 100%);
+            color: #2c3e50;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            border: 1px solid #bee5eb;
+        }
+
+        .day-section {
+            background: #fff;
+            border-left: 4px solid #ff6b6b;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .day-title {
+            color: #ff6b6b;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #fee;
+            padding-bottom: 0.5rem;
+        }
+
+        .time-block {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 3px solid #667eea;
+        }
+
+        .time-period {
+            background: #667eea;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 0.8rem;
+        }
+
+        .activity-item {
+            margin: 0.6rem 0;
+            padding: 0.8rem;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid #ee5a24;
+            line-height: 1.6;
+        }
+
+        .highlight-activity {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+            font-weight: 500;
+        }
+
+        .route-info {
+            background: #e3f2fd;
+            border-left-color: #2196f3;
+            font-style: italic;
+        }
+
+        .tips-section {
+            background: #f3e5f5;
+            border-left-color: #9c27b0;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .emoji {
+            font-size: 1.1em;
+            margin-right: 0.3rem;
+        }
+
+        .warning-box {
+            background: #ffebee;
+            border: 1px solid #f44336;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .warning-title {
+            color: #d32f2f;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .backup-plan {
+            background: #f1f8e9;
+            border: 1px solid #689f38;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .backup-title {
+            color: #558b2f;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .day-section {
+                padding: 1rem;
+            }
+
+            .time-block {
+                padding: 0.8rem;
+            }
+        }
+    </style>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+    </script>
+</head>
+
+<body>
+    <a href="{% url 'cetapp_main_menu' %}" class="back-mainmenu-btn" title="返回主菜单">
+        <span class="back-mainmenu-icon">🏠</span>
+    </a>
+    <style>
+        .back-mainmenu-btn {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1200;
+            background: linear-gradient(135deg, rgba(255, 192, 203, 0.38) 0%, rgba(255, 182, 193, 0.32) 100%);
+            color: #d6336c;
+            padding: 7px 14px 7px 14px;
+            border-radius: 50%;
+            font-size: 1.08rem;
+            font-weight: 600;
+            box-shadow: 0 2px 12px 0 rgba(214, 51, 108, 0.07);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.18s, box-shadow 0.18s, color 0.18s, transform 0.18s;
+            width: 38px;
+            height: 38px;
+            border: 1.5px solid #ffe4ec;
+        }
+
+        .back-mainmenu-btn:hover {
+            background: linear-gradient(135deg, #ffe4ec 0%, #fff0f5 100%);
+            color: #b81b5c;
+            box-shadow: 0 6px 18px rgba(214, 51, 108, 0.13);
+            transform: scale(1.08) translateY(-1px);
+            text-decoration: none;
+        }
+
+        .back-mainmenu-icon {
+            font-size: 1.18rem;
+            vertical-align: middle;
+            display: inline-block;
+            line-height: 1;
+            color: #d6336c;
+            filter: drop-shadow(0 1px 0 #ffe4ec);
+        }
+
+        @media (max-width: 600px) {
+            .back-mainmenu-btn {
+                top: 6px;
+                left: 6px;
+                width: 32px;
+                height: 32px;
+                padding: 5px 8px 5px 8px;
+                font-size: 1.05rem;
+            }
+
+            .back-mainmenu-icon {
+                font-size: 1.05rem;
+            }
+        }
+    </style>
+    <br>
+    <h2 style="text-align:center; font-size:1.3rem;">🌇 长沙3天2夜慢旅行计划（2025年10月6日-10月8日）</h2>
+
+    <div style="position: absolute; top: 20px; right: 20px;">
+        {% if user.is_authenticated %}
+        👋 你好啊，{{ user.username }}！
+        <form id="logoutForm" action="{% url 'logout' %}?next=/cetapp/trip4/" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit"
+                style="background:none; border:none; color:#2366b4; cursor:pointer; font-size:1rem;">退出</button>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}?next={{ request.path }}">登录</a> /
+        <a href="{% url 'register' %}?next={{ request.path }}">注册</a>
+        {% endif %}
+    </div>
+
+    <section>
+        <h2>🌊 旅行进度条</h2>
+        <div class="progress-container">
+            <div id="progressBar" class="progress-bar" style="width:0%;">0% - 旅程未开始</div>
+        </div>
+    </section>
+
+    <!-- 旅行概览 -->
+    <section class="changsha-special">
+        <h3><span class="emoji">🎯</span> 长沙慢旅行概览</h3>
+        <p><strong>旅行时间：</strong>2025年10月6日 ~ 10月8日（3天2夜）</p>
+        <p><strong>出发地：</strong>南昌</p>
+        <p><strong>目的地：</strong>长沙（步行为主、地铁为辅的慢旅行）</p>
+        <p><strong>交通方式：</strong>高铁往返（11:38抵达，16:34返程）</p>
+        <p><strong>成员：</strong>J.Grigg 和 Leen</p>
+        <p><strong>住宿：</strong>五一广场附近（核心圈，步行便利）</p>
+        <p><strong>旅行理念：</strong>同片区串联，充足休息与拍照时间</p>
+    </section>
+
+    <!-- Day 1 -->
+    <section class="day-section">
+        <div class="day-title">📍Day 1｜10/6（到达日｜五一广场核心圈）</div>
+
+        <div class="time-block">
+            <div class="time-period">🚄 抵达 & 入住</div>
+            <div class="activity-item route-info">
+                <span class="emoji">🚄</span> <strong>11:38 抵达长沙南</strong> → 地铁2号线到五一广场（约25–30min）
+            </div>
+            <div class="activity-item">
+                <span class="emoji">🏨</span> <strong>入住/午休到14:00</strong>
+            </div>
+        </div>
+
+        <div class="time-block">
+            <div class="time-period">🕐 14:00–17:30 逛三街两中心（全步行圈）</div>
+            <div class="activity-item route-info">
+                <span class="emoji">🗺️</span> <strong>线路：</strong>五一广场 → 国金中心IFS → 黄兴步行街 → 南门口 → 坡子街 → 太平老街
+            </div>
+            <div class="activity-item highlight-activity">
+                <span class="emoji">🐼</span> <strong>IFS 看悬挂熊猫</strong>，顺手拍一张「到此一游」照
+            </div>
+            <div class="activity-item">
+                <span class="emoji">☕</span> <strong>黄兴步行街/南门口：</strong>茶颜悦色、臭豆腐、糖油粑粑作下午茶
+            </div>
+            <div class="activity-item">
+                <span class="emoji">🏛️</span> <strong>坡子街与太平老街</strong>慢逛老长沙气息（店多，别强打卡）
+            </div>
+        </div>
+
+        <div class="time-block">
+            <div class="time-period">🌅 18:00–20:00 傍晚江景+晚餐</div>
+            <div class="activity-item">
+                <span class="emoji">🏮</span> <strong>走去杜甫江阁</strong>（步行或地铁短驳），日落后灯光会亮，江风舒服
+            </div>
+            <div class="activity-item highlight-activity">
+                <span class="emoji">🍲</span> <strong>晚餐：文和友</strong>（烟火气十足，适合两人随意点小吃）
+            </div>
+        </div>
+
+        <div class="time-block">
+            <div class="time-period">🌙 20:30–22:00 湘江夜游 or 回酒店收尾</div>
+            <div class="activity-item">
+                <span class="emoji">🌃</span> <strong>有力气：</strong>江边散步取夜景素材
+            </div>
+            <div class="activity-item">
+                <span class="emoji">📝</span> <strong>回酒店：</strong>整理照片/短视频，写旅行网站 Day1 小结<br>
+                <em>关键词：城市烟火气、重逢老友的松弛</em>
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <div class="warning-title">⚠️ 避坑要点（Day1）</div>
+            <ul>
+                <li>核心商圈人多，不与陌生人攀谈推销</li>
+                <li>不要在景点里买特产</li>
+                <li>晚间如去杜甫江阁，尽量"天全黑以后再去看灯"，更好看</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Day 2 -->
+    <section class="day-section">
+        <div class="day-title">🏞️ Day 2｜10/7（岳麓山片区一整天｜自然+人文）</div>
+
+        <div class="time-block">
+            <div class="time-period">🌅 08:30–11:30 岳麓山轻徒步</div>
+            <div class="activity-item route-info">
+                <span class="emoji">🚇</span> <strong>08:30 出门</strong> → 地铁4号线到岳麓山站（约18min）
+            </div>
+            <div class="activity-item highlight-activity">
+                <span class="emoji">🍂</span> <strong>路线：</strong>岳麓山入口 → 爱晚亭 → 林间步道<br>
+                <em>（无需暴走到顶，留力气）</em>
+            </div>
+            <div class="activity-item">
+                <span class="emoji">🌳</span> <strong>提醒：</strong>山路台阶较多，慢慢走、别赶；树荫好，适合拍特写与慢镜头
+            </div>
+        </div>
+
+        <div class="time-block">
+            <div class="time-period">📚 11:30–13:30 岳麓书院 & 湖南大学</div>
+            <div class="activity-item highlight-activity">
+                <span class="emoji">🏛️</span> <strong>岳麓书院</strong>（参考票价40，开闭馆时间以现场为准）
+            </div>
+            <div class="activity-item">
+                <span class="emoji">🎓</span> <strong>出书院即到湖南大学老校区：</strong>红砖、林荫大道很出片
+            </div>
+            <div class="activity-item">
+                <span class="emoji">🍜</span> <strong>午餐：</strong>校内外小馆任选（小炒肉/米粉皆可）
+            </div>
+        </div>
+
+        <div class="time-block">
+            <div class="time-period">🎨 13:30–15:30 后湖艺术园 & 麓山南路</div>
+            <div class="activity-item">
+                <span class="emoji">🖼️</span> <strong>后湖艺术园：</strong>安静的"文艺片段"，拍拍建筑线条/橱窗
+            </div>
+            <div class="activity-item">
+                <span class="emoji">☕</span> <strong>麓山南路：</strong>咖啡休息，恢复体力
+            </div>
+        </div>
+
+        <div class="time-block">
+            <div class="time-period">🌅 16:00–18:30 橘子洲看日落</div>
+            <div class="activity-item route-info">
+                <span class="emoji">🚇</span> <strong>地铁2号线直达</strong>，不要打车（岛上车禁行，地铁最省事）
+            </div>
+            <div class="activity-item highlight-activity">
+                <span class="emoji">🌄</span> <strong>若遇人潮：</strong>靠江边长廊慢走，找空位等天色变化取景
+            </div>
+        </div>
+
+        <div class="time-block">
+            <div class="time-period">🌙 19:00–21:00 晚餐&返程</div>
+            <div class="activity-item">
+                <span class="emoji">🦐</span> <strong>回五一广场一带解决夜宵</strong>（口味虾 / 小炒肉）
+            </div>
+            <div class="activity-item">
+                <span class="emoji">📝</span> <strong>回酒店整理素材，写 Day2 小结</strong><br>
+                <em>关键词：山风、书院、人文感、江上晚霞</em>
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <div class="warning-title">⚠️ 避坑要点（Day2）</div>
+            <ul>
+                <li>岳麓书院/橘子洲人流大，错峰进入</li>
+                <li>去橘子洲一定坐地铁</li>
+                <li>晚间如想看江景烟花需以当日公告为准（不做刚性安排）</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Day 3 -->
+    <section class="day-section">
+        <div class="day-title">🧸 Day 3｜10/8（文博与老街｜中午收尾 → 返程）</div>
+
+        <div style="background: #e1f5fe; padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+            <strong>⏰ 返程提醒：</strong>你16:34的高铁，建议15:00前出发去长沙南（地铁2号线约25–30min+安检缓冲），所以行程安排到14:30结束，回酒店取行李再走。
+        </div>
+
+        <div class="time-block">
+            <div class="time-period">🏛️ 09:00–11:30 湖南博物院 → 烈士公园</div>
+            <div class="activity-item highlight-activity">
+                <span class="emoji">🏺</span> <strong>湖南博物院</strong>（免费，通常需预约；周一闭馆，今天周三可行）
+            </div>
+            <div class="activity-item">
+                <span class="emoji">👑</span> <strong>看镇馆线：</strong>马王堆汉墓出土文物（按当日开放线路为准）
+            </div>
+            <div class="activity-item">
+                <span class="emoji">🌳</span> <strong>步行3分钟到烈士公园</strong>，在湖边走一小圈，补白天绿意镜头
+            </div>
+        </div>
+
+        <div class="time-block">
+            <div class="time-period">🏘️ 11:30–13:30 潮宗街 → 轩辕殿巷 → 丰盈西里</div>
+            <div class="activity-item route-info">
+                <span class="emoji">🚇</span> <strong>地铁至潮宗街</strong>（或打车短驳）
+            </div>
+            <div class="activity-item highlight-activity">
+                <span class="emoji">🍜</span> <strong>在潮宗街/轩辕殿巷/丰盈西里</strong>挑一家口碑小馆午餐 + 咖啡甜点
+            </div>
+            <div class="activity-item">
+                <span class="emoji">📸</span> <strong>这些巷子更生活化</strong>，出片但不拥挤，适合"长沙慢生活"的收尾
+            </div>
+        </div>
+
+        <div class="time-block">
+            <div class="time-period">🏯 13:30–14:30 古开福寺（可二选一）</div>
+            <div class="activity-item">
+                <span class="emoji">🏯</span> <strong>想加一点人文寺庙氛围</strong>，可地铁前往古开福寺小逛（不久留）
+            </div>
+            <div class="activity-item">
+                <span class="emoji">🎁</span> <strong>不去寺庙也行</strong>，就在潮宗街周边慢走、买伴手礼<br>
+                <em>（辣条、臭豆腐礼盒、茶颜挂耳包）</em>
+            </div>
+        </div>
+
+        <div class="time-block">
+            <div class="time-period">🚄 14:30→ 返程</div>
+            <div class="activity-item route-info">
+                <span class="emoji">🧳</span> <strong>14:30</strong> 回酒店取行李
+            </div>
+            <div class="activity-item">
+                <span class="emoji">🚇</span> <strong>15:00</strong> 出发去长沙南站
+            </div>
+            <div class="activity-item highlight-activity">
+                <span class="emoji">🚄</span> <strong>16:34</strong> 高铁回南昌
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <div class="warning-title">⚠️ 避坑要点（Day3）</div>
+            <ul>
+                <li>文博系统常有闭馆日/预约规则，出门前看当日提示</li>
+                <li>寺庙与街巷注意礼貌安静</li>
+                <li>回站务必预留 <strong>≥90分钟</strong>（地铁+安检+候车）</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 备选方案 -->
+    <section class="backup-plan">
+        <div class="backup-title">🌧️ 当天备选 / 天气应急</div>
+        <div style="margin: 1rem 0;">
+            <strong>下雨：</strong>把户外时段换成"湖南博物院 → 省/李自健/谢子龙美术馆（均在3号线沿线） → 咖啡店"，橘子洲留到雨停或直接跳过。
+        </div>
+        <div style="margin: 1rem 0;">
+            <strong>太累：</strong>橘子洲压缩为"地铁入岛→江边15分钟→返程"，把力气放去晚餐与夜景。
+        </div>
+        <div style="margin: 1rem 0;">
+            <strong>人太多：</strong>IFS/黄兴步行街快进，转入太平老街/后湖艺术园/潮宗街等相对松弛的巷道。
+        </div>
+    </section>
+
+    <!-- 花费预估 -->
+    <section
+        style="background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 2rem; margin-bottom: 2rem;">
+        <h3>💰 花费预估（人均，大概范围）</h3>
+
+        <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 1.5rem 0;">
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #28a745;">
+                <h4 style="color: #28a745; margin-bottom: 1rem;"><span class="emoji">🍜</span> 吃喝</h4>
+                <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.8;">
+                    <li><strong>早餐：</strong>10–20元/天 × 3 = 30–60元</li>
+                    <li><strong>午餐：</strong>30–40元/天 × 2 = 60–80元</li>
+                    <li><strong>晚餐：</strong>60–80元/天 × 2 = 120–160元</li>
+                    <li><strong>饮品：</strong>15–25元/天 × 3 = 45–75元</li>
+                </ul>
+                <div
+                    style="background: #d4edda; padding: 0.8rem; border-radius: 4px; margin-top: 1rem; text-align: center; font-weight: bold; color: #155724;">
+                    👉 合计吃喝：255–375元
+                </div>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #007bff;">
+                <h4 style="color: #007bff; margin-bottom: 1rem;"><span class="emoji">🎟️</span> 门票/景点</h4>
+                <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.8;">
+                    <li><strong>岳麓书院：</strong>40元</li>
+                    <li><strong>古开福寺：</strong>10元</li>
+                    <li><strong>其他景点：</strong>大多免费<br><small>（橘子洲、岳麓山、湖南博物院、烈士公园、潮宗街、杜甫江阁等）</small></li>
+                </ul>
+                <div
+                    style="background: #cce5ff; padding: 0.8rem; border-radius: 4px; margin-top: 1rem; text-align: center; font-weight: bold; color: #004085;">
+                    👉 门票合计：约50元
+                </div>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #ffc107;">
+                <h4 style="color: #e67e22; margin-bottom: 1rem;"><span class="emoji">🚇</span> 交通</h4>
+                <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.8;">
+                    <li><strong>地铁：</strong>2–6元/次 × 12次左右 ≈ 50–60元</li>
+                    <li><strong>偶尔打车：</strong>20–30元/次 × 2次 ≈ 40–60元</li>
+                </ul>
+                <div
+                    style="background: #fff3cd; padding: 0.8rem; border-radius: 4px; margin-top: 1rem; text-align: center; font-weight: bold; color: #856404;">
+                    👉 交通合计：90–120元
+                </div>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #dc3545;">
+                <h4 style="color: #dc3545; margin-bottom: 1rem;"><span class="emoji">🎁</span> 伴手礼（可选）</h4>
+                <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.8;">
+                    <li>辣条、臭豆腐礼盒、茶颜挂耳包</li>
+                    <li><strong>预算：</strong>100–150元</li>
+                </ul>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #6f42c1;">
+                <h4 style="color: #6f42c1; margin-bottom: 1rem;"><span class="emoji">🏨</span> 住宿</h4>
+                <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.8;">
+                    <li><strong>酒店2天：</strong>372元（两人总价）</li>
+                    <li><strong>人均：</strong>186元</li>
+                </ul>
+                <div
+                    style="background: #e8e3ff; padding: 0.8rem; border-radius: 4px; margin-top: 1rem; text-align: center; font-weight: bold; color: #6f42c1;">
+                    👉 住宿合计：186元/人
+                </div>
+            </div>
+        </div>
+
+        <div
+            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+            <h3 style="margin: 0; font-size: 1.3rem;">💵 总预算（人均，不含高铁）</h3>
+            <div style="font-size: 1.8rem; font-weight: bold; margin: 0.5rem 0;">约 686–886 元</div>
+            <div style="font-size: 0.9rem; opacity: 0.9;">（包含住宿，留点浮动空间，基本轻松够用）</div>
+        </div>
+    </section>
+
+    <!-- 物品准备清单 -->
+    <section
+        style="background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 2rem; margin-bottom: 2rem;">
+        <h3>🎒 物品准备清单</h3>
+
+        <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 1.5rem 0;">
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #6f42c1;">
+                <h4 style="color: #6f42c1; margin-bottom: 1rem;"><span class="emoji">📑</span> 证件/票据</h4>
+                <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.6;">
+                    <li>身份证、学生证</li>
+                    <li>高铁票（手机电子票即可）</li>
+                    <li>酒店预订单、门票预约二维码</li>
+                    <li>湖南博物院可能需要预约</li>
+                </ul>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #20c997;">
+                <h4 style="color: #20c997; margin-bottom: 1rem;"><span class="emoji">👕</span> 衣物</h4>
+                <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.6;">
+                    <li>3天衣服（轻便透气）</li>
+                    <li>带一套长袖以防早晚凉</li>
+                    <li>运动鞋/舒适鞋（适合走路爬山）</li>
+                    <li>轻便外套（岳麓山/江边风大时可用）</li>
+                    <li>睡衣、袜子、内衣</li>
+                </ul>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #fd7e14;">
+                <h4 style="color: #fd7e14; margin-bottom: 1rem;"><span class="emoji">🧴</span> 洗漱护肤</h4>
+                <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.6;">
+                    <li>牙刷牙膏、洗面奶、毛巾</li>
+                    <li>洗发水/沐浴露小瓶装</li>
+                    <li>防晒霜、润肤乳</li>
+                    <li>纸巾、湿巾、酒精棉片</li>
+                </ul>
+                <div
+                    style="background: #fff3cd; padding: 0.5rem; border-radius: 4px; margin-top: 0.8rem; font-size: 0.9rem; color: #856404;">
+                    ⚠️ 别用酒店电热壶！
+                </div>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #dc3545;">
+                <h4 style="color: #dc3545; margin-bottom: 1rem;"><span class="emoji">💊</span> 常备药品</h4>
+                <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.6;">
+                    <li>肠胃药（吃辣防不适）</li>
+                    <li>感冒药、退烧药、止痛药</li>
+                    <li>创可贴、小包碘伏</li>
+                </ul>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #007bff;">
+                <h4 style="color: #007bff; margin-bottom: 1rem;"><span class="emoji">📱</span> 电子设备</h4>
+                <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.6;">
+                    <li>手机、充电器</li>
+                    <li><strong>移动电源（必带！）</strong></li>
+                    <li>耳机、相机（可选）</li>
+                    <li>数据线（最好带2条）</li>
+                </ul>
+                <div
+                    style="background: #cce5ff; padding: 0.5rem; border-radius: 4px; margin-top: 0.8rem; font-size: 0.9rem; color: #004085;">
+                    💡 长沙行走拍照多，充电宝必备
+                </div>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #28a745;">
+                <h4 style="color: #28a745; margin-bottom: 1rem;"><span class="emoji">📸</span> 旅途记录装备</h4>
+                <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.6;">
+                    <li>自拍杆/小三脚架</li>
+                    <li>小笔记本/钢笔（记录感受）</li>
+                    <li>背包（装水、相机、雨伞）</li>
+                </ul>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #6c757d;">
+                <h4 style="color: #6c757d; margin-bottom: 1rem;"><span class="emoji">🛍️</span> 其他</h4>
+                <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.6;">
+                    <li>零食/水（路上应急）</li>
+                    <li>雨伞（10月长沙可能小雨）</li>
+                    <li>口罩（地铁人多备用）</li>
+                    <li>塑料袋（装湿衣物/垃圾）</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 实用小贴士 -->
+    <section class="tips-section">
+        <h3>💡 实用小贴士</h3>
+        <ul>
+            <li><strong>安全提醒：</strong>不用酒店电热壶；核心商圈谨慎搭理陌生搭讪/推销</li>
+            <li><strong>交通优先：</strong>地铁优先，尤其去橘子洲一定坐地铁2号线</li>
+            <li><strong>健康准备：</strong>长沙口味偏油辣，随身带肠胃药</li>
+            <li><strong>出行安全：</strong>摩的/黑车容易乱价，若必须乘坐先谈好价；高峰期尽量地铁+步行</li>
+            <li><strong>购物建议：</strong>不在景区内买特产；伴手礼回市区再买更实惠</li>
+        </ul>
+    </section>
+
+    <div
+        style="background: #fff; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 1.2rem 2rem; margin-bottom: 2rem; text-align:center; font-size:1.08rem;">
+        浏览量：<span id="views">0</span> ｜ 点赞：<span id="likes">0</span>
+        <button onclick="like()" style="display: block; margin: 0 auto; font-size: 1.0rem;">👍 点赞</button>
+    </div>
+    <script>
+        document.getElementById("views").innerText = {{ stats.views }};
+        document.getElementById("likes").innerText = {{ stats.likes }};
+        function like() {
+            fetch("/cetapp/trip4/like/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrftoken,
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("likes").innerText = data.likes;
+                });
+        }
+    </script>
+
+    <section class="comments"
+        style="background: #fff; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 2.5rem 2.5rem 2rem 2.5rem; margin-bottom: 2rem; border: 1.5px solid #e0e0e0;">
+        <h2
+            style="font-size:2rem; font-weight:700; color:#234; margin-bottom:1.5rem; display:flex; align-items:center;">
+            <span style="font-size:2.1rem; margin-right:0.5rem;">📍</span> 打卡与留言
+        </h2>
+        <div style="display:flex; gap:1.2rem; align-items:center; margin-bottom:1.2rem; flex-wrap:wrap;">
+            <!-- 切换评论顺序按钮 -->
+            <button id="toggleOrderBtn" class="btn btn-success"
+                style="font-size:1rem; padding:0.5rem 1.2rem; border-radius:8px; border:1.5px solid #b5b5b5; background:#f5f5f5; color:#234; cursor:pointer;">
+                <span style="font-size:1.2rem; vertical-align:middle;">🔄</span> 切换评论顺序
+            </button>
+        </div>
+        <div style="display:flex; gap:1.2rem; align-items:center; margin-bottom:1.2rem; flex-wrap:wrap;">
+            <!-- 去打卡按钮 -->
+            <button id="checkInBtn" class="btn btn-success"
+                style="font-size:1rem; padding:0.5rem 1.2rem; border-radius:8px; border:1.5px solid #b5b5b5; background:#f5f5f5; color:#234; cursor:pointer;"
+                onclick="checkIn()">
+                <span style="font-size:1.2rem; vertical-align:middle;">📍</span> 去打卡
+            </button>
+        </div>
+        {% if request.user.is_superuser %}
+        <form id="commentForm" method="POST" enctype="multipart/form-data" style="margin-bottom:1.2rem;">
+            {% csrf_token %}
+            <textarea id="commentInput" name="content" placeholder="写下你的留言或建议..."
+                style="width:100%; min-height:100px; border-radius:8px; border:1px solid #ccc; padding:0.8rem; margin-bottom:1rem; resize:vertical;"></textarea>
+            <div style="display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
+                <label style="margin-bottom:0;">
+                    <input type="file" name="image" accept="image/*" style="display:none;"
+                        onchange="document.getElementById('fileName').innerText=this.files[0]?this.files[0].name:'未选择任何文件';">
+                    <span
+                        style="display:inline-block; padding:0.4rem 1.1rem; background:#f5f5f5; border-radius:6px; border:1px solid #ccc; cursor:pointer;">选择文件</span>
+                </label>
+                <span id="fileName" style="color:#888;">未选择任何文件</span>
+                <input type="hidden" name="page" value="trip4">
+                <!-- 发表评论按钮 -->
+                <button type="submit" class="btn btn-success"
+                    style="font-size:1rem; padding:0.5rem 1.5rem; border-radius:8px; border:1.5px solid #b5b5b5; background:#f5f5f5; color:#234; cursor:pointer; margin-left:auto;">
+                    <span style="font-size:1.2rem; vertical-align:middle;">💬</span> 发表评论
+                </button>
+            </div>
+        </form>
+        {% else %}
+        <p style="color: gray;">🛡️ 当前仅站主可发表评论，欢迎打卡浏览。</p>
+        {% endif %}
+        <div class="comment-list" id="commentList" data-order="asc">
+            {% for comment in comments %}
+            <div class="comment"
+                style="background:#f7f7f7; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.07); padding:1.2rem 1.5rem 1.2rem 1.5rem; margin-bottom: 28px; position: relative; display: flex; flex-direction: column;">
+                <div style="font-weight:600; color:#444; margin-bottom:0.5rem;">{{ comment.user.username }}：</div>
+                <div style="color:#222; font-size:1.08rem; margin-bottom:0.7rem;">{{ comment.content|linebreaksbr }}
+                </div>
+                {% if comment.image %}
+                <div style="margin: 10px 0 0 0; text-align: left;">
+                    <img src="{{ comment.image.url }}" alt="comment image" onclick="showImageModal(this.src)"
+                        style="display: inline-block; max-width: 100%; max-height: 320px; border-radius: 12px; box-shadow: 0 6px 16px rgba(0,0,0,0.13); transition: all 0.3s ease; cursor: pointer;" />
+                </div>
+                {% endif %}
+                <div style="display:flex; align-items:center; justify-content: flex-end; margin-top: 1.2rem;">
+                    <div style="color: #aaa; font-size: 13px; margin-right: 1.2rem;">
+                        {{ comment.timestamp|date:"Y-m-d H:i" }}
+                    </div>
+                    {% if comment.user == request.user or request.user.is_superuser %}
+                    <button class="delete-btn" onclick="deleteComment(this, {{ comment.id }})"
+                        style="background: none; border: none; cursor: pointer; font-size: 1.2rem; margin-left: 0.5rem;">
+                        🗑️
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- 图片查看模态框 -->
+    <div id="imageModal" style="
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.9);
+        backdrop-filter: blur(5px);">
+        <div style="
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;">
+            <img id="modalImage" src="" alt="大图" style="
+                max-width: 95%;
+                max-height: 95%;
+                object-fit: contain;
+                border-radius: 8px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+            <button id="closeModal" style="
+                position: absolute;
+                top: 20px;
+                right: 30px;
+                color: #f1f1f1;
+                font-size: 40px;
+                font-weight: bold;
+                background: none;
+                border: none;
+                cursor: pointer;
+                z-index: 10001;">&times;</button>
+        </div>
+    </div>
+
+    {% block quote %}
+    {% include 'cetapp/components/quote_block.html' %}
+    {% endblock %}
+
+    <script>
+        // 进度条逻辑 - 更细致的时间节点
+        function updateProgressBar() {
+            const now = new Date();
+            const start = new Date("2025-10-06T11:38:00");
+            const end = new Date("2025-10-08T16:34:00");
+            const total = end - start;
+            const passed = now - start;
+            const percentage = Math.min(Math.max((passed / total) * 100, 0), 100);
+
+            const progressBar = document.getElementById("progressBar");
+            progressBar.style.width = percentage + "%";
+
+            let label = Math.round(percentage) + "% - ";
+            if (percentage < 3) label += "🚄 高铁上";
+            else if (percentage < 8) label += "🏨 入住休息";
+            else if (percentage < 25) label += "🛍️ 核心圈漫步";
+            else if (percentage < 35) label += "🌅 江边夜景";
+            else if (percentage < 50) label += "🏞️ 岳麓山徒步";
+            else if (percentage < 65) label += "📚 书院人文";
+            else if (percentage < 75) label += "🌄 橘子洲日落";
+            else if (percentage < 90) label += "🏛️ 博物院文博";
+            else if (percentage < 95) label += "🏘️ 老街慢生活";
+            else label += "🚄 返程路上";
+
+            progressBar.innerText = label;
+        }
+
+        updateProgressBar();
+        setInterval(updateProgressBar, 60000);
+
+        // 评论系统相关
+        function updateViewsLikes() {
+            fetch('/cetapp/trip4/views_likes/')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('views').innerText = data.views;
+                    document.getElementById('likes').innerText = data.likes;
+                });
+        }
+        updateViewsLikes();
+
+        // 打卡功能
+        function checkIn() {
+            fetch("/cetapp/trip4/checkin/", {
+                method: "POST",
+                headers: { "X-CSRFToken": csrftoken },
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.checked_in) {
+                        const btn = document.getElementById("checkInBtn");
+                        btn.innerText = "📍 已打卡";
+                        btn.disabled = true;
+                    }
+                });
+        }
+
+        // 评论表单
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("commentForm");
+            if (form) {
+                form.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    let formData = new FormData(this);
+                    formData.set('page', 'trip4');
+                    fetch("/cetapp/trip4/add_comment/", {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === "ok") {
+                                alert("✅ 评论成功！");
+                                location.reload();
+                            } else {
+                                alert("评论失败，请填写内容或上传图片。");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("评论错误：", error);
+                            alert("提交失败，请稍后再试。");
+                        });
+                });
+            }
+        });
+
+        // 删除评论
+        function deleteComment(btn, commentId) {
+            if (!confirm('确定要删除这条评论吗？')) return;
+            fetch(`/cetapp/trip4/delete_comment/${commentId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrftoken
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        btn.closest('.comment').remove();
+                    } else {
+                        alert("无权限删除该评论");
+                    }
+                });
+        }
+
+        // 图片查看模态框功能
+        function showImageModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modalImg.src = imageSrc;
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 关闭模态框
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('imageModal');
+            const closeBtn = document.getElementById('closeModal');
+
+            closeBtn.onclick = function () {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+
+            modal.onclick = function (e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            }
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && modal.style.display === 'block') {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+
+        // 切换评论顺序功能
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggleBtn = document.getElementById("toggleOrderBtn");
+            if (toggleBtn) {
+                toggleBtn.addEventListener("click", function () {
+                    const commentList = document.getElementById("commentList");
+                    const currentOrder = commentList.dataset.order || "asc";
+                    const comments = Array.from(commentList.children);
+                    commentList.innerHTML = "";
+                    comments.reverse();
+                    commentList.dataset.order = currentOrder === "asc" ? "desc" : "asc";
+                    comments.forEach(comment => commentList.appendChild(comment));
+                });
+            }
+        });
+    </script>
+
+    <!-- 背景音乐 -->
+    <audio id="bg-music" src="{% static 'music/road.mp3' %}" preload="auto" loop></audio>
+    <button id="music-toggle" style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(255,255,255,0.8);
+        border: none;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        cursor: pointer;
+        font-size: 20px;
+        z-index: 9999;">🔇</button>
+    <script>
+        const audio = document.getElementById("bg-music");
+        const toggleBtn = document.getElementById("music-toggle");
+        let isPlaying = false;
+        toggleBtn.addEventListener("click", () => {
+            if (isPlaying) {
+                audio.pause();
+                toggleBtn.textContent = "🔇";
+            } else {
+                audio.volume = 0.5;
+                audio.play().then(() => {
+                    toggleBtn.textContent = "🔊";
+                }).catch(err => {
+                    console.error("播放失败：", err);
+                    toggleBtn.textContent = "❌";
+                });
+            }
+            isPlaying = !isPlaying;
+        });
+    </script>
+</body>
+
+</html>

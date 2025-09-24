@@ -277,3 +277,6 @@ def trip3_like_view(request):
 
 def trip2(request):
     return trip_page_generic(request, 'trip2')
+
+def trip4(request):
+    return trip_page_generic(request, 'trip4')

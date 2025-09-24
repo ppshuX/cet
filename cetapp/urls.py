@@ -25,4 +25,6 @@ urlpatterns = [
 urlpatterns.extend(add_trip_page_urls('trip2'))
 # 动态添加 trip3 路由
 urlpatterns.extend(add_trip_page_urls('trip3'))
+# 动态添加 trip4 路由
+urlpatterns.extend(add_trip_page_urls('trip4'))
 
