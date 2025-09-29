@@ -794,8 +794,16 @@
                 </label>
                 <span id="fileName" style="color:#888;">未选择任何文件</span>
                 <input type="hidden" name="page" value="trip4">
+                <!-- 上传进度条 -->
+                <div id="uploadProgress" style="display: none; width: 100%; margin: 10px 0;">
+                    <div style="background: #f0f0f0; border-radius: 10px; height: 20px; position: relative;">
+                        <div id="progressBar" style="background: #4CAF50; height: 100%; border-radius: 10px; width: 0%; transition: width 0.3s;"></div>
+                        <span id="progressText" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; font-weight: bold;">0%</span>
+                    </div>
+                    <div id="uploadStatus" style="font-size: 12px; color: #666; margin-top: 5px;">准备上传...</div>
+                </div>
                 <!-- 发表评论按钮 -->
-                <button type="submit" class="btn btn-success"
+                <button type="submit" class="btn btn-success" id="submitBtn"
                     style="font-size:1rem; padding:0.5rem 1.5rem; border-radius:8px; border:1.5px solid #b5b5b5; background:#f5f5f5; color:#234; cursor:pointer; margin-left:auto;">
                     <span style="font-size:1.2rem; vertical-align:middle;">💬</span> 发表评论
                 </button>
@@ -948,28 +956,92 @@
             if (form) {
                 form.addEventListener("submit", function (e) {
                     e.preventDefault();
+
+                    const submitBtn = document.getElementById("submitBtn");
+                    const progressContainer = document.getElementById("uploadProgress");
+                    const progressBar = document.getElementById("progressBar");
+                    const progressText = document.getElementById("progressText");
+                    const uploadStatus = document.getElementById("uploadStatus");
+
+                    // 检查是否有文件上传
+                    const imageFile = document.querySelector('input[name="image"]').files[0];
+                    const videoFile = document.querySelector('input[name="video"]').files[0];
+                    const hasLargeFile = (videoFile && videoFile.size > 5 * 1024 * 1024) || (imageFile && imageFile.size > 2 * 1024 * 1024);
+
+                    if (hasLargeFile) {
+                        // 显示进度条
+                        progressContainer.style.display = "block";
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<span style="font-size:1.2rem;">⏳</span> 上传中...';
+                        uploadStatus.textContent = "正在上传大文件，请耐心等待...";
+                    }
+
                     let formData = new FormData(this);
                     formData.set('page', 'trip4');
-                    fetch("/cetapp/trip4/add_comment/", {
-                        method: "POST",
-                        body: formData,
-                        headers: {
-                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                        }
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status === "ok") {
-                                alert("✅ 评论成功！");
-                                location.reload();
+                    
+                    // 使用XMLHttpRequest以支持进度监控和超时设置
+                    const xhr = new XMLHttpRequest();
+                    
+                    // 设置超时时间为10分钟
+                    xhr.timeout = 600000; // 10分钟
+
+                    xhr.upload.addEventListener("progress", function(e) {
+                        if (e.lengthComputable && hasLargeFile) {
+                            const percentComplete = (e.loaded / e.total) * 100;
+                            progressBar.style.width = percentComplete + "%";
+                            progressText.textContent = Math.round(percentComplete) + "%";
+                            
+                            if (percentComplete < 100) {
+                                uploadStatus.textContent = `上传中... ${(e.loaded / (1024*1024)).toFixed(1)}MB / ${(e.total / (1024*1024)).toFixed(1)}MB`;
                             } else {
-                                alert("评论失败，请填写内容或上传图片。");
+                                uploadStatus.textContent = "上传完成，正在处理...";
                             }
-                        })
-                        .catch(error => {
-                            console.error("评论错误：", error);
-                            alert("提交失败，请稍后再试。");
-                        });
+                        }
+                    });
+
+                    xhr.addEventListener("load", function() {
+                        if (xhr.status === 200) {
+                            try {
+                                const data = JSON.parse(xhr.responseText);
+                                if (data.status === "ok") {
+                                    uploadStatus.textContent = "✅ 评论成功！正在刷新页面...";
+                                    setTimeout(() => location.reload(), 1000);
+                                } else {
+                                    throw new Error(data.message || "服务器返回错误");
+                                }
+                            } catch (error) {
+                                console.error("解析响应失败：", error);
+                                alert("❌ 评论失败：" + error.message);
+                                resetForm();
+                            }
+                        } else {
+                            alert("❌ 提交失败，服务器错误：" + xhr.status);
+                            resetForm();
+                        }
+                    });
+
+                    xhr.addEventListener("error", function() {
+                        alert("❌ 网络错误，请检查网络连接");
+                        resetForm();
+                    });
+
+                    xhr.addEventListener("timeout", function() {
+                        alert("⏰ 上传超时，请尝试压缩视频文件或检查网络连接");
+                        resetForm();
+                    });
+
+                    xhr.open("POST", "/cetapp/trip4/add_comment/");
+                    xhr.setRequestHeader('X-CSRFToken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+                    xhr.send(formData);
+
+                    function resetForm() {
+                        progressContainer.style.display = "none";
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<span style="font-size:1.2rem; vertical-align:middle;">💬</span> 发表评论';
+                        progressBar.style.width = "0%";
+                        progressText.textContent = "0%";
+                        uploadStatus.textContent = "准备上传...";
+                    }
                 });
             }
         });
