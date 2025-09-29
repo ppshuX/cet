@@ -87,10 +87,37 @@
         <h2>登录</h2>
         <form method="post">
             {% csrf_token %}
+
+            <!-- 显示表单错误信息 -->
+            {% if form.non_field_errors %}
+            <div
+                style="background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 6px; margin-bottom: 18px; border: 1px solid #f5c6cb;">
+                {% for error in form.non_field_errors %}
+                <div style="font-size: 0.9rem;">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
             <label for="id_username">用户名：</label>
             <input type="text" name="username" id="id_username" required style="margin-bottom: 18px;">
+            {% if form.username.errors %}
+            <div style="color: #dc3545; font-size: 0.85rem; margin-top: -12px; margin-bottom: 18px;">
+                {% for error in form.username.errors %}
+                <div>{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
             <label for="id_password">密码：</label>
             <input type="password" name="password" id="id_password" required style="margin-bottom: 24px;">
+            {% if form.password.errors %}
+            <div style="color: #dc3545; font-size: 0.85rem; margin-top: -12px; margin-bottom: 24px;">
+                {% for error in form.password.errors %}
+                <div>{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
             <button type="submit">立即登录</button>
         </form>
         <div style="text-align: center; margin-top: 1rem;">

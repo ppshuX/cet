@@ -4,6 +4,7 @@ from .utils import add_trip_page_urls
 
 urlpatterns = [
     path('', views.main_menu, name='cetapp_main_menu'),
+    path('login/', views.custom_login, name='custom_login'),
     path('get_quote/', views.get_quote, name='get_quote'),
     path('trip/', views.trip_page, name='trip_page'),
     path('trip/add_comment/', views.add_comment, name='add_comment'),
@@ -20,6 +21,11 @@ urlpatterns = [
     path('trip2/like/', views.trip2_like_view, name='trip2_like_view'),
     path('trip3/like/', views.trip3_like_view, name='trip3_like_view'),
     path('trip4/like/', views.trip4_like_view, name='trip4_like_view'),
+    # 个人中心路由
+    path('user_center/', views.user_center, name='user_center'),
+    path('upload_avatar/', views.upload_avatar, name='upload_avatar'),
+    # 点赞路由
+    path('trip4/toggle_like/<int:comment_id>/', views.toggle_comment_like, name='toggle_comment_like'),
 ]
 
 # 动态添加 trip2 路由

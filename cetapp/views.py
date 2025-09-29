@@ -7,7 +7,9 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib import messages
 from .forms import CustomRegisterForm
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
@@ -33,6 +35,32 @@ def writing(request):
 def translate(request):
     return render(request, 'translate.html')
 
+
+def custom_login(request):
+    """自定义登录视图，提供更好的错误处理"""
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                # 重定向到用户想要访问的页面，或默认页面
+                next_url = request.GET.get('next', 'cetapp_main_menu')
+                return redirect(next_url)
+        else:
+            # 添加自定义错误信息
+            if not form.cleaned_data.get('username'):
+                form.add_error('username', '请输入用户名')
+            if not form.cleaned_data.get('password'):
+                form.add_error('password', '请输入密码')
+            if form.cleaned_data.get('username') and form.cleaned_data.get('password'):
+                form.add_error(None, '用户名或密码错误，请检查后重试')
+    else:
+        form = AuthenticationForm()
+    
+    return render(request, 'registration/login.html', {'form': form})
 
 def register(request):
     if request.method == "POST":
@@ -202,10 +230,21 @@ def trip_page_generic(request, page_name):
     stats.views += 1
     stats.save()
     comments = Comment.objects.filter(page=page_name).order_by('-timestamp')
+    
+    # 获取当前用户已点赞的评论ID列表
+    user_liked_comments = []
+    if request.user.is_authenticated:
+        from .models import CommentLike
+        user_liked_comments = CommentLike.objects.filter(
+            user=request.user,
+            comment__in=comments
+        ).values_list('comment_id', flat=True)
+    
     return render(request, f'cetapp/{page_name}.html', {
         'comments': comments,
         'stats': stats,
         'page_name': page_name,
+        'user_liked_comments': list(user_liked_comments),
     })
 
 @csrf_exempt
@@ -301,3 +340,115 @@ def trip4_like_view(request):
     stats.likes += 1
     stats.save()
     return JsonResponse({'likes': stats.likes})
+
+# 个人中心相关视图
+@login_required
+def user_center(request):
+    """用户个人中心"""
+    if request.method == 'POST':
+        # 处理个人信息更新
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+        
+        # 验证用户名唯一性
+        if username != request.user.username:
+            if User.objects.filter(username=username).exists():
+                messages.error(request, '用户名已存在，请选择其他用户名')
+                return redirect('user_center')
+        
+        # 更新用户信息
+        request.user.username = username
+        request.user.email = email
+        request.user.save()
+        
+        messages.success(request, '个人信息更新成功！')
+        return redirect('user_center')
+    
+    # 简单的上下文数据
+    context = {}
+    
+    return render(request, 'cetapp/user_center.html', context)
+
+@csrf_exempt
+@login_required
+def upload_avatar(request):
+    """上传头像"""
+    if request.method == 'POST' and request.FILES.get('avatar'):
+        avatar_file = request.FILES['avatar']
+        
+        # 验证文件类型
+        if not avatar_file.content_type.startswith('image/'):
+            return JsonResponse({'success': False, 'error': '请上传图片文件'})
+        
+        # 验证文件大小 (5MB)
+        if avatar_file.size > 5 * 1024 * 1024:
+            return JsonResponse({'success': False, 'error': '图片大小不能超过5MB'})
+        
+        try:
+            # 生成唯一文件名
+            import uuid
+            ext = os.path.splitext(avatar_file.name)[-1]
+            avatar_file.name = f"{uuid.uuid4().hex}{ext}"
+            
+            # 更新用户头像
+            profile = request.user.profile
+            
+            # 删除旧头像文件（如果存在）
+            if profile.avatar:
+                try:
+                    os.remove(profile.avatar.path)
+                except:
+                    pass
+            
+            profile.avatar = avatar_file
+            profile.save()
+            
+            return JsonResponse({
+                'success': True, 
+                'avatar_url': profile.avatar.url,
+                'message': '头像上传成功！'
+            })
+            
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': f'上传失败：{str(e)}'})
+    
+    return JsonResponse({'success': False, 'error': '请选择要上传的图片'})
+
+# 评论点赞功能
+@csrf_exempt
+def toggle_comment_like(request, comment_id):
+    """切换评论点赞状态"""
+    if not request.user.is_authenticated:
+        return JsonResponse({'status': 'error', 'message': '请先登录'})
+    
+    try:
+        comment = Comment.objects.get(id=comment_id)
+        from .models import CommentLike
+        
+        # 检查是否已经点赞
+        like, created = CommentLike.objects.get_or_create(
+            user=request.user,
+            comment=comment
+        )
+        
+        if created:
+            # 新增点赞
+            liked = True
+        else:
+            # 取消点赞
+            like.delete()
+            liked = False
+        
+        # 获取当前点赞总数
+        like_count = comment.likes.count()
+        
+        return JsonResponse({
+            'status': 'ok',
+            'liked': liked,
+            'like_count': like_count
+        })
+        
+    except Comment.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': '评论不存在'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})

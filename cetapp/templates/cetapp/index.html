@@ -266,15 +266,30 @@
 </head>
 
 <body>
-    <div class="auth-links">
+    <div style="position: absolute; top: 20px; right: 20px; display: flex; align-items: center; gap: 10px;">
         {% if user.is_authenticated %}
-        👋 你好，{{ user.username }}！
+        <!-- 用户头像和用户名 -->
+        <a href="{% url 'user_center' %}" style="text-decoration: none; display: flex; align-items: center;">
+            <div
+                style="width: 30px; height: 30px; border-radius: 50%; overflow: hidden; border: 2px solid #ddd; margin-right: 8px; flex-shrink: 0;">
+                {% if user.profile.avatar %}
+                <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}的头像"
+                    style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                <img src="/static/images/default_avatar.png" alt="默认头像"
+                    style="width: 100%; height: 100%; object-fit: cover;">
+                {% endif %}
+            </div>
+            <span style="color: #333; font-weight: 600; font-size: 0.9rem;">{{ user.username }}</span>
+        </a>
+
         <form id="logoutForm" action="{% url 'logout' %}?next=/cetapp/" method="post" style="display:inline;">
             {% csrf_token %}
-            <button type="submit">退出</button>
+            <button type="submit"
+                style="background:none; border:none; color:#2366b4; cursor:pointer; font-size:1rem;">退出</button>
         </form>
         {% else %}
-        <a href="{% url 'login' %}?next={{ request.path }}">登录</a>
+        <a href="{% url 'login' %}?next={{ request.path }}">登录</a> /
         <a href="{% url 'register' %}?next={{ request.path }}">注册</a>
         {% endif %}
     </div>
