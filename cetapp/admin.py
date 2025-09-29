@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from .models import Comment, SiteStat, UserProfile, CommentLike
+from .models import Comment, SiteStat, UserProfile
 
 # Register your models here.
 
@@ -30,4 +30,3 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 admin.site.register(Comment)
 admin.site.register(SiteStat)
-admin.site.register(CommentLike)

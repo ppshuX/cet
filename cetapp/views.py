@@ -231,20 +231,10 @@ def trip_page_generic(request, page_name):
     stats.save()
     comments = Comment.objects.filter(page=page_name).order_by('-timestamp')
     
-    # 获取当前用户已点赞的评论ID列表
-    user_liked_comments = []
-    if request.user.is_authenticated:
-        from .models import CommentLike
-        user_liked_comments = CommentLike.objects.filter(
-            user=request.user,
-            comment__in=comments
-        ).values_list('comment_id', flat=True)
-    
     return render(request, f'cetapp/{page_name}.html', {
         'comments': comments,
         'stats': stats,
         'page_name': page_name,
-        'user_liked_comments': list(user_liked_comments),
     })
 
 @csrf_exempt
@@ -413,42 +403,3 @@ def upload_avatar(request):
             return JsonResponse({'success': False, 'error': f'上传失败：{str(e)}'})
     
     return JsonResponse({'success': False, 'error': '请选择要上传的图片'})
-
-# 评论点赞功能
-@csrf_exempt
-def toggle_comment_like(request, comment_id):
-    """切换评论点赞状态"""
-    if not request.user.is_authenticated:
-        return JsonResponse({'status': 'error', 'message': '请先登录'})
-    
-    try:
-        comment = Comment.objects.get(id=comment_id)
-        from .models import CommentLike
-        
-        # 检查是否已经点赞
-        like, created = CommentLike.objects.get_or_create(
-            user=request.user,
-            comment=comment
-        )
-        
-        if created:
-            # 新增点赞
-            liked = True
-        else:
-            # 取消点赞
-            like.delete()
-            liked = False
-        
-        # 获取当前点赞总数
-        like_count = comment.likes.count()
-        
-        return JsonResponse({
-            'status': 'ok',
-            'liked': liked,
-            'like_count': like_count
-        })
-        
-    except Comment.DoesNotExist:
-        return JsonResponse({'status': 'error', 'message': '评论不存在'})
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)})

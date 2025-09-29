@@ -24,8 +24,6 @@ urlpatterns = [
     # 个人中心路由
     path('user_center/', views.user_center, name='user_center'),
     path('upload_avatar/', views.upload_avatar, name='upload_avatar'),
-    # 点赞路由
-    path('trip4/toggle_like/<int:comment_id>/', views.toggle_comment_like, name='toggle_comment_like'),
 ]
 
 # 动态添加 trip2 路由

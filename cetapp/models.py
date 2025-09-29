@@ -158,17 +158,6 @@ class SiteStat(models.Model):
     def __str__(self):
         return f"{self.page} 页面统计"
 
-# 点赞模型
-class CommentLike(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='likes')
-    timestamp = models.DateTimeField(auto_now_add=True)
-    
-    class Meta:
-        unique_together = ('user', 'comment')  # 防止重复点赞
-    
-    def __str__(self):
-        return f"{self.user.username} 点赞了 {self.comment.id}"
 
 # 自动为新用户创建配置文件
 @receiver(post_save, sender=User)
