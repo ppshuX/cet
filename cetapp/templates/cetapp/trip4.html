@@ -780,9 +780,17 @@
             <div style="display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
                 <label style="margin-bottom:0;">
                     <input type="file" name="image" accept="image/*" style="display:none;"
-                        onchange="document.getElementById('fileName').innerText=this.files[0]?this.files[0].name:'未选择任何文件';">
+                        onchange="updateFileDisplay('image', this.files[0]);">
                     <span
-                        style="display:inline-block; padding:0.4rem 1.1rem; background:#f5f5f5; border-radius:6px; border:1px solid #ccc; cursor:pointer;">选择文件</span>
+                        style="display:inline-block; padding:0.4rem 1.1rem; background:#f5f5f5; border-radius:6px; border:1px solid #ccc; cursor:pointer;">📷
+                        选择图片</span>
+                </label>
+                <label style="margin-bottom:0;">
+                    <input type="file" name="video" accept="video/*" style="display:none;"
+                        onchange="updateFileDisplay('video', this.files[0]);">
+                    <span
+                        style="display:inline-block; padding:0.4rem 1.1rem; background:#f5f5f5; border-radius:6px; border:1px solid #ccc; cursor:pointer;">🎥
+                        选择视频</span>
                 </label>
                 <span id="fileName" style="color:#888;">未选择任何文件</span>
                 <input type="hidden" name="page" value="trip4">
@@ -807,6 +815,15 @@
                 <div style="margin: 10px 0 0 0; text-align: left;">
                     <img src="{{ comment.image.url }}" alt="comment image" onclick="showImageModal(this.src)"
                         style="display: inline-block; max-width: 100%; max-height: 320px; border-radius: 12px; box-shadow: 0 6px 16px rgba(0,0,0,0.13); transition: all 0.3s ease; cursor: pointer;" />
+                </div>
+                {% endif %}
+                {% if comment.video %}
+                <div style="margin: 10px 0 0 0; text-align: left;">
+                    <video controls
+                        style="display: inline-block; max-width: 100%; max-height: 400px; border-radius: 12px; box-shadow: 0 6px 16px rgba(0,0,0,0.13);">
+                        <source src="{{ comment.video.url }}" type="video/mp4">
+                        您的浏览器不支持视频播放。
+                    </video>
                 </div>
                 {% endif %}
                 <div style="display:flex; align-items:center; justify-content: flex-end; margin-top: 1.2rem;">
@@ -1009,6 +1026,19 @@
                 }
             });
         });
+
+        // 文件显示更新函数
+        function updateFileDisplay(type, file) {
+            const fileNameElement = document.getElementById('fileName');
+            if (file) {
+                const fileType = type === 'image' ? '📷' : '🎥';
+                fileNameElement.innerText = `${fileType} ${file.name}`;
+                fileNameElement.style.color = '#333';
+            } else {
+                fileNameElement.innerText = '未选择任何文件';
+                fileNameElement.style.color = '#888';
+            }
+        }
 
         // 切换评论顺序功能
         document.addEventListener("DOMContentLoaded", function () {

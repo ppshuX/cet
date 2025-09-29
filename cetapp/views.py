@@ -91,12 +91,16 @@ def add_comment(request):
     if request.method == 'POST':
         content = request.POST.get('content', '').strip()
         image = request.FILES.get('image')
+        video = request.FILES.get('video')
         page = request.POST.get('page', 'trip')
         if image:
             ext = os.path.splitext(image.name)[-1]
             image.name = f"{uuid.uuid4().hex}{ext}"
-        if content or image:
-            Comment.objects.create(content=content, image=image, user=request.user, page=page)
+        if video:
+            ext = os.path.splitext(video.name)[-1]
+            video.name = f"{uuid.uuid4().hex}{ext}"
+        if content or image or video:
+            Comment.objects.create(content=content, image=image, video=video, user=request.user, page=page)
             return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'fail', 'message': '只支持POST请求'})
 
@@ -156,11 +160,15 @@ def trip1_add_comment(request):
     if request.method == 'POST':
         content = request.POST.get('content', '').strip()
         image = request.FILES.get('image')
+        video = request.FILES.get('video')
         if image:
             ext = os.path.splitext(image.name)[-1]
             image.name = f"{uuid.uuid4().hex}{ext}"
-        if content or image:
-            Comment.objects.create(content=content, image=image, user=request.user, page='trip1')
+        if video:
+            ext = os.path.splitext(video.name)[-1]
+            video.name = f"{uuid.uuid4().hex}{ext}"
+        if content or image or video:
+            Comment.objects.create(content=content, image=image, video=video, user=request.user, page='trip1')
             return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'fail', 'message': '只支持POST请求'})
 
@@ -215,11 +223,15 @@ def add_comment_generic(request, page_name):
     if request.method == 'POST':
         content = request.POST.get('content', '').strip()
         image = request.FILES.get('image')
+        video = request.FILES.get('video')
         if image:
             ext = os.path.splitext(image.name)[-1]
             image.name = f"{uuid.uuid4().hex}{ext}"
-        if content or image:
-            Comment.objects.create(content=content, image=image, user=request.user, page=page_name)
+        if video:
+            ext = os.path.splitext(video.name)[-1]
+            video.name = f"{uuid.uuid4().hex}{ext}"
+        if content or image or video:
+            Comment.objects.create(content=content, image=image, video=video, user=request.user, page=page_name)
             return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'fail', 'message': '只支持POST请求'})
 
