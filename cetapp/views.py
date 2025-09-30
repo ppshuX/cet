@@ -7,14 +7,13 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
-from .forms import CustomRegisterForm
-from django.contrib.auth.forms import UserCreationForm
+from .forms import CustomRegisterForm, CustomLoginForm
 from django.shortcuts import render, redirect
 from .models import Comment, SiteStat
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 # Create your views here.
 def index(request):
@@ -37,9 +36,9 @@ def translate(request):
 
 
 def custom_login(request):
-    """自定义登录视图，提供更好的错误处理"""
+    """自定义登录视图，提供中文错误信息"""
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
+        form = CustomLoginForm(request, data=request.POST)
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
@@ -49,16 +48,8 @@ def custom_login(request):
                 # 重定向到用户想要访问的页面，或默认页面
                 next_url = request.GET.get('next', 'cetapp_main_menu')
                 return redirect(next_url)
-        else:
-            # 添加自定义错误信息
-            if not form.cleaned_data.get('username'):
-                form.add_error('username', '请输入用户名')
-            if not form.cleaned_data.get('password'):
-                form.add_error('password', '请输入密码')
-            if form.cleaned_data.get('username') and form.cleaned_data.get('password'):
-                form.add_error(None, '用户名或密码错误，请检查后重试')
     else:
-        form = AuthenticationForm()
+        form = CustomLoginForm()
     
     return render(request, 'registration/login.html', {'form': form})
 
@@ -72,6 +63,13 @@ def register(request):
     else:
         form = CustomRegisterForm()
     return render(request, 'cetapp/register.html', {'form': form})
+
+def custom_logout(request):
+    """自定义登出视图，支持next参数跳转"""
+    logout(request)
+    # 获取next参数，如果没有就跳转到首页
+    next_url = request.GET.get('next') or request.POST.get('next') or '/'
+    return redirect(next_url)
 
 def get_quote(request):
     try:

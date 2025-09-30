@@ -27,8 +27,8 @@ urlpatterns = [
     path('reading', views.reading, name='reading'),
     path('translate', views.translate, name='translate'),
     path('cetapp/', include('cetapp.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),  # 关键：启用登录/登出路由
-    path('accounts/login/', views.custom_login, name='login'),  # 使用自定义登录视图
+    path('accounts/login/', views.custom_login, name='login'),  # 使用自定义登录视图（必须在auth.urls之前）
+    path('accounts/logout/', views.custom_logout, name='logout'),  # 自定义登出视图
     path('admin/', admin.site.urls),
 ]
 
