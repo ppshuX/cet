@@ -565,7 +565,7 @@
             <button type="submit">💬 发表评论</button>
         </form>
         {% else %}
-        <p style="color: gray;">🛡️ 当前仅站主授权后可发表评论，欢迎打卡浏览。</p>
+        <p style="color: gray;">🛡️ 当前仅授权后可发表评论。</p>
         {% endif %}
         <div class="comment-list" id="commentList" data-order="asc">
             {% for comment in comments %}

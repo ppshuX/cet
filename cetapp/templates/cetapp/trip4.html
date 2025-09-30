@@ -839,7 +839,7 @@
             </div>
         </form>
         {% else %}
-        <p style="color: gray;">🛡️ 仅授权后可发表评论，欢迎打卡浏览。</p>
+        <p style="color: gray;">🛡️ 当前仅授权后可发表评论。</p>
         {% endif %}
         <div class="comment-list" id="commentList" data-order="asc">
             {% for comment in comments %}
@@ -853,7 +853,7 @@
                         <a href="{% if comment.user == user %}{% url 'user_center' %}{% else %}#{% endif %}"
                             style="text-decoration: none;">
                             <div style="width: 45px; height: 45px; border-radius: 50%; overflow: hidden; margin-right: 12px; border: 2px solid #ddd; flex-shrink: 0; cursor: {% if comment.user == user %}pointer{% else %}default{% endif %}; transition: transform 0.2s ease;"
-                                {% if comment.user == user %}onmouseover="this.style.transform='scale(1.1)'"
+                                {% if comment.user==user %}onmouseover="this.style.transform='scale(1.1)'"
                                 onmouseout="this.style.transform='scale(1)'" {% endif %}>
                                 {% if comment.user.profile.avatar %}
                                 <img src="{{ comment.user.profile.avatar.url }}" alt="{{ comment.user.username }}的头像"
