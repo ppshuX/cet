@@ -366,7 +366,7 @@
                 <span class="emoji">🗺️</span> <strong>线路：</strong>五一广场 → 国金中心IFS → 黄兴步行街 → 南门口 → 坡子街 → 太平老街
             </div>
             <div class="activity-item highlight-activity">
-                <span class="emoji">🐼</span> <strong>IFS 看悬挂熊猫</strong>，顺手拍一张「到此一游」照
+                <span class="emoji">🌃</span> <strong> IFS </strong>，顺手拍一张「到此一游」照
             </div>
             <div class="activity-item">
                 <span class="emoji">☕</span> <strong>黄兴步行街/南门口：</strong>茶颜悦色、臭豆腐、糖油粑粑作下午茶
@@ -853,7 +853,7 @@
                         <a href="{% if comment.user == user %}{% url 'user_center' %}{% else %}#{% endif %}"
                             style="text-decoration: none;">
                             <div style="width: 45px; height: 45px; border-radius: 50%; overflow: hidden; margin-right: 12px; border: 2px solid #ddd; flex-shrink: 0; cursor: {% if comment.user == user %}pointer{% else %}default{% endif %}; transition: transform 0.2s ease;"
-                                {% if comment.user==user %}onmouseover="this.style.transform='scale(1.1)'"
+                                {% if comment.user == user %}onmouseover="this.style.transform='scale(1.1)'"
                                 onmouseout="this.style.transform='scale(1)'" {% endif %}>
                                 {% if comment.user.profile.avatar %}
                                 <img src="{{ comment.user.profile.avatar.url }}" alt="{{ comment.user.username }}的头像"
