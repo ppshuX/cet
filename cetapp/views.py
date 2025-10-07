@@ -245,22 +245,54 @@ def views_likes_generic(request, page_name):
 @csrf_exempt
 @login_required
 def add_comment_generic(request, page_name):
+    # 权限检查
     if not request.user.is_superuser:
-        return JsonResponse({'error': '仅管理员可发表评论'}, status=403)
-    if request.method == 'POST':
+        return JsonResponse({
+            'status': 'fail',
+            'error': '仅管理员可发表评论',
+            'message': '您当前没有发表评论的权限，请联系管理员'
+        }, status=403)
+    
+    if request.method != 'POST':
+        return JsonResponse({'status': 'fail', 'message': '只支持POST请求'}, status=405)
+    
+    try:
         content = request.POST.get('content', '').strip()
         image = request.FILES.get('image')
         video = request.FILES.get('video')
+        
+        # 重命名图片文件
         if image:
             ext = os.path.splitext(image.name)[-1]
             image.name = f"{uuid.uuid4().hex}{ext}"
+        
+        # 重命名视频文件
         if video:
             ext = os.path.splitext(video.name)[-1]
             video.name = f"{uuid.uuid4().hex}{ext}"
+        
+        # 创建评论
         if content or image or video:
-            Comment.objects.create(content=content, image=image, video=video, user=request.user, page=page_name)
-            return JsonResponse({'status': 'ok'})
-    return JsonResponse({'status': 'fail', 'message': '只支持POST请求'})
+            Comment.objects.create(
+                content=content, 
+                image=image, 
+                video=video, 
+                user=request.user, 
+                page=page_name
+            )
+            return JsonResponse({'status': 'ok', 'message': '评论发表成功'})
+        else:
+            return JsonResponse({
+                'status': 'fail',
+                'message': '评论内容、图片或视频至少需要提供一项'
+            }, status=400)
+            
+    except Exception as e:
+        return JsonResponse({
+            'status': 'fail',
+            'error': str(e),
+            'message': '评论发表失败，请稍后重试'
+        }, status=500)
 
 @csrf_exempt
 def like_view_generic(request, page_name):
