@@ -853,7 +853,7 @@
                         <a href="{% if comment.user == user %}{% url 'user_center' %}{% else %}#{% endif %}"
                             style="text-decoration: none;">
                             <div style="width: 45px; height: 45px; border-radius: 50%; overflow: hidden; margin-right: 12px; border: 2px solid #ddd; flex-shrink: 0; cursor: {% if comment.user == user %}pointer{% else %}default{% endif %}; transition: transform 0.2s ease;"
-                                {% if comment.user==user %}onmouseover="this.style.transform='scale(1.1)'"
+                                {% if comment.user == user %}onmouseover="this.style.transform='scale(1.1)'"
                                 onmouseout="this.style.transform='scale(1)'" {% endif %}>
                                 {% if comment.user.profile.avatar %}
                                 <img src="{{ comment.user.profile.avatar.url }}" alt="{{ comment.user.username }}的头像"
@@ -1073,7 +1073,7 @@
                             try {
                                 const data = JSON.parse(xhr.responseText);
                                 alert("❌ 权限不足：" + (data.message || "您没有发表评论的权限，请联系管理员"));
-                            } catch {
+                            } catch (e) {
                                 alert("❌ 权限不足：您没有发表评论的权限，请联系管理员");
                             }
                             resetForm();
@@ -1101,8 +1101,33 @@
                         resetForm();
                     });
 
+                    // 获取CSRF token
+                    let csrfToken = null;
+
+                    // 方法1: 从表单字段获取
+                    const csrfField = document.querySelector('[name=csrfmiddlewaretoken]');
+                    if (csrfField && csrfField.value) {
+                        csrfToken = csrfField.value;
+                    }
+
+                    // 方法2: 从cookie获取（备用方案）
+                    if (!csrfToken) {
+                        csrfToken = getCookie('csrftoken');
+                    }
+
+                    // 方法3: 从全局变量获取（最后备用）
+                    if (!csrfToken && typeof csrftoken !== 'undefined') {
+                        csrfToken = csrftoken;
+                    }
+
+                    if (!csrfToken) {
+                        alert("❌ 无法获取安全令牌，请刷新页面后重试");
+                        resetForm();
+                        return;
+                    }
+
                     xhr.open("POST", "/cetapp/trip4/add_comment/");
-                    xhr.setRequestHeader('X-CSRFToken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+                    xhr.setRequestHeader('X-CSRFToken', csrfToken);
                     xhr.send(formData);
 
                     function resetForm() {
