@@ -1021,6 +1021,39 @@
                     // 检查是否有文件上传
                     const imageFile = document.querySelector('input[name="image"]').files[0];
                     const videoFile = document.querySelector('input[name="video"]').files[0];
+
+                    // 检测是否为移动设备
+                    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+                    // 文件大小检查（移动端更严格）
+                    if (imageFile) {
+                        const maxImageSize = isMobile ? 50 * 1024 * 1024 : 100 * 1024 * 1024; // 移动端50MB，电脑端100MB
+                        if (imageFile.size > maxImageSize) {
+                            const sizeMB = (imageFile.size / (1024 * 1024)).toFixed(1);
+                            const maxSizeMB = (maxImageSize / (1024 * 1024)).toFixed(0);
+                            alert(`❌ 图片太大！\n当前大小: ${sizeMB}MB\n${isMobile ? '移动端' : '电脑端'}最大限制: ${maxSizeMB}MB\n\n建议：请压缩图片后再上传`);
+                            return;
+                        }
+                    }
+
+                    if (videoFile) {
+                        const maxVideoSize = isMobile ? 100 * 1024 * 1024 : 200 * 1024 * 1024; // 移动端100MB，电脑端200MB
+                        if (videoFile.size > maxVideoSize) {
+                            const sizeMB = (videoFile.size / (1024 * 1024)).toFixed(1);
+                            const maxSizeMB = (maxVideoSize / (1024 * 1024)).toFixed(0);
+                            alert(`❌ 视频太大！\n当前大小: ${sizeMB}MB\n${isMobile ? '移动端' : '电脑端'}最大限制: ${maxSizeMB}MB\n\n建议：\n1. 使用手机自带的视频压缩功能\n2. 降低视频分辨率（如720p）\n3. 缩短视频时长`);
+                            return;
+                        }
+
+                        // 移动端大文件上传提醒
+                        if (isMobile && videoFile.size > 50 * 1024 * 1024) {
+                            const sizeMB = (videoFile.size / (1024 * 1024)).toFixed(1);
+                            if (!confirm(`📱 检测到您正在使用移动设备上传 ${sizeMB}MB 的视频\n\n上传可能需要较长时间，建议：\n✓ 确保网络连接稳定\n✓ 不要切换应用或锁屏\n✓ 使用WiFi网络上传\n\n是否继续上传？`)) {
+                                return;
+                            }
+                        }
+                    }
+
                     const hasLargeFile = (videoFile && videoFile.size > 5 * 1024 * 1024) || (imageFile && imageFile.size > 2 * 1024 * 1024);
 
                     if (hasLargeFile) {
@@ -1037,8 +1070,12 @@
                     // 使用XMLHttpRequest以支持进度监控和超时设置
                     const xhr = new XMLHttpRequest();
 
-                    // 设置超时时间为10分钟
-                    xhr.timeout = 600000; // 10分钟
+                    // 设置超时时间（移动端更长）
+                    if (isMobile) {
+                        xhr.timeout = 1800000; // 移动端30分钟
+                    } else {
+                        xhr.timeout = 900000; // 电脑端15分钟
+                    }
 
                     xhr.upload.addEventListener("progress", function (e) {
                         if (e.lengthComputable && hasLargeFile) {
@@ -1084,6 +1121,9 @@
                             } catch {
                                 alert("❌ 请求错误：请求参数有误");
                             }
+                            resetForm();
+                        } else if (xhr.status === 413) {
+                            alert("❌ 文件太大！\n\n服务器无法处理这么大的文件。\n\n建议：\n• 压缩视频文件（推荐720p或更低）\n• 缩短视频时长\n• 降低视频质量\n• 使用手机自带的压缩功能");
                             resetForm();
                         } else {
                             alert("❌ 提交失败，服务器错误：" + xhr.status + "\n请检查您的网络连接或稍后重试");

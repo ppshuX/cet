@@ -123,7 +123,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # settings.py 添加
 LOGIN_REDIRECT_URL = '/cetapp/trip1/'
 
-# 文件上传设置
-FILE_UPLOAD_MAX_MEMORY_SIZE = 100 * 1024 * 1024  # 100MB
-DATA_UPLOAD_MAX_MEMORY_SIZE = 100 * 1024 * 1024  # 100MB
+# 文件上传设置 - 支持大文件上传
+FILE_UPLOAD_MAX_MEMORY_SIZE = 100 * 1024 * 1024  # 250MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 100 * 1024 * 1024  # 250MB
 FILE_UPLOAD_TEMP_DIR = None  # 使用系统临时目录
+
+# 大文件上传设置
+FILE_UPLOAD_HANDLERS = [
+    'django.core.files.uploadhandler.MemoryFileUploadHandler',
+    'django.core.files.uploadhandler.TemporaryFileUploadHandler',
+]
+
+# 请求体大小限制
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
+DATA_UPLOAD_MAX_NUMBER_FILES = 100
