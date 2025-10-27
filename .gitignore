@@ -4,6 +4,7 @@ __pycache__/
 media/comment_images/
 media/comment_videos/
 media/user_avatars/
+db.sqlite3
 backups/
 *.log
 uwsgi.log
