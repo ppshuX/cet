@@ -2,7 +2,8 @@
 旅行和统计相关序列化器
 """
 from rest_framework import serializers
-from ..models import SiteStat, Comment
+from ..models import SiteStat, Comment, Trip
+
 
 
 class SiteStatSerializer(serializers.ModelSerializer):
@@ -43,8 +44,8 @@ class TripSerializer(serializers.Serializer):
                 'description': '感受曲靖的文化景点和自然风光',
             },
             'trip3': {
-                'name': '通用旅行页面',
-                'description': '通用的旅行计划模板',
+                'name': '昆明旅行',
+                'description': '探索春城昆明的自然与人文',
             },
             'trip4': {
                 'name': '长沙三天两夜慢旅行',
@@ -53,10 +54,20 @@ class TripSerializer(serializers.Serializer):
         }
         
         page = instance.page
-        info = page_info.get(page, {
-            'name': page.upper(),
-            'description': f'{page} 旅行计划'
-        })
+        
+        # 尝试从Trip模型获取标题和描述
+        try:
+            trip = Trip.objects.get(slug=page)
+            info = {
+                'name': trip.title,
+                'description': trip.description or f'{trip.title}',
+            }
+        except Trip.DoesNotExist:
+            # 使用默认映射
+            info = page_info.get(page, {
+                'name': page.upper(),
+                'description': f'{page} 旅行计划'
+            })
         
         return {
             'slug': page,

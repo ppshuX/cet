@@ -26,7 +26,7 @@
       <!-- 中间的藤蔓线 -->
       <div class="vine-line"></div>
       
-      <!-- 原始果实（前5个） -->
+      <!-- 原始果实：前5个（厦门、三岔湖、曲靖、昆明、长沙） -->
       <div
         v-for="(trip, index) in originalTrips"
         :key="trip.slug"
@@ -45,11 +45,11 @@
         </div>
       </div>
       
-      <!-- 新增的果实（左右排列） -->
+      <!-- 新增的果实：时间较晚的放在最下面，按左右交错 -->
       <div
         v-for="(trip, index) in newTrips"
         :key="trip.slug"
-        :class="['fruit', 'fruit-new', index % 2 === 0 ? 'fruit-new-left' : 'fruit-new-right']"
+        :class="['fruit', `fruit-${5 + index + 1}`]"
         @click="goToDetail(trip.slug)"
       >
         <span class="icon">{{ getIcon(index + 5) }}</span>
@@ -123,7 +123,7 @@ export default {
       return icons[index] || '🗺️'
     }
     
-    // 将trips分成原始和新数据
+    // 将trips分成原始（前5个）和新数据
     const originalTrips = computed(() => trips.value.slice(0, 5))
     const newTrips = computed(() => trips.value.slice(5))
     
@@ -181,7 +181,7 @@ export default {
   width: 100%;
   max-width: 520px;
   margin: 0 auto 40px auto;
-  min-height: 1000px;
+  min-height: 1400px;
   padding-bottom: 150px;
 }
 
@@ -283,49 +283,59 @@ export default {
   display: block;
 }
 
-/* 交错布局 */
+/* 电脑端：左右交错布局 - 间隔减小 */
 .fruit-1 {
   top: 30px;
   transform: translate(-120%, 0);
 }
 
 .fruit-2 {
-  top: 180px;
+  top: 160px;
   transform: translate(20%, 0);
 }
 
 .fruit-3 {
-  top: 330px;
+  top: 290px;
   transform: translate(-120%, 0);
 }
 
 .fruit-4 {
-  top: 480px;
+  top: 420px;
   transform: translate(20%, 0);
 }
 
 .fruit-5 {
-  top: 630px;
+  top: 550px;
   transform: translate(-120%, 0);
 }
 
-/* 新果实样式 */
-.fruit-new {
-  opacity: 0.85;
+.fruit-6 {
+  top: 680px;
+  transform: translate(20%, 0);
 }
 
-.fruit-new-left {
-  top: 780px;
+.fruit-7 {
+  top: 810px;
   transform: translate(-120%, 0);
 }
 
-.fruit-new-right {
-  top: 780px;
+.fruit-8 {
+  top: 940px;
+  transform: translate(20%, 0);
+}
+
+.fruit-9 {
+  top: 1070px;
+  transform: translate(-120%, 0);
+}
+
+.fruit-10 {
+  top: 1200px;
   transform: translate(20%, 0);
 }
 
 .fruit-coming-soon {
-  top: 850px;
+  top: 1330px;
   transform: translate(20%, 0);
   background: #f8f8ff;
   opacity: 0.7;
@@ -334,12 +344,17 @@ export default {
 /* Hover时的位置调整 */
 .fruit-1:hover,
 .fruit-3:hover,
-.fruit-5:hover {
+.fruit-5:hover,
+.fruit-7:hover,
+.fruit-9:hover {
   transform: translate(-120%, -6px) scale(1.08);
 }
 
 .fruit-2:hover,
-.fruit-4:hover {
+.fruit-4:hover,
+.fruit-6:hover,
+.fruit-8:hover,
+.fruit-10:hover {
   transform: translate(20%, -6px) scale(1.08);
 }
 
@@ -381,51 +396,31 @@ export default {
     transition: all 0.25s ease;
   }
 
+  /* 移动端：上下堆叠 */
+  .fruit {
+    position: relative !important;
+    left: 50% !important;
+    margin-bottom: 20px !important;
+  }
+  
   .fruit-1,
   .fruit-2,
   .fruit-3,
   .fruit-4,
   .fruit-5,
+  .fruit-6,
+  .fruit-7,
+  .fruit-8,
+  .fruit-9,
+  .fruit-10,
   .fruit-coming-soon {
+    top: auto !important;
     transform: translate(-50%, 0) !important;
-  }
-
-  .fruit-1 {
-    top: 30px;
-  }
-
-  .fruit-2 {
-    top: 180px;
-  }
-
-  .fruit-3 {
-    top: 330px;
-  }
-
-  .fruit-4 {
-    top: 480px;
-  }
-
-  .fruit-5 {
-    top: 630px;
-  }
-
-  .fruit-new {
-    transform: translate(-50%, 0) !important;
-  }
-  
-  .fruit-new-left,
-  .fruit-new-right {
-    transform: translate(-50%, 0) !important;
-  }
-  
-  .fruit-new-left,
-  .fruit-new-right {
-    margin-top: 20px;
+    margin-bottom: 25px !important;
   }
   
   .fruit-coming-soon {
-    top: 920px;
+    margin-top: 10px !important;
   }
 
   .fruit:hover {
