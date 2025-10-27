@@ -21,8 +21,14 @@ export const getTripDetail = async (slug) => {
     try {
         return await request.get(`/trip-plans/${slug}/`)
     } catch (error) {
-        // 如果失败（404），尝试旧的SiteStat
-        if (error.response?.status === 404) {
+        // 404或网络错误，尝试旧的SiteStat
+        const statusCode = error.response?.status || error.status
+        const shouldFallback = statusCode === 404 ||
+            error.code === 'ERR_BAD_REQUEST' ||
+            error.message?.includes('404') ||
+            !error.response
+
+        if (shouldFallback) {
             return await request.get(`/trips/${slug}/`)
         }
         throw error

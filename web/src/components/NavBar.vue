@@ -31,12 +31,6 @@
               我的旅行
             </router-link>
           </li>
-          <li class="nav-item">
-            <a href="/api/docs/" target="_blank" class="nav-link">
-              <i class="bi bi-book me-1"></i>
-              API文档
-            </a>
-          </li>
         </ul>
         
         <!-- 右侧用户信息 -->
