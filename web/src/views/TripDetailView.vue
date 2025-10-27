@@ -163,6 +163,7 @@
           @checkin="handleCheckin"
           @submit-comment="handleSubmitComment"
           @delete-comment="handleDeleteComment"
+          @add-image="handleAddImage"
         />
       </div>
     </div>
@@ -174,7 +175,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
 import { getTripDetail, likeTrip, checkinTrip } from '@/api/trip'
-import { getCommentList, createComment, deleteComment } from '@/api/comment'
+import { getCommentList, createComment, deleteComment, addCommentImage } from '@/api/comment'
 import { getAvatarUrl } from '@/config/api'
 import { getTripConfig } from '@/config/tripConfig'
 import NavBar from '@/components/NavBar.vue'
@@ -327,6 +328,21 @@ export default {
       }
     }
     
+    // 添加图片
+    const handleAddImage = async ({ commentId, file }) => {
+      try {
+        const formData = new FormData()
+        formData.append('image', file)
+        
+        await addCommentImage(commentId, formData)
+        alert('图片添加成功！')
+        await fetchComments()
+      } catch (error) {
+        console.error('添加图片失败:', error)
+        alert('添加图片失败：' + (error.response?.data?.detail || error.message))
+      }
+    }
+    
     // 返回按钮
     const goBack = () => {
       router.push('/')
@@ -367,6 +383,7 @@ export default {
       handleCheckin,
       handleSubmitComment,
       handleDeleteComment,
+      handleAddImage,
       goBack,
       toggleMusic,
       getAvatarUrl

@@ -42,3 +42,16 @@ export const getCommentDetail = (id) => {
     return request.get(`/comments/${id}/`)
 }
 
+/**
+ * 为评论添加图片
+ * @param {number} id - 评论ID
+ * @param {FormData} data - 表单数据（包含图片文件）
+ */
+export const addCommentImage = (id, data) => {
+    return request.post(`/comments/${id}/add_image/`, data, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+}
+

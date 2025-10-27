@@ -7,18 +7,18 @@ module.exports = defineConfig({
     port: 8080,
     proxy: {
       // 代理API请求
-      '/api': {
+      '^/api': {
         target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         ws: true,
       },
       // 代理静态文件（头像等）
-      '/static': {
+      '^/static': {
         target: 'http://127.0.0.1:8000',
         changeOrigin: true,
       },
       // 代理媒体文件（用户上传的图片、视频）
-      '/media': {
+      '^/media': {
         target: 'http://127.0.0.1:8000',
         changeOrigin: true,
       }

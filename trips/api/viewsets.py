@@ -220,6 +220,52 @@ class CommentViewSet(viewsets.ModelViewSet):
         
         self.perform_destroy(comment)
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def add_image(self, request, pk=None):
+        """为评论添加图片（补交图片）"""
+        comment = self.get_object()
+        
+        # 权限检查：只有评论作者或管理员可以添加图片
+        if comment.user != request.user and not request.user.is_superuser:
+            return Response(
+                {'detail': '无权修改此评论'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        # 检查是否已经有关联的图片或视频
+        if comment.image or comment.video:
+            return Response(
+                {'detail': '该评论已包含图片或视频，无法追加'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # 获取上传的图片
+        image = request.FILES.get('image')
+        if not image:
+            return Response(
+                {'detail': '请上传图片'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # 验证图片大小
+        if image.size > 10 * 1024 * 1024:
+            return Response(
+                {'detail': '图片大小不能超过10MB'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # 生成唯一文件名
+        ext = os.path.splitext(image.name)[-1]
+        image.name = f"{uuid.uuid4().hex}{ext}"
+        
+        # 保存图片
+        comment.image = image
+        comment.save()
+        
+        # 返回更新后的评论
+        serializer = CommentSerializer(comment, context={'request': request})
+        return Response(serializer.data)
 
 
 class TripViewSet(viewsets.ReadOnlyModelViewSet):

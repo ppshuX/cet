@@ -66,7 +66,19 @@
       
       <!-- 评论列表 -->
       <div class="comment-list">
-        <h5 class="mb-3">评论列表 ({{ comments.length }}条)</h5>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">评论列表 ({{ comments.length }}条)</h5>
+          <!-- 管理评论模式切换按钮 -->
+          <button
+            v-if="hasManageableComments"
+            class="btn btn-sm"
+            :class="isManageMode ? 'btn-secondary' : 'btn-outline-secondary'"
+            @click="toggleManageMode"
+            title="管理评论"
+          >
+            {{ isManageMode ? '完成管理' : '管理评论' }}
+          </button>
+        </div>
         
         <div v-if="comments.length === 0" class="text-center text-muted py-4">
           暂无评论，快来留下第一条评论吧！
@@ -91,14 +103,44 @@
                 <strong>{{ comment.user.username }}</strong>
                 <div class="d-flex gap-2 align-items-center">
                   <small class="text-muted">{{ formatDate(comment.timestamp) }}</small>
-                  <button
-                    v-if="comment.can_delete"
-                    class="btn btn-sm btn-outline-danger"
-                    @click="handleDelete(comment.id)"
-                    title="删除这条评论"
-                  >
-                    🗑️
-                  </button>
+                  <!-- 仅在管理模式下显示的操作按钮 -->
+                  <template v-if="isManageMode">
+                    <!-- 编辑模式按钮 -->
+                    <button
+                      v-if="canAddImage(comment) && !editingComments[comment.id]"
+                      class="btn btn-sm btn-outline-primary"
+                      @click="startEditing(comment.id)"
+                      title="编辑评论"
+                    >
+                      ✏️
+                    </button>
+                    <!-- 添加图片按钮（仅在编辑模式下显示） -->
+                    <button
+                      v-if="canAddImage(comment) && editingComments[comment.id]"
+                      class="btn btn-sm btn-outline-success"
+                      @click="handleAddImage(comment.id)"
+                      title="添加图片"
+                    >
+                      📷
+                    </button>
+                    <!-- 取消编辑按钮 -->
+                    <button
+                      v-if="editingComments[comment.id]"
+                      class="btn btn-sm btn-outline-secondary"
+                      @click="cancelEditing(comment.id)"
+                      title="取消"
+                    >
+                      ✕
+                    </button>
+                    <button
+                      v-if="comment.can_delete"
+                      class="btn btn-sm btn-outline-danger"
+                      @click="handleDelete(comment.id)"
+                      title="删除这条评论"
+                    >
+                      🗑️
+                    </button>
+                  </template>
                 </div>
               </div>
               
@@ -158,17 +200,33 @@ export default {
     }
   },
   
-  emits: ['checkin', 'submit-comment', 'delete-comment'],
+  emits: ['checkin', 'submit-comment', 'delete-comment', 'add-image'],
   
   setup(props, { emit }) {
     const checking = ref(false)
     const submitting = ref(false)
+    const editingComments = ref({})  // 跟踪哪些评论处于编辑模式
+    const isManageMode = ref(false)  // 管理评论模式
     
     const formData = ref({
       content: '',
       image: null,
       video: null
     })
+    
+    // 计算是否有可管理的评论
+    const hasManageableComments = computed(() => {
+      return props.comments.some(comment => comment.can_delete)
+    })
+    
+    // 切换管理模式
+    const toggleManageMode = () => {
+      isManageMode.value = !isManageMode.value
+      if (!isManageMode.value) {
+        // 退出管理模式时，清除所有编辑状态
+        editingComments.value = {}
+      }
+    }
     
     const checkinButtonText = computed(() => {
       if (props.hasCheckedIn) return '✓ 已打卡'
@@ -230,10 +288,44 @@ export default {
       window.open(url, '_blank')
     }
     
+    const canAddImage = (comment) => {
+      // 判断是否可以添加图片：
+      // 1. 评论没有图片
+      // 2. 评论没有视频
+      // 3. 评论作者是当前用户（通过can_delete判断）
+      return !comment.image && !comment.video && comment.can_delete
+    }
+    
+    const startEditing = (commentId) => {
+      editingComments.value[commentId] = true
+    }
+    
+    const cancelEditing = (commentId) => {
+      editingComments.value[commentId] = false
+    }
+    
+    const handleAddImage = (commentId) => {
+      const input = document.createElement('input')
+      input.type = 'file'
+      input.accept = 'image/*'
+      input.onchange = (e) => {
+        const file = e.target.files[0]
+        if (file) {
+          emit('add-image', { commentId, file })
+          // 添加图片后退出编辑模式
+          editingComments.value[commentId] = false
+        }
+      }
+      input.click()
+    }
+    
     return {
       checking,
       submitting,
       formData,
+      editingComments,
+      isManageMode,
+      hasManageableComments,
       checkinButtonText,
       handleCheckin,
       handleImageChange,
@@ -241,7 +333,12 @@ export default {
       handleSubmit,
       handleDelete,
       formatDate,
-      showImageModal
+      showImageModal,
+      canAddImage,
+      startEditing,
+      cancelEditing,
+      handleAddImage,
+      toggleManageMode
     }
   }
 }
@@ -287,6 +384,15 @@ export default {
   border-radius: 12px;
   margin-bottom: 1.5rem;
   transition: all 0.3s ease;
+  overflow: hidden;
+  word-wrap: break-word;
+}
+
+.comment-item p {
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .comment-item:hover {
@@ -324,13 +430,30 @@ export default {
   border-radius: 8px;
 }
 
-/* 删除按钮透明度 */
-.btn-outline-danger {
+/* 按钮透明度 */
+.btn-outline-danger,
+.btn-outline-success,
+.btn-outline-primary,
+.btn-outline-secondary {
   opacity: 0.7;
   transition: all 0.3s ease;
 }
 
-.btn-outline-danger:hover {
+.btn-outline-danger:hover,
+.btn-outline-success:hover,
+.btn-outline-primary:hover,
+.btn-outline-secondary:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* 添加图片按钮样式 */
+.btn-outline-success {
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-success:hover {
   opacity: 1;
   transform: scale(1.1);
 }
@@ -402,6 +525,23 @@ export default {
   .comment-item p {
     font-size: 0.9rem;
     line-height: 1.5;
+    word-wrap: break-word;
+    word-break: break-all;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  
+  /* 评论操作按钮组 */
+  .comment-item .d-flex.gap-2 {
+    flex-wrap: wrap;
+    gap: 0.3rem !important;
+  }
+  
+  .comment-item button {
+    min-width: 32px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
   }
   
   /* 图片在移动端全宽 */
@@ -425,6 +565,17 @@ export default {
   /* 按钮组 */
   .d-flex.gap-2 {
     gap: 0.5rem !important;
+  }
+  
+  /* 标题行布局优化 */
+  .comment-item .d-flex.justify-content-between {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  /* 确保按钮不会超出容器 */
+  .comment-item .d-flex.justify-content-between > div:last-child {
+    flex-shrink: 0;
   }
 }
 </style>
