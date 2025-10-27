@@ -422,4 +422,27 @@ class TripPlanViewSet(viewsets.ModelViewSet):
                 'stat': serializer.data,
                 'slug': trip.slug
             }, status=status.HTTP_201_CREATED)
+    
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def remove_from_tree(self, request, slug=None):
+        """从旅行树移除旅行计划（删除SiteStat）"""
+        trip = self.get_object()
+        
+        # 检查权限
+        if trip.author != request.user and not request.user.is_superuser:
+            raise PermissionError("无权从旅行树移除此旅行")
+        
+        # 删除SiteStat
+        try:
+            site_stat = SiteStat.objects.get(page=trip.slug)
+            site_stat.delete()
+            return Response({
+                'detail': '旅行已成功从旅行树移除',
+                'slug': trip.slug
+            }, status=status.HTTP_200_OK)
+        except SiteStat.DoesNotExist:
+            return Response({
+                'detail': '该旅行不存在于旅行树中',
+                'slug': trip.slug
+            }, status=status.HTTP_404_NOT_FOUND)
 

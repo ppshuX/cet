@@ -84,3 +84,11 @@ export const addTripToTree = (slug) => {
     return request.post(`/trip-plans/${slug}/add_to_tree/`)
 }
 
+/**
+ * 从旅行树移除旅行计划
+ * @param {string} slug - 旅行标识符
+ */
+export const removeTripFromTree = (slug) => {
+    return request.post(`/trip-plans/${slug}/remove_from_tree/`)
+}
+

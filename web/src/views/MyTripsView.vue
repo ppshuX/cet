@@ -51,7 +51,16 @@
               <button class="btn btn-sm btn-outline-secondary" @click="viewTrip(trip.slug)">
                 <i class="bi bi-eye me-1"></i>预览
               </button>
-              <button class="btn btn-sm btn-success" @click="addToTree(trip.slug)">
+              <button 
+                v-if="trip.isOnTree" 
+                class="btn btn-sm btn-danger" 
+                @click="removeFromTree(trip.slug)">
+                <i class="bi bi-x-circle me-1"></i>摘下果实
+              </button>
+              <button 
+                v-else
+                class="btn btn-sm btn-success" 
+                @click="addToTree(trip.slug)">
                 <i class="bi bi-tree me-1"></i>运用到旅行树
               </button>
               <button class="btn btn-sm btn-outline-danger" @click="deleteTrip(trip.slug)">
@@ -79,7 +88,8 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
-import { getMyTrips, deleteTripPlan, addTripToTree } from '@/api/tripPlan'
+import { getMyTrips, deleteTripPlan, addTripToTree, removeTripFromTree } from '@/api/tripPlan'
+import { getTripList } from '@/api/trip'
 import NavBar from '@/components/NavBar.vue'
 
 export default {
@@ -101,6 +111,7 @@ export default {
       try {
         const data = await getMyTrips()
         trips.value = data.results || data || []
+        await checkTreeStatus() // 检查是否在旅行树中
       } catch (error) {
         console.error('获取旅行列表失败:', error)
         alert('加载失败')
@@ -144,9 +155,39 @@ export default {
       try {
         const result = await addTripToTree(slug)
         alert(result.detail || '成功添加到旅行树！')
+        await fetchMyTrips() // 刷新列表
       } catch (error) {
         console.error('添加到旅行树失败:', error)
         alert('添加到旅行树失败，请稍后重试')
+      }
+    }
+    
+    const removeFromTree = async (slug) => {
+      if (!confirm('确定要将此旅行计划从旅行树摘下吗？它将不再显示在首页的旅行树上。')) {
+        return
+      }
+      
+      try {
+        const result = await removeTripFromTree(slug)
+        alert(result.detail || '成功摘下果实！')
+        await fetchMyTrips() // 刷新列表
+      } catch (error) {
+        console.error('摘下果实失败:', error)
+        alert('摘下果实失败，请稍后重试')
+      }
+    }
+    
+    const checkTreeStatus = async () => {
+      try {
+        const treeData = await getTripList()
+        const treeSlugs = new Set((treeData.results || treeData || []).map(t => t.slug))
+        
+        // 为每个trip添加isOnTree属性
+        trips.value.forEach(trip => {
+          trip.isOnTree = treeSlugs.has(trip.slug)
+        })
+      } catch (error) {
+        console.error('获取旅行树状态失败:', error)
       }
     }
     
@@ -173,6 +214,7 @@ export default {
       viewTrip,
       deleteTrip,
       addToTree,
+      removeFromTree,
       formatDate
     }
   }

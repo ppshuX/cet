@@ -5,7 +5,7 @@
     
     <!-- 主标题 -->
     <div class="main-header">
-      <h1 class="title">旅行主菜单</h1>
+      <h1 class="title">旅行树</h1>
     </div>
     
     <!-- 欢迎语 -->
@@ -181,7 +181,8 @@ export default {
   width: 100%;
   max-width: 520px;
   margin: 0 auto 40px auto;
-  min-height: 750px;
+  min-height: 1000px;
+  padding-bottom: 150px;
 }
 
 /* 中间的藤蔓线 */
@@ -289,22 +290,22 @@ export default {
 }
 
 .fruit-2 {
-  top: 160px;
+  top: 180px;
   transform: translate(20%, 0);
 }
 
 .fruit-3 {
-  top: 290px;
+  top: 330px;
   transform: translate(-120%, 0);
 }
 
 .fruit-4 {
-  top: 420px;
+  top: 480px;
   transform: translate(20%, 0);
 }
 
 .fruit-5 {
-  top: 550px;
+  top: 630px;
   transform: translate(-120%, 0);
 }
 
@@ -314,17 +315,17 @@ export default {
 }
 
 .fruit-new-left {
-  top: 680px;
+  top: 780px;
   transform: translate(-120%, 0);
 }
 
 .fruit-new-right {
-  top: 680px;
+  top: 780px;
   transform: translate(20%, 0);
 }
 
 .fruit-coming-soon {
-  top: 750px;
+  top: 850px;
   transform: translate(20%, 0);
   background: #f8f8ff;
   opacity: 0.7;
@@ -418,8 +419,13 @@ export default {
     transform: translate(-50%, 0) !important;
   }
   
+  .fruit-new-left,
+  .fruit-new-right {
+    margin-top: 20px;
+  }
+  
   .fruit-coming-soon {
-    top: 850px;
+    top: 920px;
   }
 
   .fruit:hover {
