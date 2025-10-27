@@ -107,12 +107,21 @@
                   <template v-if="isManageMode">
                     <!-- 编辑模式按钮 -->
                     <button
-                      v-if="canAddImage(comment) && !editingComments[comment.id]"
+                      v-if="comment.can_delete && !editingComments[comment.id]"
                       class="btn btn-sm btn-outline-primary"
-                      @click="startEditing(comment.id)"
+                      @click="startEditing(comment.id, comment.content)"
                       title="编辑评论"
                     >
                       ✏️
+                    </button>
+                    <!-- 保存按钮 -->
+                    <button
+                      v-if="editingComments[comment.id]"
+                      class="btn btn-sm btn-success"
+                      @click="handleSaveComment(comment.id)"
+                      title="保存修改"
+                    >
+                      ✓
                     </button>
                     <!-- 添加/替换图片按钮（仅在编辑模式下显示） -->
                     <button
@@ -144,7 +153,17 @@
                 </div>
               </div>
               
-              <p class="mb-2">{{ comment.content }}</p>
+              <!-- 编辑模式：显示编辑框 -->
+              <div v-if="editingComments[comment.id]" class="mb-2">
+                <textarea
+                  v-model="editingComments[comment.id].content"
+                  class="form-control"
+                  rows="3"
+                  placeholder="编辑评论内容..."
+                ></textarea>
+              </div>
+              <!-- 普通模式：显示原内容 -->
+              <p v-else class="mb-2">{{ comment.content }}</p>
               
               <!-- 图片 -->
               <div v-if="comment.image" class="mb-2 comment-media">
@@ -170,6 +189,14 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    
+    <!-- 图片放大模态框 -->
+    <div v-if="showModal" class="image-modal" @click="closeImageModal">
+      <div class="modal-content" @click.stop>
+        <button class="close-button" @click="closeImageModal">✕</button>
+        <img :src="modalImageUrl" alt="放大图片" />
       </div>
     </div>
   </div>
@@ -200,13 +227,15 @@ export default {
     }
   },
   
-  emits: ['checkin', 'submit-comment', 'delete-comment', 'add-image'],
+  emits: ['checkin', 'submit-comment', 'delete-comment', 'add-image', 'update-comment'],
   
   setup(props, { emit }) {
     const checking = ref(false)
     const submitting = ref(false)
     const editingComments = ref({})  // 跟踪哪些评论处于编辑模式
     const isManageMode = ref(false)  // 管理评论模式
+    const showModal = ref(false)  // 控制图片放大模态框显示
+    const modalImageUrl = ref('')  // 当前要展示的图片URL
     
     const formData = ref({
       content: '',
@@ -291,7 +320,13 @@ export default {
     }
     
     const showImageModal = (url) => {
-      window.open(url, '_blank')
+      modalImageUrl.value = url
+      showModal.value = true
+    }
+    
+    const closeImageModal = () => {
+      showModal.value = false
+      modalImageUrl.value = ''
     }
     
     const canAddImage = (comment) => {
@@ -302,12 +337,27 @@ export default {
       return !comment.video && comment.can_delete
     }
     
-    const startEditing = (commentId) => {
-      editingComments.value[commentId] = true
+    const startEditing = (commentId, originalContent) => {
+      // 保存原始内容以便取消时恢复
+      editingComments.value[commentId] = {
+        isEditing: true,
+        content: originalContent
+      }
     }
     
     const cancelEditing = (commentId) => {
       editingComments.value[commentId] = false
+    }
+    
+    const handleSaveComment = (commentId) => {
+      const editedContent = editingComments.value[commentId]?.content
+      if (editedContent && editedContent.trim()) {
+        emit('update-comment', {
+          commentId,
+          content: editedContent.trim()
+        })
+        editingComments.value[commentId] = false
+      }
     }
     
     const handleAddImage = (commentId) => {
@@ -340,11 +390,15 @@ export default {
       handleDelete,
       formatDate,
       showImageModal,
+      closeImageModal,
       canAddImage,
       startEditing,
       cancelEditing,
       handleAddImage,
-      toggleManageMode
+      handleSaveComment,
+      toggleManageMode,
+      showModal,
+      modalImageUrl
     }
   }
 }
@@ -582,6 +636,96 @@ export default {
   /* 确保按钮不会超出容器 */
   .comment-item .d-flex.justify-content-between > div:last-child {
     flex-shrink: 0;
+  }
+}
+
+/* 图片放大模态框样式 */
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  cursor: pointer;
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  cursor: default;
+  animation: zoomIn 0.2s ease-in;
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-content img {
+  max-width: 100%;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.close-button {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  color: #333;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: rotate(90deg);
+}
+
+/* 移动端模态框适配 */
+@media (max-width: 768px) {
+  .modal-content {
+    max-width: 95vw;
+  }
+  
+  .close-button {
+    top: -35px;
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
   }
 }
 </style>

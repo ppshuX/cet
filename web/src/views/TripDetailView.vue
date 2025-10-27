@@ -164,6 +164,7 @@
           @submit-comment="handleSubmitComment"
           @delete-comment="handleDeleteComment"
           @add-image="handleAddImage"
+          @update-comment="handleUpdateComment"
         />
       </div>
     </div>
@@ -175,7 +176,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
 import { getTripDetail, likeTrip, checkinTrip } from '@/api/trip'
-import { getCommentList, createComment, deleteComment, addCommentImage } from '@/api/comment'
+import { getCommentList, createComment, deleteComment, addCommentImage, updateComment } from '@/api/comment'
 import { getAvatarUrl } from '@/config/api'
 import { getTripConfig } from '@/config/tripConfig'
 import NavBar from '@/components/NavBar.vue'
@@ -343,6 +344,18 @@ export default {
       }
     }
     
+    // 更新评论
+    const handleUpdateComment = async ({ commentId, content }) => {
+      try {
+        await updateComment(commentId, { content })
+        alert('评论更新成功！')
+        await fetchComments()
+      } catch (error) {
+        console.error('更新评论失败:', error)
+        alert('更新评论失败：' + (error.response?.data?.detail || error.message))
+      }
+    }
+    
     // 返回按钮
     const goBack = () => {
       router.push('/')
@@ -384,6 +397,7 @@ export default {
       handleSubmitComment,
       handleDeleteComment,
       handleAddImage,
+      handleUpdateComment,
       goBack,
       toggleMusic,
       getAvatarUrl

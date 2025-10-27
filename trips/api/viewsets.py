@@ -12,6 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import serializers as drf_serializers
 from django.contrib.auth.models import User
 from django.db import models
+from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from django_filters import CharFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -24,6 +25,7 @@ from ..serializers import (
     AvatarUploadSerializer,
     CommentSerializer,
     CommentCreateSerializer,
+    CommentUpdateSerializer,
     TripSerializer,
     SiteStatSerializer,
     TripCreateSerializer,
@@ -180,6 +182,8 @@ class CommentViewSet(viewsets.ModelViewSet):
         """根据action选择序列化器"""
         if self.action == 'create':
             return CommentCreateSerializer
+        elif self.action in ['update', 'partial_update']:
+            return CommentUpdateSerializer
         return CommentSerializer
     
     def get_permissions(self):
@@ -207,6 +211,15 @@ class CommentViewSet(viewsets.ModelViewSet):
         
         serializer.save(user=self.request.user)
     
+    def perform_update(self, serializer):
+        """更新评论时检查权限"""
+        comment = self.get_object()
+        # 权限检查：只有评论作者或管理员可以修改
+        if comment.user != self.request.user and not self.request.user.is_superuser:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('无权修改此评论')
+        serializer.save()
+    
     def destroy(self, request, *args, **kwargs):
         """删除评论"""
         comment = self.get_object()
@@ -223,21 +236,14 @@ class CommentViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def add_image(self, request, pk=None):
-        """为评论添加图片（补交图片）"""
+        """为评论添加或替换图片"""
         comment = self.get_object()
         
-        # 权限检查：只有评论作者或管理员可以添加图片
+        # 权限检查：只有评论作者或管理员可以修改图片
         if comment.user != request.user and not request.user.is_superuser:
             return Response(
                 {'detail': '无权修改此评论'},
                 status=status.HTTP_403_FORBIDDEN
-            )
-        
-        # 检查是否已经有关联的图片或视频
-        if comment.image or comment.video:
-            return Response(
-                {'detail': '该评论已包含图片或视频，无法追加'},
-                status=status.HTTP_400_BAD_REQUEST
             )
         
         # 获取上传的图片
@@ -255,17 +261,39 @@ class CommentViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
+        # 如果评论已有图片，删除旧图片
+        if comment.image:
+            try:
+                old_image = comment.image
+                # 只使用文件名的相对路径，避免路径问题
+                if old_image.name:
+                    # 构建完整路径
+                    old_image_path = os.path.join(settings.MEDIA_ROOT, old_image.name)
+                    if os.path.isfile(old_image_path):
+                        os.remove(old_image_path)
+                        print(f"成功删除旧图片: {old_image_path}")
+            except Exception as e:
+                print(f"删除旧图片失败: {e}")
+                # 继续执行，不中断流程
+        
         # 生成唯一文件名
         ext = os.path.splitext(image.name)[-1]
         image.name = f"{uuid.uuid4().hex}{ext}"
         
-        # 保存图片
-        comment.image = image
-        comment.save()
-        
-        # 返回更新后的评论
-        serializer = CommentSerializer(comment, context={'request': request})
-        return Response(serializer.data)
+        try:
+            # 保存新图片
+            comment.image = image
+            comment.save()
+            
+            # 返回更新后的评论
+            serializer = CommentSerializer(comment, context={'request': request})
+            return Response(serializer.data)
+        except Exception as e:
+            print(f"添加图片失败: {e}")
+            return Response(
+                {'detail': f'添加图片失败: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class TripViewSet(viewsets.ReadOnlyModelViewSet):

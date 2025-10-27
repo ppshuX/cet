@@ -71,6 +71,20 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         return value
 
 
+class CommentUpdateSerializer(serializers.ModelSerializer):
+    """评论更新序列化器"""
+    
+    class Meta:
+        model = Comment
+        fields = ['content']
+    
+    def validate_content(self, value):
+        """验证内容不为空"""
+        if not value or not value.strip():
+            raise serializers.ValidationError("评论内容不能为空")
+        return value.strip()
+
+
 class CommentListSerializer(serializers.ModelSerializer):
     """评论列表序列化器（精简版）"""
     user = serializers.SerializerMethodField()

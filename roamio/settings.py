@@ -209,21 +209,26 @@ SPECTACULAR_SETTINGS = {
 }
 
 # ==================== CORS跨域配置 ====================
-# 开发环境允许的源
+# 允许所有来源（生产环境）
+CORS_ALLOW_ALL_ORIGINS = True
+
+# 更安全的配置（如果需要限制特定域名）
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",      # Vue (Vite默认端口)
-    "http://localhost:3000",      # React (create-react-app默认端口)
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:3000",
+    "https://app7508.acapp.acwing.com.cn",
+    "http://47.121.137.60",
 ]
 
-# 生产环境需要添加实际的前端域名
-# CORS_ALLOWED_ORIGINS += [
-#     "https://www.example.com",
-# ]
+# 允许的请求方法
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS'
+]
 
-# CORS相关配置
-CORS_ALLOW_CREDENTIALS = True                # 允许携带Cookie
+# 允许的请求头
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
@@ -236,5 +241,9 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
-# 如果开发时遇到跨域问题，可以临时使用（生产环境禁用！）
-# CORS_ORIGIN_ALLOW_ALL = True
+# 安全头部（微信需要）
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# CORS相关配置
+CORS_ALLOW_CREDENTIALS = True  # 允许携带Cookie

@@ -55,3 +55,12 @@ export const addCommentImage = (id, data) => {
     })
 }
 
+/**
+ * 更新评论内容
+ * @param {number} id - 评论ID
+ * @param {Object} data - 评论数据 {content}
+ */
+export const updateComment = (id, data) => {
+    return request.patch(`/comments/${id}/`, data)
+}
+

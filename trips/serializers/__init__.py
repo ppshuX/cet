@@ -9,7 +9,7 @@ from .user_serializer import (
     UpdateUserSerializer,
     AvatarUploadSerializer,
 )
-from .comment_serializer import CommentSerializer, CommentCreateSerializer
+from .comment_serializer import CommentSerializer, CommentCreateSerializer, CommentUpdateSerializer
 from .trip_serializer import TripSerializer, SiteStatSerializer
 from .trip_detail_serializer import (
     TripCreateSerializer,
@@ -29,6 +29,7 @@ __all__ = [
     # 评论
     'CommentSerializer',
     'CommentCreateSerializer',
+    'CommentUpdateSerializer',
     # 旅行（旧）
     'TripSerializer',
     'SiteStatSerializer',
