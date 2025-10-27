@@ -4,12 +4,12 @@ __pycache__/
 media/comment_images/
 media/comment_videos/
 media/user_avatars/
-db.sqlite3
 backups/
 *.log
 uwsgi.log
 
 # 配置文件（不提交到Git）
 nginx_full_config.conf
+nginx_roamio_config.conf
 server_deploy_commands.md
 DEPLOYMENT_NOTES.md
