@@ -51,6 +51,9 @@
               <button class="btn btn-sm btn-outline-secondary" @click="viewTrip(trip.slug)">
                 <i class="bi bi-eye me-1"></i>预览
               </button>
+              <button class="btn btn-sm btn-success" @click="addToTree(trip.slug)">
+                <i class="bi bi-tree me-1"></i>运用到旅行树
+              </button>
               <button class="btn btn-sm btn-outline-danger" @click="deleteTrip(trip.slug)">
                 <i class="bi bi-trash"></i>
               </button>
@@ -76,7 +79,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
-import { getMyTrips, deleteTripPlan } from '@/api/tripPlan'
+import { getMyTrips, deleteTripPlan, addTripToTree } from '@/api/tripPlan'
 import NavBar from '@/components/NavBar.vue'
 
 export default {
@@ -133,6 +136,20 @@ export default {
       }
     }
     
+    const addToTree = async (slug) => {
+      if (!confirm('确定要将此旅行计划添加到旅行树吗？它将显示在首页的旅行树上。')) {
+        return
+      }
+      
+      try {
+        const result = await addTripToTree(slug)
+        alert(result.detail || '成功添加到旅行树！')
+      } catch (error) {
+        console.error('添加到旅行树失败:', error)
+        alert('添加到旅行树失败，请稍后重试')
+      }
+    }
+    
     const formatDate = (dateStr) => {
       if (!dateStr) return '暂无'
       const date = new Date(dateStr)
@@ -155,6 +172,7 @@ export default {
       editTrip,
       viewTrip,
       deleteTrip,
+      addToTree,
       formatDate
     }
   }

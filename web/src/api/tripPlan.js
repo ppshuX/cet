@@ -76,3 +76,11 @@ export const makePrivate = (slug) => {
     return updateTripPlan(slug, { visibility: 'private' })
 }
 
+/**
+ * 将旅行计划添加到旅行树
+ * @param {string} slug - 旅行标识符
+ */
+export const addTripToTree = (slug) => {
+    return request.post(`/trip-plans/${slug}/add_to_tree/`)
+}
+

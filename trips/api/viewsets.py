@@ -390,4 +390,39 @@ class TripPlanViewSet(viewsets.ModelViewSet):
         
         serializer = TripDetailSerializer(new_trip)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def add_to_tree(self, request, slug=None):
+        """将旅行计划添加到旅行树（创建SiteStat）"""
+        trip = self.get_object()
+        
+        # 检查权限
+        if trip.author != request.user and not request.user.is_superuser:
+            raise PermissionError("无权将此旅行添加到旅行树")
+        
+        # 检查是否已存在
+        try:
+            SiteStat.objects.get(page=trip.slug)
+            return Response({
+                'detail': '该旅行已存在于旅行树中',
+                'slug': trip.slug
+            }, status=status.HTTP_200_OK)
+        except SiteStat.DoesNotExist:
+            # 创建新的SiteStat
+            site_stat = SiteStat.objects.create(
+                page=trip.slug,
+                name=trip.title,
+                description=trip.description,
+                views=0,
+                likes=0,
+                checked_in=False,
+                comments_count=0
+            )
+            
+            serializer = SiteStatSerializer(site_stat)
+            return Response({
+                'detail': '旅行已成功添加到旅行树',
+                'stat': serializer.data,
+                'slug': trip.slug
+            }, status=status.HTTP_201_CREATED)
 
