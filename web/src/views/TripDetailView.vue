@@ -230,6 +230,10 @@ export default {
         tripConfig.value = getTripConfig(slug)
       } catch (error) {
         console.error('获取旅行详情失败:', error)
+        if (error.response?.status === 404) {
+          alert('旅行页面不存在')
+          router.push('/')
+        }
       }
     }
     
@@ -241,6 +245,7 @@ export default {
         comments.value = data.results || data || []
       } catch (error) {
         console.error('获取评论列表失败:', error)
+        comments.value = []
       } finally {
         loading.value = false
       }
