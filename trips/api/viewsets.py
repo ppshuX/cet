@@ -394,6 +394,12 @@ class TripPlanViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def add_to_tree(self, request, slug=None):
         """将旅行计划添加到旅行树（创建SiteStat）"""
+        # 检查是否为管理员
+        if not request.user.is_superuser:
+            return Response({
+                'detail': '当前未开放此功能'
+            }, status=status.HTTP_403_FORBIDDEN)
+        
         trip = self.get_object()
         
         # 检查权限
@@ -426,6 +432,12 @@ class TripPlanViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def remove_from_tree(self, request, slug=None):
         """从旅行树移除旅行计划（删除SiteStat）"""
+        # 检查是否为管理员
+        if not request.user.is_superuser:
+            return Response({
+                'detail': '当前未开放此功能'
+            }, status=status.HTTP_403_FORBIDDEN)
+        
         trip = self.get_object()
         
         # 检查权限
