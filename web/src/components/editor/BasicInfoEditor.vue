@@ -5,13 +5,13 @@
     </div>
     <div class="card-body">
       <!-- 标题 -->
-      <div class="mb-3">
-        <label class="form-label">旅行标题 *</label>
+      <div class="mb-4 title-input-wrapper">
+        <label class="form-label title-label">旅行标题 *</label>
         <input
           :value="modelValue.title"
           @input="$emit('update:modelValue', { ...modelValue, title: $event.target.value })"
           type="text"
-          class="form-control"
+          class="form-control title-input"
           placeholder="例如：厦门三天两夜游"
           required
         />
@@ -144,6 +144,44 @@ export default {
   border-color: #667eea;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   transform: scale(1.1);
+}
+
+/* 标题输入框样式 */
+.title-input-wrapper {
+  text-align: center;
+}
+
+.title-label {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  display: block;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.title-input {
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+  transition: all 0.3s ease;
+}
+
+.title-input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+  background: white;
+  transform: scale(1.02);
+}
+
+.title-input::placeholder {
+  color: #adb5bd;
+  font-weight: 400;
 }
 </style>
 
