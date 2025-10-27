@@ -1,6 +1,44 @@
 # 🌟 旅行交流平台 (Travel Community Platform)
 
-一个基于Django的旅行规划与分享平台，提供旅行记录、路线规划、社区交流等功能。支持图片和视频上传，具备智能压缩功能以优化存储。
+一个现代化的前后端分离旅行平台，采用 Django REST Framework + Vue 3 架构。支持旅行规划、路线分享、社区交流等功能。
+
+**🎉 重大更新**：前后端分离架构升级100%完成！全部6个页面迁移成功！ 
+
+## 📚 项目文档
+
+详细的技术文档已整理到 [`docs/`](docs/) 目录：
+
+### 🎉 迁移完成
+- **[迁移完成总结](docs/MIGRATION_COMPLETE.md)** ⭐⭐⭐ - **前后端分离100%完成！**
+- **[旅行页面清单](docs/TRIP_PAGES_CHECKLIST.md)** ⭐⭐ - 5个旅行页面状态确认
+- **[样式迁移说明](docs/STYLE_MIGRATION.md)** ⭐⭐ - 6个页面100%样式还原
+- **[组件化重构总结](docs/COMPONENT_REFACTORING.md)** ⭐⭐ - 4个独立组件设计
+- **[旅行内容配置指南](docs/TRIP_CONTENT_GUIDE.md)** ⭐ - 详细配置说明（含新增字段）
+
+### 🚀 快速开始
+- **[立即部署](DEPLOY_NOW.md)** ⭐ - 一键部署指南
+- **[组件使用指南](cetapp/web/src/components/COMPONENTS_GUIDE.md)** - Vue组件API文档
+
+### 🎯 产品规划
+- **[阶段开发计划](docs/PHASE_PLAN.md)** ⭐⭐⭐ - **清晰的5阶段发展路线**
+- **[产品路线图](docs/PRODUCT_ROADMAP.md)** ⭐⭐ - 详细技术实现方案
+- **[内容增强总结](docs/CONTENT_ENHANCEMENT_SUMMARY.md)** ⭐ - 旅行内容优化记录
+
+### 📖 架构说明
+- **[前端集成完整指南](docs/FRONTEND_INTEGRATION_COMPLETE.md)** - Vue 3前端架构说明
+- **[前端项目README](cetapp/web/README.md)** - Vue项目详细说明
+
+### 🔧 功能文档
+- **[视频压缩功能](docs/VIDEO_COMPRESSION_README.md)** - 智能视频压缩实现
+- **[旅行页面指南](docs/TRIP_PAGES_GUIDE.md)** - 新增旅行页面的方法
+- **[用户认证说明](docs/AUTH_README.md)** - 认证系统实现细节
+
+### 🐛 常见问题
+- **[静态文件访问修复](docs/STATIC_FILES_FIX.md)** - 头像等静态文件404问题解决方案
+- **[API参数冲突修复](docs/API_PARAMETER_CONFLICT_FIX.md)** - 评论API参数冲突解决方案
+- **[注册功能修复](docs/REGISTRATION_FIX.md)** - 注册功能问题修复
+
+---
 
 ## 📋 目录
 

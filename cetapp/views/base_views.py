@@ -1,35 +1,32 @@
 """
-基础页面视图（首页、主菜单、CET考试相关页面等）
+基础页面视图
 """
 from django.shortcuts import render
-
-
-def index(request):
-    """网站首页"""
-    return render(request, 'index.html')
+from django.http import HttpResponse
+from django.conf import settings
+import os
 
 
 def main_menu(request):
-    """主菜单页面"""
+    """主菜单页面（保留向后兼容）"""
     return render(request, 'cetapp/index.html')
 
 
-def listening(request):
-    """听力页面"""
-    return render(request, 'listening.html')
-
-
-def reading(request):
-    """阅读页面"""
-    return render(request, 'reading.html')
-
-
-def writing(request):
-    """写作页面"""
-    return render(request, 'writing.html')
-
-
-def translate(request):
-    """翻译页面"""
-    return render(request, 'translate.html')
+def vue_app(request):
+    """
+    Vue单页应用入口
+    提供Vue构建后的index.html
+    """
+    vue_index_path = os.path.join(settings.BASE_DIR, 'cetapp', 'static', 'vue', 'index.html')
+    
+    try:
+        with open(vue_index_path, 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        return HttpResponse(html_content, content_type='text/html')
+    except FileNotFoundError:
+        return HttpResponse(
+            '<h1>Vue应用未构建</h1>'
+            '<p>请先运行: <code>cd cetapp/web && npm run build</code></p>',
+            status=404
+        )
 

@@ -31,17 +31,25 @@ ALLOWED_HOSTS = ['47.121.137.60', 'app7508.acapp.acwing.com.cn','127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
-    'cetapp',
+    'trips',  # ⭐ 旅行应用（原cetapp）
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Django REST Framework
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
+    'django_filters',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # CORS中间件（必须在CommonMiddleware之前）
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -137,3 +145,96 @@ FILE_UPLOAD_HANDLERS = [
 # 请求体大小限制
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 DATA_UPLOAD_MAX_NUMBER_FILES = 100
+
+# ==================== Django REST Framework配置 ====================
+from datetime import timedelta
+
+REST_FRAMEWORK = {
+    # 认证
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',  # 保留session认证用于浏览器API调试
+    ],
+    # 权限
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    # 分页
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+    # 过滤、搜索、排序
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+    # API文档
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    # 日期时间格式
+    'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+    # 异常处理
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
+}
+
+# JWT配置
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),        # access token有效期1天
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),       # refresh token有效期7天
+    'ROTATE_REFRESH_TOKENS': True,                     # 刷新token时返回新的refresh token
+    'BLACKLIST_AFTER_ROTATION': True,                  # 旧token加入黑名单
+    'UPDATE_LAST_LOGIN': True,                         # 更新最后登录时间
+    
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+}
+
+# API文档配置
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'CET旅行平台 API',
+    'DESCRIPTION': '前后端分离的旅行分享平台',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+}
+
+# ==================== CORS跨域配置 ====================
+# 开发环境允许的源
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",      # Vue (Vite默认端口)
+    "http://localhost:3000",      # React (create-react-app默认端口)
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:3000",
+]
+
+# 生产环境需要添加实际的前端域名
+# CORS_ALLOWED_ORIGINS += [
+#     "https://www.example.com",
+# ]
+
+# CORS相关配置
+CORS_ALLOW_CREDENTIALS = True                # 允许携带Cookie
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+# 如果开发时遇到跨域问题，可以临时使用（生产环境禁用！）
+# CORS_ORIGIN_ALLOW_ALL = True

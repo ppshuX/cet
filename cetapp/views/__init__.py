@@ -4,12 +4,8 @@
 """
 # 基础页面视图
 from .base_views import (
-    index,
     main_menu,
-    listening,
-    reading,
-    writing,
-    translate,
+    vue_app,
 )
 
 # 认证相关视图
@@ -62,12 +58,8 @@ from .api_views import (
 
 __all__ = [
     # 基础页面
-    'index',
     'main_menu',
-    'listening',
-    'reading',
-    'writing',
-    'translate',
+    'vue_app',
     # 认证
     'custom_login',
     'register',

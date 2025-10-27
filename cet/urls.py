@@ -1,35 +1,37 @@
 """
-URL configuration for cet project.
+URL configuration for Roamio project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include
 from cetapp import views
 from django.conf import settings
 from django.conf.urls.static import static
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('listening', views.listening, name='listening'),
-    path('writing', views.writing, name='writing'),
-    path('reading', views.reading, name='reading'),
-    path('translate', views.translate, name='translate'),
-    path('cetapp/', include('cetapp.urls')),
-    path('accounts/login/', views.custom_login, name='login'),  # 使用自定义登录视图（必须在auth.urls之前）
-    path('accounts/logout/', views.custom_logout, name='logout'),  # 自定义登出视图
+    # ==================== 主应用 ⭐ ====================
+    path('', views.vue_app, name='home'),  # Vue单页应用作为首页
+    
+    # ==================== 旅行相关路由（保留向后兼容） ====================
+    path('trips/', include('cetapp.urls')),
+    path('accounts/login/', views.custom_login, name='login'),
+    path('accounts/logout/', views.custom_logout, name='logout'),
+    
+    # ==================== RESTful API路由 ⭐ ====================
+    path('api/v1/', include('cetapp.api.urls')),
+    
+    # API文档
+    path('api/schema/', SpectacularAPIView.as_view(), name='api-schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='api-schema'), name='api-docs'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='api-schema'), name='api-redoc'),
+    
+    # Django Admin
     path('admin/', admin.site.urls),
 ]
 
+# 静态文件和媒体文件
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
