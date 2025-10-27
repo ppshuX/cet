@@ -224,7 +224,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 class TripViewSet(viewsets.ReadOnlyModelViewSet):
     """旅行页面ViewSet"""
-    queryset = SiteStat.objects.all().order_by('page')
+    queryset = SiteStat.objects.all().order_by('id')  # 按ID排序，保持创建时间顺序
     serializer_class = TripSerializer
     lookup_field = 'page'
     permission_classes = [AllowAny]
