@@ -114,12 +114,12 @@
                     >
                       ✏️
                     </button>
-                    <!-- 添加图片按钮（仅在编辑模式下显示） -->
+                    <!-- 添加/替换图片按钮（仅在编辑模式下显示） -->
                     <button
                       v-if="canAddImage(comment) && editingComments[comment.id]"
                       class="btn btn-sm btn-outline-success"
                       @click="handleAddImage(comment.id)"
-                      title="添加图片"
+                      :title="comment.image ? '替换图片' : '添加图片'"
                     >
                       📷
                     </button>
@@ -295,11 +295,11 @@ export default {
     }
     
     const canAddImage = (comment) => {
-      // 判断是否可以添加图片：
-      // 1. 评论没有图片
-      // 2. 评论没有视频
-      // 3. 评论作者是当前用户（通过can_delete判断）
-      return !comment.image && !comment.video && comment.can_delete
+      // 判断是否可以添加/替换图片：
+      // 1. 评论没有视频（有视频就不能添加图片）
+      // 2. 评论作者是当前用户（通过can_delete判断）
+      // 3. 允许替换已有图片
+      return !comment.video && comment.can_delete
     }
     
     const startEditing = (commentId) => {
