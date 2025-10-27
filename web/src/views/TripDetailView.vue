@@ -35,8 +35,9 @@
           </div>
         </div>
         
-        <!-- 统计组件 ⭐ -->
+        <!-- 统计组件 ⭐ (仅旧页面) -->
         <TripStats
+          v-if="trip.stats"
           :views="trip.stats.views"
           :likes="trip.stats.likes"
           @like="handleLike"
@@ -44,9 +45,9 @@
         
         <!-- 旅行进度条组件 ⭐ -->
         <TripProgress
-          v-if="tripConfig && tripConfig.dates"
-          :start-date="tripConfig.dates.start"
-          :end-date="tripConfig.dates.end"
+          v-if="(tripConfig && tripConfig.dates) || (trip.start_date && trip.end_date)"
+          :start-date="tripConfig?.dates?.start || trip.start_date"
+          :end-date="tripConfig?.dates?.end || trip.end_date"
         />
         
         <!-- 行程概览组件 ⭐ (动态内容) -->
@@ -157,7 +158,7 @@
         <CommentSection
           :comments="comments"
           :is-admin="isAdmin"
-          :has-checked-in="trip.stats.checked_in"
+          :has-checked-in="trip.stats?.checked_in || false"
           :get-avatar-url="getAvatarUrl"
           @checkin="handleCheckin"
           @submit-comment="handleSubmitComment"

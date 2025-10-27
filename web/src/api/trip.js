@@ -14,9 +14,19 @@ export const getTripList = (params) => {
 /**
  * 获取旅行详情
  * @param {string} slug - 旅行标识符
+ * 先尝试从新Trip模型获取，失败则尝试旧SiteStat
  */
-export const getTripDetail = (slug) => {
-    return request.get(`/trips/${slug}/`)
+export const getTripDetail = async (slug) => {
+    // 先尝试新的Trip模型
+    try {
+        return await request.get(`/trip-plans/${slug}/`)
+    } catch (error) {
+        // 如果失败（404），尝试旧的SiteStat
+        if (error.response?.status === 404) {
+            return await request.get(`/trips/${slug}/`)
+        }
+        throw error
+    }
 }
 
 /**
