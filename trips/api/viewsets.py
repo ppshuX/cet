@@ -234,6 +234,33 @@ class CommentViewSet(viewsets.ModelViewSet):
         self.perform_destroy(comment)
         return Response(status=status.HTTP_204_NO_CONTENT)
     
+    def perform_destroy(self, instance):
+        """删除评论时同时删除关联的文件"""
+        # 删除关联的图片文件
+        if instance.image:
+            try:
+                # 使用媒体文件名的相对路径
+                image_path = os.path.join(settings.MEDIA_ROOT, instance.image.name)
+                if os.path.isfile(image_path):
+                    os.remove(image_path)
+                    print(f"成功删除图片文件: {image_path}")
+            except Exception as e:
+                print(f"删除图片文件失败: {e}")
+        
+        # 删除关联的视频文件
+        if instance.video:
+            try:
+                # 使用媒体文件名的相对路径
+                video_path = os.path.join(settings.MEDIA_ROOT, instance.video.name)
+                if os.path.isfile(video_path):
+                    os.remove(video_path)
+                    print(f"成功删除视频文件: {video_path}")
+            except Exception as e:
+                print(f"删除视频文件失败: {e}")
+        
+        # 删除评论对象
+        instance.delete()
+    
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def add_image(self, request, pk=None):
         """为评论添加或替换图片"""
