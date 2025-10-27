@@ -116,6 +116,11 @@ const request = {
             throw error
         }
 
+        // 检查响应是否有内容（204 No Content没有响应体）
+        if (response.status === 204 || response.headers.get('content-length') === '0') {
+            return null
+        }
+
         // 解析响应数据
         const data = await response.json()
         return data

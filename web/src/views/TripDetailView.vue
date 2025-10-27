@@ -325,7 +325,8 @@ export default {
         await fetchComments()
       } catch (error) {
         console.error('删除评论失败:', error)
-        alert('删除失败，请稍后重试')
+        const errorMsg = error.response?.data?.detail || error.message || '删除失败，请稍后重试'
+        alert(errorMsg)
       }
     }
     

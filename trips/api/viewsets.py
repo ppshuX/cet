@@ -222,25 +222,46 @@ class CommentViewSet(viewsets.ModelViewSet):
     
     def destroy(self, request, *args, **kwargs):
         """删除评论"""
-        comment = self.get_object()
-        
-        # 权限检查：只有评论作者或管理员可以删除
-        if comment.user != request.user and not request.user.is_superuser:
+        try:
+            comment = self.get_object()
+            
+            # 权限检查：只有评论作者或管理员可以删除
+            if comment.user != request.user and not request.user.is_superuser:
+                return Response(
+                    {'detail': '无权删除此评论'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+            
+            # 执行删除操作
+            self.perform_destroy(comment)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+            
+        except Exception as e:
+            print(f"删除评论时发生错误: {e}")
+            import traceback
+            traceback.print_exc()
             return Response(
-                {'detail': '无权删除此评论'},
-                status=status.HTTP_403_FORBIDDEN
+                {'detail': f'删除失败: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-        
-        self.perform_destroy(comment)
-        return Response(status=status.HTTP_204_NO_CONTENT)
     
     def perform_destroy(self, instance):
         """删除评论时同时删除关联的文件"""
+        # 保存文件路径
+        image_name = instance.image.name if instance.image else None
+        video_name = instance.video.name if instance.video else None
+        
+        # 删除评论对象（这会自动触发文件清理）
+        try:
+            instance.delete()
+        except Exception as e:
+            print(f"删除评论对象失败: {e}")
+            raise
+        
         # 删除关联的图片文件
-        if instance.image:
+        if image_name:
             try:
-                # 使用媒体文件名的相对路径
-                image_path = os.path.join(settings.MEDIA_ROOT, instance.image.name)
+                image_path = os.path.join(settings.MEDIA_ROOT, image_name)
                 if os.path.isfile(image_path):
                     os.remove(image_path)
                     print(f"成功删除图片文件: {image_path}")
@@ -248,18 +269,14 @@ class CommentViewSet(viewsets.ModelViewSet):
                 print(f"删除图片文件失败: {e}")
         
         # 删除关联的视频文件
-        if instance.video:
+        if video_name:
             try:
-                # 使用媒体文件名的相对路径
-                video_path = os.path.join(settings.MEDIA_ROOT, instance.video.name)
+                video_path = os.path.join(settings.MEDIA_ROOT, video_name)
                 if os.path.isfile(video_path):
                     os.remove(video_path)
                     print(f"成功删除视频文件: {video_path}")
             except Exception as e:
                 print(f"删除视频文件失败: {e}")
-        
-        # 删除评论对象
-        instance.delete()
     
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def add_image(self, request, pk=None):
