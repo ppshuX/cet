@@ -411,12 +411,9 @@ class TripPlanViewSet(viewsets.ModelViewSet):
             # 创建新的SiteStat
             site_stat = SiteStat.objects.create(
                 page=trip.slug,
-                name=trip.title,
-                description=trip.description,
                 views=0,
                 likes=0,
-                checked_in=False,
-                comments_count=0
+                checked_in=False
             )
             
             serializer = SiteStatSerializer(site_stat)
