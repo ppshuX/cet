@@ -64,8 +64,8 @@
         </div>
       </div>
       
-      <!-- 敬请期待 -->
-      <div class="fruit fruit-coming-soon" style="pointer-events: none;">
+      <!-- 敬请期待（作为最后一个果实，与newTrips一起循环） -->
+      <div class="fruit fruit-coming-soon" style="pointer-events: none;" :class="`fruit-${trips.length + 1}`">
         <span class="icon">⏳</span>
         <div class="info">
           <div class="trip-title">敬请期待</div>
@@ -334,9 +334,8 @@ export default {
   transform: translate(20%, 0);
 }
 
+/* 敬请期待位置动态调整 */
 .fruit-coming-soon {
-  top: 1330px;
-  transform: translate(20%, 0);
   background: #f8f8ff;
   opacity: 0.7;
 }
