@@ -44,6 +44,10 @@ const routes = [
     }
   },
   {
+    path: '/editor',
+    redirect: '/my-trips'
+  },
+  {
     path: '/editor/new',
     name: 'trip-editor-new',
     component: () => import('@/views/TripEditorView.vue'),
