@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from .viewsets import UserViewSet, CommentViewSet, TripViewSet, AuthViewSet
+from .viewsets import UserViewSet, CommentViewSet, TripViewSet, TripPlanViewSet, AuthViewSet
 
 # 创建路由器
 router = DefaultRouter()
@@ -15,7 +15,8 @@ router = DefaultRouter()
 # 注册ViewSets
 router.register(r'users', UserViewSet, basename='user')
 router.register(r'comments', CommentViewSet, basename='comment')
-router.register(r'trips', TripViewSet, basename='trip')
+router.register(r'trips', TripViewSet, basename='trip')  # 旧的SiteStat接口（保持兼容）
+router.register(r'trip-plans', TripPlanViewSet, basename='trip-plan')  # 新的Trip编辑接口
 router.register(r'auth', AuthViewSet, basename='auth')
 
 # URL配置

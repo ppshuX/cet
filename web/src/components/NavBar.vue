@@ -26,6 +26,12 @@
             </router-link>
           </li>
           <li class="nav-item">
+            <router-link to="/my-trips" class="nav-link">
+              <i class="bi bi-folder me-1"></i>
+              我的旅行
+            </router-link>
+          </li>
+          <li class="nav-item">
             <a href="/api/docs/" target="_blank" class="nav-link">
               <i class="bi bi-book me-1"></i>
               API文档

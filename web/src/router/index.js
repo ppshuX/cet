@@ -33,6 +33,33 @@ const routes = [
     name: 'trip-detail',
     component: () => import('@/views/TripDetailView.vue'),
     meta: { title: '旅行详情' }
+  },
+  {
+    path: '/my-trips',
+    name: 'my-trips',
+    component: () => import('@/views/MyTripsView.vue'),
+    meta: {
+      title: '我的旅行',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/editor/new',
+    name: 'trip-editor-new',
+    component: () => import('@/views/TripEditorView.vue'),
+    meta: {
+      title: '创建旅行计划',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/editor/:slug',
+    name: 'trip-editor',
+    component: () => import('@/views/TripEditorView.vue'),
+    meta: {
+      title: '编辑旅行计划',
+      requiresAuth: true
+    }
   }
 ]
 

@@ -11,6 +11,12 @@ from .user_serializer import (
 )
 from .comment_serializer import CommentSerializer, CommentCreateSerializer
 from .trip_serializer import TripSerializer, SiteStatSerializer
+from .trip_detail_serializer import (
+    TripCreateSerializer,
+    TripDetailSerializer,
+    TripListSerializer,
+    TripUpdateSerializer,
+)
 from .auth_serializer import LoginSerializer, TokenObtainSerializer
 
 __all__ = [
@@ -23,9 +29,14 @@ __all__ = [
     # 评论
     'CommentSerializer',
     'CommentCreateSerializer',
-    # 旅行
+    # 旅行（旧）
     'TripSerializer',
     'SiteStatSerializer',
+    # 旅行（新）
+    'TripCreateSerializer',
+    'TripDetailSerializer',
+    'TripListSerializer',
+    'TripUpdateSerializer',
     # 认证
     'LoginSerializer',
     'TokenObtainSerializer',
