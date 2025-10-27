@@ -26,14 +26,33 @@
       <!-- 中间的藤蔓线 -->
       <div class="vine-line"></div>
       
-      <!-- 旅行卡片（果实） -->
+      <!-- 原始果实（前5个） -->
       <div
-        v-for="(trip, index) in trips"
+        v-for="(trip, index) in originalTrips"
         :key="trip.slug"
         :class="['fruit', `fruit-${index + 1}`]"
         @click="goToDetail(trip.slug)"
       >
         <span class="icon">{{ getIcon(index) }}</span>
+        <div class="info">
+          <div class="trip-title">{{ trip.name }}</div>
+          <div class="desc">{{ trip.description }}</div>
+          <div class="stats">
+            <span class="stat-item">👁️ {{ trip.stats.views }}</span>
+            <span class="stat-item">❤️ {{ trip.stats.likes }}</span>
+            <span class="stat-item">💬 {{ trip.stats.comments_count }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 新增的果实（左右排列） -->
+      <div
+        v-for="(trip, index) in newTrips"
+        :key="trip.slug"
+        :class="['fruit', 'fruit-new', index % 2 === 0 ? 'fruit-new-left' : 'fruit-new-right']"
+        @click="goToDetail(trip.slug)"
+      >
+        <span class="icon">{{ getIcon(index + 5) }}</span>
         <div class="info">
           <div class="trip-title">{{ trip.name }}</div>
           <div class="desc">{{ trip.description }}</div>
@@ -65,7 +84,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { getTripList } from '@/api/trip'
 import NavBar from '@/components/NavBar.vue'
@@ -95,7 +114,7 @@ export default {
     }
     
     const goToDetail = (slug) => {
-      router.push(`/trip/${slug}`)
+      router.push(`/trip/${slug}/`)
     }
     
     // 根据索引返回不同的图标
@@ -104,12 +123,18 @@ export default {
       return icons[index] || '🗺️'
     }
     
+    // 将trips分成原始和新数据
+    const originalTrips = computed(() => trips.value.slice(0, 5))
+    const newTrips = computed(() => trips.value.slice(5))
+    
     onMounted(() => {
       fetchTrips()
     })
     
     return {
       trips,
+      originalTrips,
+      newTrips,
       loading,
       goToDetail,
       getIcon
@@ -283,8 +308,23 @@ export default {
   transform: translate(-120%, 0);
 }
 
-.fruit-coming-soon {
+/* 新果实样式 */
+.fruit-new {
+  opacity: 0.85;
+}
+
+.fruit-new-left {
   top: 680px;
+  transform: translate(-120%, 0);
+}
+
+.fruit-new-right {
+  top: 680px;
+  transform: translate(20%, 0);
+}
+
+.fruit-coming-soon {
+  top: 750px;
   transform: translate(20%, 0);
   background: #f8f8ff;
   opacity: 0.7;
@@ -369,8 +409,17 @@ export default {
     top: 630px;
   }
 
+  .fruit-new {
+    transform: translate(-50%, 0) !important;
+  }
+  
+  .fruit-new-left,
+  .fruit-new-right {
+    transform: translate(-50%, 0) !important;
+  }
+  
   .fruit-coming-soon {
-    top: 780px;
+    top: 850px;
   }
 
   .fruit:hover {

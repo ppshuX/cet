@@ -25,8 +25,8 @@
               旅行列表
             </router-link>
           </li>
-          <li class="nav-item">
-            <router-link to="/my-trips" class="nav-link">
+          <li v-if="isLoggedIn" class="nav-item">
+            <router-link to="/my-trips/" class="nav-link">
               <i class="bi bi-folder me-1"></i>
               我的旅行
             </router-link>
