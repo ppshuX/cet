@@ -8,10 +8,10 @@ import os
 import django
 
 # 设置Django环境
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cet.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'roamio.settings')
 django.setup()
 
-from cetapp.models import SiteStat
+from trips.models import SiteStat
 
 # 要创建的旅行页面
 trips = ['trip', 'trip1', 'trip2', 'trip3', 'trip4']

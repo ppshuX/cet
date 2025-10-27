@@ -1,0 +1,360 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅行主菜单</title>
+    <link rel="icon" type="image/png" href="{% static 'favicon.png' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0e7ff 0%, #f0f4f8 100%);
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .main-header {
+            text-align: center;
+            margin-top: 36px;
+            margin-bottom: 10px;
+        }
+
+        .main-header .title {
+            font-size: 2.1rem;
+            color: #2366b4;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .welcome {
+            text-align: center;
+            color: #234;
+            font-size: 1.08rem;
+            margin-bottom: 18px;
+        }
+
+        .vine-container {
+            position: relative;
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto 40px auto;
+            min-height: 700px;
+            /* PC端不设置背景色，保持透明 */
+        }
+
+        .vine-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: linear-gradient(to bottom, #7ec850 0%, #2366b4 100%);
+            border-radius: 3px;
+            z-index: 0;
+            transform: translateX(-50%);
+        }
+
+        .fruit {
+            position: absolute;
+            left: 50%;
+            width: 320px;
+            max-width: 95vw;
+            background: #fff;
+            border-radius: 50px;
+            box-shadow: 0 4px 24px rgba(35, 102, 180, 0.10);
+            padding: 1.7rem 1.5rem 1.5rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.3rem;
+            transition: box-shadow 0.18s, transform 0.18s, background 0.18s;
+            cursor: pointer;
+            text-decoration: none !important;
+        }
+
+        .fruit:hover {
+            box-shadow: 0 12px 36px rgba(35, 102, 180, 0.22);
+            transform: scale(1.08) translateY(-6px);
+            background: linear-gradient(90deg, #f0f8ff 0%, #e0e7ff 100%);
+            text-decoration: none !important;
+        }
+
+        .fruit .icon {
+            font-size: 2.5rem;
+            flex-shrink: 0;
+            transition: color 0.18s;
+        }
+
+        .fruit:hover .icon {
+            color: #4e9cff;
+        }
+
+        .fruit .title,
+        .fruit .desc,
+        .fruit .date {
+            text-decoration: none !important;
+            transition: color 0.18s;
+        }
+
+        .fruit:hover .title {
+            color: #2366b4;
+        }
+
+        .fruit:hover .desc {
+            color: #2c3e50;
+        }
+
+        .fruit:hover .date {
+            color: #4e9cff;
+        }
+
+        /* 交错布局 */
+        .fruit.fruit-1 {
+            top: 30px;
+            transform: translate(-120%, 0);
+        }
+
+        .fruit.fruit-2 {
+            top: 150px;
+            transform: translate(20%, 0);
+        }
+
+        .fruit.fruit-3 {
+            top: 270px;
+            transform: translate(-120%, 0);
+        }
+
+        .fruit.fruit-4 {
+            top: 390px;
+            transform: translate(20%, 0);
+        }
+
+        .fruit.fruit-5 {
+            top: 470px;
+            transform: translate(-120%, 0);
+        }
+
+        .fruit.fruit-6 {
+            top: 590px;
+            transform: translate(20%, 0);
+            background: #f8f8ff;
+            color: #aaa;
+        }
+
+        @media (max-width: 600px) {
+            .vine-container {
+                min-height: 900px;
+                background: linear-gradient(135deg, #e0e7ff 0%, #f0f4f8 100%);
+                border-radius: 32px;
+                box-shadow: 0 4px 24px rgba(35, 102, 180, 0.08);
+            }
+
+            .fruit {
+                left: 50%;
+                transform: translate(-50%, 0) !important;
+                width: 98vw;
+                max-width: 98vw;
+                padding: 1.2rem 0.7rem 1.1rem 0.7rem;
+            }
+
+            .fruit.fruit-1,
+            .fruit.fruit-2,
+            .fruit.fruit-3 {
+                top: unset;
+            }
+
+            .fruit.fruit-1 {
+                top: 30px;
+            }
+
+            .fruit.fruit-2 {
+                top: 140px;
+            }
+
+            .fruit.fruit-3 {
+                top: 250px;
+            }
+
+            .fruit.fruit-4 {
+                top: 360px;
+            }
+
+            .fruit.fruit-5 {
+                top: 480px;
+                transform: translate(-50%, 0) !important;
+            }
+
+            .fruit.fruit-6 {
+                top: 590px;
+                transform: translate(-50%, 0) !important;
+            }
+
+            .fruit .icon {
+                font-size: 2rem;
+            }
+
+            .fruit .title {
+                font-size: 1.05rem;
+            }
+
+            .fruit .desc {
+                font-size: 0.95rem;
+            }
+
+            .fruit .date {
+                font-size: 0.93rem;
+            }
+
+            .fruit.fruit-4 {
+                top: 370px;
+                transform: translate(-50%, 0) !important;
+            }
+        }
+
+        .auth-links {
+            position: absolute;
+            top: 18px;
+            right: 16px;
+            font-size: 1rem;
+        }
+
+        .auth-links a,
+        .auth-links button {
+            color: #2366b4;
+            text-decoration: none;
+            margin: 0 0.7rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .auth-links a:hover,
+        .auth-links button:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            text-align: center;
+            color: #aaa;
+            font-size: 0.98rem;
+            margin-top: 60px;
+            padding-bottom: 18px;
+        }
+
+        @media (max-width: 480px) {
+            .main-header .title {
+                font-size: 1.3rem;
+            }
+
+            .footer {
+                font-size: 0.85rem;
+                margin-top: 30px;
+            }
+
+            .auth-links {
+                top: 8px;
+                right: 6px;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position: absolute; top: 20px; right: 20px; display: flex; align-items: center; gap: 10px;">
+        {% if user.is_authenticated %}
+        <!-- 用户头像和用户名 -->
+        <a href="{% url 'user_center' %}" style="text-decoration: none; display: flex; align-items: center;">
+            <div
+                style="width: 30px; height: 30px; border-radius: 50%; overflow: hidden; border: 2px solid #ddd; margin-right: 8px; flex-shrink: 0;">
+                {% if user.profile.avatar %}
+                <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}的头像"
+                    style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                <img src="/static/images/default_avatar.png" alt="默认头像"
+                    style="width: 100%; height: 100%; object-fit: cover;">
+                {% endif %}
+            </div>
+            <span style="color: #333; font-weight: 600; font-size: 0.9rem;">{{ user.username }}</span>
+        </a>
+
+        <form id="logoutForm" action="{% url 'logout' %}?next=/trips/" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit"
+                style="background:none; border:none; color:#2366b4; cursor:pointer; font-size:1rem;">退出</button>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}?next={{ request.path }}">登录</a> /
+        <a href="{% url 'register' %}?next={{ request.path }}">注册</a>
+        {% endif %}
+    </div>
+    <div class="main-header">
+        <span class="title">旅行主菜单</span>
+    </div>
+    <div class="welcome">
+        欢迎来到旅行计划与交流平台！<br>
+        发现精彩行程，记录美好旅途，和朋友一起分享旅行故事。
+    </div>
+    <div class="vine-container">
+        <div class="vine-line"></div>
+        <a href="{% url 'trip_page' %}" class="fruit fruit-1">
+            <span class="icon">🏖️</span>
+            <span class="info">
+                <span class="title">2025年厦门旅行计划</span><br>
+                <span class="desc">三天两晚畅游厦门植物园、鼓浪屿、八市等地，体验闽南风情与美食。</span>
+                <span class="date">结束日期：2025-06-24</span>
+            </span>
+        </a>
+        <a href="{% url 'trip1' %}" class="fruit fruit-2">
+            <span class="icon">🌊</span>
+            <span class="info">
+                <span class="title">三岔河一日游</span><br>
+                <span class="desc">龙凤寺、白水塘、紫溪湿地，亲近自然，轻松徒步，适合家庭和好友结伴。</span>
+                <span class="date">结束日期：2025-07-12</span>
+            </span>
+        </a>
+        <a href="{% url 'trip2' %}" class="fruit fruit-3">
+            <span class="icon">🏙️</span>
+            <span class="info">
+                <span class="title">曲靖市区两日游</span><br>
+                <span class="desc">龙潭公园、麒麟公园、夜市美食、寥廓山日出，深度体验曲靖本地生活。</span>
+                <span class="date">结束日期：2025-07-14</span>
+            </span>
+        </a>
+        <a href="{% url 'trip3' %}" class="fruit fruit-4">
+            <span class="icon">🌄</span>
+            <span class="info">
+                <span class="title">昆明三天两夜旅行挑战</span><br>
+                <span class="desc">西南联大、翠湖、滇池西山等地，地铁公交畅游昆明，预算900元内。</span>
+                <span class="date">结束日期：2025-07-21</span>
+            </span>
+        </a>
+        <a href="{% url 'trip4' %}" class="fruit fruit-5">
+            <span class="icon">🌇</span>
+            <span class="info">
+                <span class="title">长沙慢旅行计划</span><br>
+                <span class="desc">太平街、岳麓山、橘子洲，J.Grigg 和 Leen 一起体验湘楚文化和网红美食。</span>
+                <span class="date">结束日期：2025-10-08</span>
+            </span>
+        </a>
+        <a href="#" class="fruit fruit-6" style="pointer-events:none; opacity:0.7;">
+            <span class="icon">⏳</span>
+            <span class="info">
+                <span class="title">敬请期待</span><br>
+                <span class="desc">更多精彩行程即将上线，欢迎持续关注！</span>
+                <span class="date">Coming soon...</span>
+            </span>
+        </a>
+    </div>
+    <div class="footer">
+        &copy; 2025 旅行计划平台 | 旅行社区<br>
+        技术支持：Django + Bootstrap | 联系方式：2064747320@qq.com
+    </div>
+</body>
+
+</html>
