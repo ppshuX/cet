@@ -118,7 +118,7 @@ export default {
     }
     
     const viewTrip = (slug) => {
-      router.push(`/trip/${slug}`)
+      router.push(`/trip/${slug}/`)
     }
     
     const deleteTrip = async (slug) => {

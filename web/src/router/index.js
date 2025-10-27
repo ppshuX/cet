@@ -8,19 +8,19 @@ const routes = [
     meta: { title: '旅行列表' }
   },
   {
-    path: '/login',
+    path: '/login/',
     name: 'login',
     component: () => import('@/views/LoginView.vue'),
     meta: { title: '用户登录' }
   },
   {
-    path: '/register',
+    path: '/register/',
     name: 'register',
     component: () => import('@/views/RegisterView.vue'),
     meta: { title: '用户注册' }
   },
   {
-    path: '/user/center',
+    path: '/user/center/',
     name: 'user-center',
     component: () => import('@/views/UserCenterView.vue'),
     meta: {
@@ -29,13 +29,13 @@ const routes = [
     }
   },
   {
-    path: '/trip/:slug',
+    path: '/trip/:slug/',
     name: 'trip-detail',
     component: () => import('@/views/TripDetailView.vue'),
     meta: { title: '旅行详情' }
   },
   {
-    path: '/my-trips',
+    path: '/my-trips/',
     name: 'my-trips',
     component: () => import('@/views/MyTripsView.vue'),
     meta: {
@@ -44,11 +44,11 @@ const routes = [
     }
   },
   {
-    path: '/editor',
-    redirect: '/my-trips'
+    path: '/editor/',
+    redirect: '/my-trips/'
   },
   {
-    path: '/editor/new',
+    path: '/editor/new/',
     name: 'trip-editor-new',
     component: () => import('@/views/TripEditorView.vue'),
     meta: {
@@ -57,7 +57,7 @@ const routes = [
     }
   },
   {
-    path: '/editor/:slug',
+    path: '/editor/:slug/',
     name: 'trip-editor',
     component: () => import('@/views/TripEditorView.vue'),
     meta: {
@@ -83,10 +83,10 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !token) {
     // 需要登录但未登录，跳转到登录页
     next({
-      path: '/login',
+      path: '/login/',
       query: { redirect: to.fullPath }  // 保存原本要去的页面
     })
-  } else if ((to.path === '/login' || to.path === '/register') && token) {
+  } else if ((to.path === '/login/' || to.path === '/register/') && token) {
     // 已登录用户访问登录/注册页，跳转到首页
     next('/')
   } else {

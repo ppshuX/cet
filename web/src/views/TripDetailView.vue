@@ -227,11 +227,25 @@ export default {
       const slug = route.params.slug
       try {
         trip.value = await getTripDetail(slug)
-        // 获取配置
-        tripConfig.value = getTripConfig(slug)
+        
+        // 如果是新Trip模型，不需要getTripConfig
+        // 如果是旧SiteStat模型，使用getTripConfig
+        if (trip.value.overview) {
+          // 新Trip模型，已经有完整的配置和数据
+          tripConfig.value = {
+            dates: {
+              start: trip.value.start_date,
+              end: trip.value.end_date
+            },
+            overview: trip.value.overview
+          }
+        } else {
+          // 旧SiteStat模型，使用静态配置
+          tripConfig.value = getTripConfig(slug)
+        }
       } catch (error) {
         console.error('获取旅行详情失败:', error)
-        if (error.response?.status === 404) {
+        if (error.response?.status === 404 || error.status === 404) {
           alert('旅行页面不存在')
           router.push('/')
         }
