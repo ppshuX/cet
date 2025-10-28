@@ -25,6 +25,7 @@ urlpatterns = [
     
     # ==================== 旅行相关路由（保留向后兼容） ====================
     path('trips/', include('trips.urls')),
+    path('cetapp/', include('trips.urls')),  # 旧URL路径兼容
     path('accounts/login/', views.custom_login, name='login'),
     path('accounts/logout/', views.custom_logout, name='logout'),
     
