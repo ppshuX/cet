@@ -46,3 +46,11 @@ export const updateProfile = (data) => {
 export const getUserStats = (userId) => {
     return request.get(`/users/${userId}/stats/`)
 }
+
+/**
+ * 删除用户账号
+ * @param {number} userId - 用户ID
+ */
+export const deleteUser = (userId) => {
+    return request.delete(`/users/${userId}/`)
+}

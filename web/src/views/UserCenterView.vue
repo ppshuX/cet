@@ -22,80 +22,22 @@
       <div v-else class="row">
         <!-- 左侧：用户信息卡片 -->
         <div class="col-md-4 mb-4">
-          <div class="card shadow-sm">
-            <div class="card-body text-center p-4">
-              <!-- 头像 -->
-              <div class="avatar-container mb-3">
-                <img
-                  :src="userAvatar"
-                  alt="头像"
-                  class="rounded-circle"
-                  width="120"
-                  height="120"
-                />
-                <button
-                  class="btn btn-sm btn-light avatar-upload-btn"
-                  @click="triggerFileInput"
-                >
-                  <i class="bi bi-camera"></i>
-                </button>
-                <input
-                  ref="avatarInput"
-                  type="file"
-                  accept="image/*"
-                  style="display: none"
-                  @change="handleAvatarChange"
-                />
-              </div>
-              
-              <!-- 用户名 -->
-              <h4 class="username-display mb-1">{{ username }}</h4>
-              <p class="email-display mb-3">{{ email || '未设置邮箱' }}</p>
-              
-              <!-- 标签和等级 -->
-              <div class="mb-3 d-flex gap-2 justify-content-center align-items-center">
-                <span v-if="isAdmin" class="badge bg-danger">管理员</span>
-                <span v-else class="badge bg-primary">普通用户</span>
-                <span :class="'badge level-badge-small ' + getLevelClass(profileData.level)">
-                  {{ getLevelText(profileData.level) }}
-                </span>
-              </div>
-              
-              <!-- 注册时间 -->
-              <small class="text-muted">
-                注册时间：{{ formatDate(userInfo?.date_joined) }}
-              </small>
-            </div>
-          </div>
+          <!-- 用户信息卡片 -->
+          <UserProfileCard
+            :username="username"
+            :email="email"
+            :avatar="userAvatar"
+            :is-admin="isAdmin"
+            :level="profileData.level"
+            :date-joined="userInfo?.date_joined"
+            :get-level-text="getLevelText"
+            :get-level-class="getLevelClass"
+            :format-date="formatDate"
+            @avatar-change="handleAvatarChange"
+          />
           
           <!-- 我的统计 -->
-          <div class="card shadow-sm mt-3">
-            <div class="card-header bg-white">
-              <h5 class="mb-0">📊 我的统计</h5>
-            </div>
-            <div class="card-body">
-              <div class="row text-center">
-                <div class="col-12 mb-3">
-                  <div class="stat-box-small">
-                    <h4 class="text-primary mb-1">{{ stats.comments_count || 0 }}</h4>
-                    <p class="text-muted mb-0 small">评论数</p>
-                  </div>
-                </div>
-                <div class="col-6 mb-3">
-                  <div class="stat-box-small">
-                    <h4 class="text-success mb-1">{{ stats.trips_count || 0 }}</h4>
-                    <p class="text-muted mb-0 small">旅行数</p>
-                  </div>
-                </div>
-                <div class="col-6 mb-3">
-                  <div class="stat-box-small">
-                    <h4 class="text-warning mb-1">{{ stats.public_trips_count || 0 }}</h4>
-                    <p class="text-muted mb-0 small">公开旅行</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <UserStats :stats="stats" />
           
           <!-- 编辑个人中心按钮 -->
           <button
@@ -124,6 +66,31 @@
               取消编辑
             </button>
           </template>
+          
+          <!-- 高级设置按钮 -->
+          <button
+            v-if="!isEditingBasic && !isEditingProfile"
+            class="btn btn-outline-secondary w-100 mt-3"
+            @click="showAdvancedSettings = true"
+          >
+            ⚙️ 高级设置
+          </button>
+          
+          <!-- 高级设置模态框 -->
+          <AdvancedSettingsModal
+            :show="showAdvancedSettings"
+            title="⚙️ 高级设置"
+            warning-text="删除账号将会永久删除您的所有数据，包括："
+            :warning-items="[
+              '所有旅行计划',
+              '所有评论和回复',
+              '所有统计数据',
+              '个人资料和头像'
+            ]"
+            action-button-text="🗑️ 删除账号"
+            @close="showAdvancedSettings = false"
+            @confirm="confirmAndDeleteAccount"
+          />
         </div>
         
         <!-- 右侧：信息编辑 -->
@@ -330,14 +297,20 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
-import { getUserStats, updateProfile, updateUser, uploadAvatar } from '@/api/user'
+import { getUserStats, updateProfile, updateUser, uploadAvatar, deleteUser } from '@/api/user'
 import NavBar from '@/components/NavBar.vue'
+import UserProfileCard from './user-center/UserProfileCard.vue'
+import UserStats from './user-center/UserStats.vue'
+import AdvancedSettingsModal from '@/components/AdvancedSettingsModal.vue'
 
 export default {
   name: 'UserCenterView',
   
   components: {
-    NavBar
+    NavBar,
+    UserProfileCard,
+    UserStats,
+    AdvancedSettingsModal
   },
   
   setup() {
@@ -350,13 +323,12 @@ export default {
     const savingAll = ref(false)
     const isEditingBasic = ref(false)
     const isEditingProfile = ref(false)
+    const showAdvancedSettings = ref(false)
     const stats = ref({
       comments_count: 0,
       trips_count: 0,
       public_trips_count: 0
     })
-    
-    const avatarInput = ref(null)
     
     const editForm = ref({
       username: '',
@@ -420,6 +392,8 @@ export default {
       const tags = userInfo.value?.profile?.tags || ''
       const visited_countries = userInfo.value?.profile?.visited_countries || ''
       const level = userInfo.value?.profile?.level || 'novice'
+      
+      console.log('用户等级:', level, 'userInfo:', userInfo.value?.profile)
       
       profileData.value = { bio, tags, visited_countries, level }
       originalProfile.value = { bio, tags, visited_countries, level }
@@ -553,14 +527,9 @@ export default {
       }
     }
     
-    // 触发文件选择
-    const triggerFileInput = () => {
-      avatarInput.value?.click()
-    }
     
     // 上传头像
-    const handleAvatarChange = async (event) => {
-      const file = event.target.files?.[0]
+    const handleAvatarChange = async (file) => {
       if (!file) return
       
       // 检查文件类型
@@ -593,6 +562,35 @@ export default {
       router.push('/')
     }
     
+    // 确认并删除账号（用于高级设置模态框）
+    const confirmAndDeleteAccount = () => {
+      if (!confirm('⚠️ 请再次确认：您确定要删除账号吗？\n\n此操作无法撤销！')) {
+        return
+      }
+      // 关闭高级设置模态框
+      showAdvancedSettings.value = false
+      // 执行删除
+      handleDeleteAccount()
+    }
+    
+    // 删除账号
+    const handleDeleteAccount = async () => {
+      try {
+        await deleteUser(userInfo.value.id)
+        
+        // 退出登录
+        await userStore.logout()
+        
+        alert('账号已删除，感谢您的使用！')
+        
+        // 跳转到登录页
+        router.push('/login')
+      } catch (error) {
+        console.error('删除账号失败:', error)
+        alert('删除账号失败，请稍后重试')
+      }
+    }
+    
     // 退出登录
     const handleLogout = async () => {
       if (!confirm('确定要退出登录吗？')) return
@@ -615,10 +613,18 @@ export default {
       loading.value = true
       
       try {
+        // 确保从服务器获取最新的用户信息
+        await userStore.fetchUserInfo()
         await loadStats()
         initEditForm()
       } catch (error) {
         console.error('加载失败:', error)
+        // 如果获取用户信息失败，可能是token过期
+        if (error.response?.status === 401) {
+          alert('登录已过期，请重新登录')
+          await userStore.logout()
+          router.push('/login')
+        }
       } finally {
         loading.value = false
       }
@@ -631,8 +637,8 @@ export default {
       savingAll,
       isEditingBasic,
       isEditingProfile,
+      showAdvancedSettings,
       stats,
-      avatarInput,
       editForm,
       profileData,
       userInfo,
@@ -651,9 +657,10 @@ export default {
       saveAllChanges,
       getLevelText,
       getLevelClass,
-      triggerFileInput,
       handleAvatarChange,
-      handleLogout
+      handleLogout,
+      handleDeleteAccount,
+      confirmAndDeleteAccount
     }
   }
 }
@@ -949,6 +956,7 @@ h2 {
   padding: 0.4rem 1rem;
   border-radius: 20px;
   font-weight: 600;
+  display: inline-block;
 }
 
 .level-novice {
@@ -957,24 +965,27 @@ h2 {
 }
 
 .level-explorer {
-  background: linear-gradient(135deg, #bbdefb 0%, #90caf9 100%);
-  color: #1976d2;
+
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid #0d47a1 !important;
 }
 
 .level-wanderer {
-  background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
-  color: #388e3c;
+  background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%) !important;
+  color: #388e3c !important;
 }
 
 .level-adventurer {
-  background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
-  color: #f57f17;
+  background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%) !important;
+  color: #f57f17 !important;
 }
 
 .level-master {
-  background: linear-gradient(135deg, #ffeb3b 0%, #ffc107 100%);
-  color: #f57f17;
+  background: linear-gradient(135deg, #ffeb3b 0%, #ffc107 100%) !important;
+  color: #f57f17 !important;
 }
+
 
 @media (max-width: 768px) {
   .user-center-container {

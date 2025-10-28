@@ -63,8 +63,8 @@
                 @click="addToTree(trip.slug)">
                 <i class="bi bi-tree me-1"></i>运用到旅行树
               </button>
-              <button class="btn btn-sm btn-outline-danger" @click="deleteTrip(trip.slug)">
-                <i class="bi bi-trash"></i>
+              <button class="btn btn-sm btn-outline-secondary" @click="showAdvancedSettings(trip.slug)" title="高级选项">
+                ⚙️
               </button>
             </div>
           </div>
@@ -81,6 +81,22 @@
         </button>
       </div>
     </div>
+    
+    <!-- 高级设置模态框 -->
+    <AdvancedSettingsModal
+      :show="showModal"
+      title="⚙️ 高级选项"
+      warning-text="删除旅行计划将会永久删除您的所有数据，包括："
+      :warning-items="[
+        '所有行程安排',
+        '所有评论和回复',
+        '所有统计数据',
+        '所有图片和视频'
+      ]"
+      action-button-text="🗑️ 删除旅行计划"
+      @close="closeModal"
+      @confirm="confirmDeleteTrip"
+    />
   </div>
 </template>
 
@@ -91,12 +107,14 @@ import { useUserStore } from '@/stores'
 import { getMyTrips, deleteTripPlan, addTripToTree, removeTripFromTree } from '@/api/tripPlan'
 import { getTripList } from '@/api/trip'
 import NavBar from '@/components/NavBar.vue'
+import AdvancedSettingsModal from '@/components/AdvancedSettingsModal.vue'
 
 export default {
   name: 'MyTripsView',
   
   components: {
-    NavBar
+    NavBar,
+    AdvancedSettingsModal
   },
   
   setup() {
@@ -105,12 +123,24 @@ export default {
     
     const trips = ref([])
     const loading = ref(true)
+    const showModal = ref(false)
+    const currentTripSlug = ref(null)
     
     const fetchMyTrips = async () => {
       loading.value = true
       try {
         const data = await getMyTrips()
-        trips.value = data.results || data || []
+        const tripsList = data.results || data || []
+        
+        // 调试：检查slug是否存在
+        console.log('获取到的旅行列表:', tripsList)
+        tripsList.forEach(trip => {
+          if (!trip.slug) {
+            console.error('旅行计划缺少slug:', trip)
+          }
+        })
+        
+        trips.value = tripsList
         await checkTreeStatus() // 检查是否在旅行树中
       } catch (error) {
         console.error('获取旅行列表失败:', error)
@@ -132,8 +162,46 @@ export default {
       router.push(`/trip/${slug}/`)
     }
     
+    // 显示高级设置模态框
+    const showAdvancedSettings = (slug) => {
+      console.log('显示高级设置，slug:', slug)
+      if (!slug) {
+        alert('错误：该旅行计划缺少标识符')
+        return
+      }
+      currentTripSlug.value = slug
+      showModal.value = true
+    }
+    
+    // 关闭模态框
+    const closeModal = () => {
+      showModal.value = false
+      currentTripSlug.value = null
+    }
+    
+    // 确认删除旅行计划
+    const confirmDeleteTrip = () => {
+      const slug = currentTripSlug.value
+      console.log('准备删除旅行计划，slug:', slug)
+      
+      if (!slug) {
+        alert('错误：无法获取旅行计划标识')
+        closeModal()
+        return
+      }
+      
+      if (!confirm('⚠️ 请再次确认：您确定要删除这个旅行计划吗？\n\n此操作无法撤销！')) {
+        return
+      }
+      
+      deleteTrip(slug)
+      closeModal()
+    }
+    
+    // 删除旅行计划
     const deleteTrip = async (slug) => {
-      if (!confirm('确定要删除这个旅行计划吗？此操作无法撤销。')) {
+      if (!slug) {
+        alert('错误：无法获取旅行计划标识')
         return
       }
       
@@ -143,7 +211,7 @@ export default {
         await fetchMyTrips()
       } catch (error) {
         console.error('删除失败:', error)
-        alert('删除失败')
+        alert('删除失败：' + (error.response?.data?.detail || error.message))
       }
     }
     
@@ -209,9 +277,13 @@ export default {
     return {
       trips,
       loading,
+      showModal,
       createNew,
       editTrip,
       viewTrip,
+      showAdvancedSettings,
+      closeModal,
+      confirmDeleteTrip,
       deleteTrip,
       addToTree,
       removeFromTree,

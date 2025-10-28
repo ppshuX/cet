@@ -32,7 +32,7 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">✨ 行程亮点</h5>
         <button class="btn btn-sm btn-light" @click="addHighlight">
-          <i class="bi bi-plus-circle me-1"></i>添加
+          ➕ 添加
         </button>
       </div>
       <div class="card-body">
@@ -44,8 +44,8 @@
               class="form-control"
               placeholder="例如：🏖️ 厦门植物园 - 热带雨林奇观"
             />
-            <button class="btn btn-outline-danger" @click="removeHighlight(index)">
-              <i class="bi bi-trash"></i>
+            <button class="btn btn-outline-danger" @click="removeHighlight(index)" title="删除">
+              🗑️
             </button>
           </div>
         </div>
@@ -60,15 +60,15 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">📅 详细行程</h5>
         <button class="btn btn-sm btn-light" @click="addItinerary">
-          <i class="bi bi-plus-circle me-1"></i>添加一天
+          ➕ 添加一天
         </button>
       </div>
       <div class="card-body">
         <div v-for="(item, index) in content.itinerary" :key="index" class="itinerary-item mb-4">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <h6>第{{ index + 1 }}天</h6>
-            <button class="btn btn-sm btn-outline-danger" @click="removeItinerary(index)">
-              <i class="bi bi-trash"></i>
+            <button class="btn btn-sm btn-outline-danger" @click="removeItinerary(index)" title="删除">
+              🗑️
             </button>
           </div>
           <div class="mb-2">
@@ -115,7 +115,7 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">💰 预算参考</h5>
         <button class="btn btn-sm btn-light" @click="addBudgetItem">
-          <i class="bi bi-plus-circle me-1"></i>添加
+          ➕ 添加
         </button>
       </div>
       <div class="card-body">
@@ -145,8 +145,8 @@
             />
           </div>
           <div class="col-md-1">
-            <button class="btn btn-sm btn-outline-danger w-100" @click="removeBudgetItem(index)">
-              <i class="bi bi-trash"></i>
+            <button class="btn btn-sm btn-outline-danger w-100" @click="removeBudgetItem(index)" title="删除">
+              🗑️
             </button>
           </div>
         </div>
@@ -161,7 +161,7 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">💡 实用提示</h5>
         <button class="btn btn-sm btn-light" @click="addTip">
-          <i class="bi bi-plus-circle me-1"></i>添加
+          ➕ 添加
         </button>
       </div>
       <div class="card-body">
@@ -173,8 +173,8 @@
               rows="2"
               placeholder="输入一条实用提示..."
             ></textarea>
-            <button class="btn btn-outline-danger" @click="removeTip(index)">
-              <i class="bi bi-trash"></i>
+            <button class="btn btn-outline-danger" @click="removeTip(index)" title="删除">
+              🗑️
             </button>
           </div>
         </div>

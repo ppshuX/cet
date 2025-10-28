@@ -64,3 +64,11 @@ export const updateComment = (id, data) => {
     return request.patch(`/comments/${id}/`, data)
 }
 
+/**
+ * 获取评论的回复列表
+ * @param {number} id - 评论ID
+ */
+export const getCommentReplies = (id) => {
+    return request.get(`/comments/${id}/replies/`)
+}
+

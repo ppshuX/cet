@@ -31,6 +31,50 @@
         <small class="text-muted">公开后其他人可以看到你的旅行计划</small>
       </div>
       
+      <!-- 主题色 -->
+      <div class="mb-3">
+        <label class="form-label">🎨 主题色</label>
+        <div class="color-picker">
+          <input 
+            type="color" 
+            :value="modelValue.theme_color || '#f0e68c'"
+            @input="$emit('update:modelValue', { ...modelValue, theme_color: $event.target.value })"
+            class="form-control form-control-color"
+          />
+          <div class="color-preview" :style="{ background: modelValue.theme_color || '#f0e68c' }"></div>
+        </div>
+        <small class="text-muted">选择卡片头部的背景色</small>
+      </div>
+      
+      <!-- 背景音乐 -->
+      <div class="mb-3">
+        <label class="form-label">🎵 背景音乐</label>
+        <select 
+          :value="modelValue.background_music"
+          @change="$emit('update:modelValue', { ...modelValue, background_music: $event.target.value })"
+          class="form-select"
+        >
+          <option value="">无背景音乐</option>
+          <option value="/static/music/rain.mp3">🌧️ 雨声</option>
+          <option value="/static/music/road.mp3">🛤️ 旅途</option>
+          <option value="/static/music/windy.mp3">💨 风声</option>
+        </select>
+        <small class="text-muted">选择适合旅行场景的背景音乐</small>
+      </div>
+      
+      <!-- 图标 -->
+      <div class="mb-3">
+        <label class="form-label">📍 图标</label>
+        <input 
+          type="text" 
+          :value="modelValue.icon"
+          @input="$emit('update:modelValue', { ...modelValue, icon: $event.target.value })"
+          class="form-control"
+          placeholder="例如：🗺️"
+        />
+        <small class="text-muted">使用emoji表情</small>
+      </div>
+      
       <!-- 信息统计 -->
       <div class="info-stats mt-4">
         <div v-if="modelValue.created_at" class="stat-item">
@@ -114,6 +158,29 @@ export default {
   color: #2c3e50;
   font-weight: 600;
   font-size: 0.9rem;
+}
+
+.color-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-control-color {
+  width: 60px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.color-preview {
+  width: 80px;
+  height: 38px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 991px) {

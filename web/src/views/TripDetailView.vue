@@ -158,8 +158,10 @@
         
         <!-- 评论区组件 ⭐ -->
         <CommentSection
+          ref="commentSectionRef"
           :comments="comments"
           :is-admin="isAdmin"
+          :is-author="isAuthor"
           :has-checked-in="trip.stats?.checked_in || false"
           :get-avatar-url="getAvatarUrl"
           @checkin="handleCheckin"
@@ -167,6 +169,8 @@
           @delete-comment="handleDeleteComment"
           @add-image="handleAddImage"
           @update-comment="handleUpdateComment"
+          @submit-reply="handleSubmitReply"
+          @load-replies="handleLoadReplies"
         />
       </div>
     </div>
@@ -178,7 +182,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
 import { getTripDetail, likeTrip, checkinTrip } from '@/api/trip'
-import { getCommentList, createComment, deleteComment, addCommentImage, updateComment } from '@/api/comment'
+import { getCommentList, createComment, deleteComment, addCommentImage, updateComment, getCommentReplies } from '@/api/comment'
 import { getAvatarUrl } from '@/config/api'
 import { getTripConfig } from '@/config/tripConfig'
 import NavBar from '@/components/NavBar.vue'
@@ -212,19 +216,16 @@ export default {
     const isPlaying = ref(false)
     const audioPlayer = ref(null)
     const musicSrc = computed(() => {
-      // 根据不同的旅行页面返回不同的音乐
-      const slug = route.params.slug
-      const musicMap = {
-        'trip': '/static/music/rain.mp3',
-        'trip1': '/static/music/windy.mp3',
-        'trip2': '/static/music/windy.mp3',
-        'trip3': '/static/music/windy.mp3',
-        'trip4': '/static/music/road.mp3'
-      }
-      return musicMap[slug] || '/static/music/rain.mp3'
+      // 从trip数据中获取背景音乐，如果没有则使用默认音乐
+      return trip.value?.background_music || '/static/music/rain.mp3'
     })
     
     const isAdmin = computed(() => userStore.isAdmin)
+    
+    // 判断是否为旅行作者
+    const isAuthor = computed(() => {
+      return trip.value?.author?.id === userStore.userInfo?.id
+    })
     
     // 获取旅行详情
     const fetchTripDetail = async () => {
@@ -327,10 +328,36 @@ export default {
     
     // 删除评论
     const handleDeleteComment = async (commentId) => {
+      console.log('删除评论/回复，ID:', commentId)
+      
+      // 删除前提示确认
+      if (!confirm('确定要删除这条内容吗？删除后无法恢复。')) {
+        return
+      }
+      
       try {
         await deleteComment(commentId)
-        alert('删除成功！')
-        await fetchComments()
+        
+        // 找到被删除的评论
+        const deletedComment = comments.value.find(c => c.id === commentId)
+        
+        if (deletedComment && deletedComment.parent_id) {
+          console.log('删除的是回复，父评论ID:', deletedComment.parent_id)
+          // 这是回复的删除，需要同时更新CommentSection的replyLists
+          const parentComment = comments.value.find(c => c.id === deletedComment.parent_id)
+          if (parentComment && parentComment.replies) {
+            // 立即从UI中移除
+            parentComment.replies = parentComment.replies.filter(r => r.id !== commentId)
+            // 更新CommentSection的replyLists
+            if (commentSectionRef.value && commentSectionRef.value.updateReplyList) {
+              commentSectionRef.value.updateReplyList(parentComment.id, parentComment.replies)
+            }
+          }
+        } else {
+          console.log('删除的是顶层评论')
+          // 这是顶层评论的删除，从列表中立即移除
+          comments.value = comments.value.filter(c => c.id !== commentId)
+        }
       } catch (error) {
         console.error('删除评论失败:', error)
         const errorMsg = error.response?.data?.detail || error.message || '删除失败，请稍后重试'
@@ -362,6 +389,55 @@ export default {
       } catch (error) {
         console.error('更新评论失败:', error)
         alert('更新评论失败：' + (error.response?.data?.detail || error.message))
+      }
+    }
+    
+    // 提交回复
+    const handleSubmitReply = async ({ commentId, content }) => {
+      try {
+        const formData = new FormData()
+        formData.append('content', content)
+        formData.append('page', route.params.slug)
+        formData.append('parent', commentId)  // 设置父评论ID
+        
+        await createComment(formData)
+        alert('回复成功！')
+        // 提交成功后重新加载该评论的回复列表
+        await handleLoadReplies(commentId)
+      } catch (error) {
+        console.error('提交回复失败:', error)
+        alert('提交回复失败：' + (error.response?.data?.detail || error.message))
+      }
+    }
+    
+    // 保存commentSectionRef用于直接访问子组件
+    const commentSectionRef = ref(null)
+    
+    // 加载回复列表
+    const handleLoadReplies = async (commentId) => {
+      try {
+        console.log(`开始加载评论 ${commentId} 的回复列表...`)
+        const replies = await getCommentReplies(commentId)
+        console.log(`评论 ${commentId} 的回复列表加载成功，回复数量: ${replies?.length || 0}`)
+        
+        // 将回复列表保存到comments数组中对应评论的replies属性
+        const comment = comments.value.find(c => c.id === commentId)
+        if (comment) {
+          comment.replies = replies || []
+        }
+        
+        // 等待下一个tick，确保ref已经初始化
+        await new Promise(resolve => setTimeout(resolve, 100))
+        
+        // 更新CommentSection组件的replyLists
+        if (commentSectionRef.value && commentSectionRef.value.updateReplyList) {
+          commentSectionRef.value.updateReplyList(commentId, replies || [])
+          console.log(`已更新CommentSection的replyLists[${commentId}]`)
+        } else {
+          console.warn(`commentSectionRef.value 不存在或没有 updateReplyList 方法, ref:`, commentSectionRef.value)
+        }
+      } catch (error) {
+        console.error(`加载评论 ${commentId} 的回复列表失败:`, error)
       }
     }
     
@@ -401,15 +477,19 @@ export default {
       isPlaying,
       audioPlayer,
       musicSrc,
+      commentSectionRef,
       handleLike,
       handleCheckin,
       handleSubmitComment,
       handleDeleteComment,
       handleAddImage,
       handleUpdateComment,
+      handleSubmitReply,
+      handleLoadReplies,
       goBack,
       toggleMusic,
-      getAvatarUrl
+      getAvatarUrl,
+      isAuthor
     }
   }
 }
