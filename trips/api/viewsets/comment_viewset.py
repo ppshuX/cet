@@ -165,7 +165,7 @@ class CommentViewSet(viewsets.ModelViewSet):
                 # 检查权限：回复作者、旅行作者或管理员可以删除
                 has_permission = (
                     comment.user == user or  # 回复作者
-                    (trip and trip.user == user) or  # 旅行作者
+                    (trip and trip.author == user) or  # 旅行作者
                     user.is_superuser  # 管理员
                 )
                 
