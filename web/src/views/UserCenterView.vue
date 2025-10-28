@@ -393,8 +393,6 @@ export default {
       const visited_countries = userInfo.value?.profile?.visited_countries || ''
       const level = userInfo.value?.profile?.level || 'novice'
       
-      console.log('用户等级:', level, 'userInfo:', userInfo.value?.profile)
-      
       profileData.value = { bio, tags, visited_countries, level }
       originalProfile.value = { bio, tags, visited_countries, level }
     }

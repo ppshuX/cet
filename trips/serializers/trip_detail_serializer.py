@@ -12,16 +12,28 @@ class TripCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
         fields = [
-            'title', 'description', 'icon', 'start_date', 'end_date',
+            'slug', 'title', 'description', 'icon', 'start_date', 'end_date',
             'status', 'visibility', 'config', 'overview', 
             'theme_color', 'background_music'
         ]
+        read_only_fields = ['slug']
     
     def validate_title(self, value):
         """验证标题不为空"""
         if not value or not value.strip():
             raise serializers.ValidationError("旅行标题不能为空")
         return value.strip()
+    
+    def create(self, validated_data):
+        """创建旅行，确保slug正确生成"""
+        # 确保标题存在
+        title = validated_data.get('title', '')
+        if not title or not title.strip():
+            raise serializers.ValidationError("旅行标题不能为空")
+        
+        # 创建旅行，Django的save方法会自动生成slug
+        trip = super().create(validated_data)
+        return trip
 
 
 class TripDetailSerializer(serializers.ModelSerializer):

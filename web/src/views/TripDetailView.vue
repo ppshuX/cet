@@ -328,8 +328,6 @@ export default {
     
     // 删除评论
     const handleDeleteComment = async (commentId) => {
-      console.log('删除评论/回复，ID:', commentId)
-      
       // 删除前提示确认
       if (!confirm('确定要删除这条内容吗？删除后无法恢复。')) {
         return
@@ -342,7 +340,6 @@ export default {
         const deletedComment = comments.value.find(c => c.id === commentId)
         
         if (deletedComment && deletedComment.parent_id) {
-          console.log('删除的是回复，父评论ID:', deletedComment.parent_id)
           // 这是回复的删除，需要同时更新CommentSection的replyLists
           const parentComment = comments.value.find(c => c.id === deletedComment.parent_id)
           if (parentComment && parentComment.replies) {
@@ -354,7 +351,6 @@ export default {
             }
           }
         } else {
-          console.log('删除的是顶层评论')
           // 这是顶层评论的删除，从列表中立即移除
           comments.value = comments.value.filter(c => c.id !== commentId)
         }

@@ -12,12 +12,14 @@ class CommentSerializer(serializers.ModelSerializer):
     can_delete = serializers.SerializerMethodField()
     image = serializers.SerializerMethodField()
     video = serializers.SerializerMethodField()
+    is_top_level = serializers.SerializerMethodField()
+    parent_id = serializers.SerializerMethodField()
     
     class Meta:
         model = Comment
         fields = [
-            'id', 'user', 'content', 'image', 'video', 
-            'page', 'timestamp', 'can_delete'
+            'id', 'user', 'parent_id', 'content', 'image', 'video', 
+            'page', 'timestamp', 'can_delete', 'is_top_level'
         ]
         read_only_fields = ['id', 'user', 'timestamp']
     
@@ -40,15 +42,46 @@ class CommentSerializer(serializers.ModelSerializer):
             return False
         if not request.user.is_authenticated:
             return False
-        return obj.user == request.user or request.user.is_superuser
+        
+        # 如果是回复（有父评论）
+        if obj.parent:
+            # 回复只能由回复作者或旅行作者删除
+            from ..models import Trip
+            try:
+                trip = Trip.objects.filter(slug=obj.page).first()
+                # 权限：回复作者、旅行作者或管理员
+                return (
+                    obj.user == request.user or  # 回复作者
+                    (trip and trip.user == request.user) or  # 旅行作者
+                    request.user.is_superuser  # 管理员
+                )
+            except Exception:
+                # 如果获取Trip失败，回退到原始逻辑
+                return obj.user == request.user or request.user.is_superuser
+        else:
+            # 顶层评论只能由评论作者或管理员删除
+            return obj.user == request.user or request.user.is_superuser
+    
+    def get_is_top_level(self, obj):
+        """判断是否为顶层评论"""
+        try:
+            # 直接检查parent字段
+            return obj.parent is None or obj.parent_id is None
+        except (AttributeError, Exception):
+            return obj.parent is None
+    
+    def get_parent_id(self, obj):
+        """获取父评论ID"""
+        return obj.parent_id if obj.parent else None
 
 
 class CommentCreateSerializer(serializers.ModelSerializer):
     """评论创建序列化器"""
+    parent = serializers.PrimaryKeyRelatedField(queryset=Comment.objects.all(), required=False, allow_null=True)
     
     class Meta:
         model = Comment
-        fields = ['content', 'image', 'video', 'page']
+        fields = ['content', 'image', 'video', 'page', 'parent']
     
     def validate(self, attrs):
         """验证至少有一项内容"""

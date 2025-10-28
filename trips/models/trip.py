@@ -1,6 +1,7 @@
 """
 旅行计划模型
 """
+import hashlib
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
@@ -63,13 +64,29 @@ class Trip(models.Model):
     def save(self, *args, **kwargs):
         # 如果没有slug，自动生成
         if not self.slug:
-            base_slug = slugify(self.title) if self.title else str(uuid.uuid4())[:8]
-            self.slug = base_slug
+            # 使用哈希编码生成slug，确保唯一性和安全性
+            import time
+            from django.utils import timezone
             
-            # 确保slug唯一
+            # 组合标题、UUID和时间戳生成唯一哈希
+            unique_id = str(uuid.uuid4())
+            timestamp = str(timezone.now().timestamp())
+            hash_string = f"{self.title}_{unique_id}_{timestamp}"
+            
+            # 使用MD5生成32位哈希，截取前12位作为slug
+            hash_obj = hashlib.md5(hash_string.encode())
+            hash_hex = hash_obj.hexdigest()[:12]
+            
+            self.slug = hash_hex
+            
+            # 确保slug唯一（理论上已经很唯一了，但加上保险）
             counter = 1
             while Trip.objects.filter(slug=self.slug).exists():
-                self.slug = f"{base_slug}-{counter}"
+                # 如果哈希冲突，生成新的哈希
+                hash_string = f"{self.title}_{uuid.uuid4()}_{timestamp}_{counter}"
+                hash_obj = hashlib.md5(hash_string.encode())
+                hash_hex = hash_obj.hexdigest()[:12]
+                self.slug = hash_hex
                 counter += 1
         
         super().save(*args, **kwargs)

@@ -21,11 +21,26 @@ from ...serializers import (
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet,
-                  mixins.UpdateModelMixin):
+                  mixins.UpdateModelMixin,
+                  mixins.DestroyModelMixin):
     """用户ViewSet"""
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    
+    def destroy(self, request, *args, **kwargs):
+        """删除用户账号（只能删除自己的）"""
+        user = self.get_object()
+        
+        # 权限检查：只能删除自己的账号
+        if user != request.user:
+            return Response(
+                {'detail': '无权删除他人账号'},
+                status=403  # HTTP_403_FORBIDDEN
+            )
+        
+        # 调用父类的删除方法
+        return super().destroy(request, *args, **kwargs)
     
     def get_serializer_class(self):
         """根据action选择序列化器"""

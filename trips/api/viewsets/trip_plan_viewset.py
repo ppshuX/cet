@@ -6,6 +6,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.exceptions import NotFound
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db import models
@@ -56,6 +57,14 @@ class TripPlanViewSet(viewsets.ModelViewSet):
                 return queryset.filter(author=self.request.user)
             return queryset.none()
         
+        # 详情查看（retrieve）：只有公开的或作者本人可以访问
+        if self.action == 'retrieve':
+            if self.request.user.is_authenticated:
+                return queryset.filter(
+                    models.Q(visibility='public') | models.Q(author=self.request.user)
+                )
+            return queryset.filter(visibility='public')
+        
         # 普通列表：只返回公开的或自己的
         if self.action == 'list':
             if self.request.user.is_authenticated:
@@ -69,6 +78,17 @@ class TripPlanViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """创建时自动设置作者"""
         serializer.save(author=self.request.user)
+    
+    def retrieve(self, request, *args, **kwargs):
+        """重写retrieve方法，添加访问控制"""
+        instance = self.get_object()
+        
+        # 检查访问权限：必须是公开的或是作者本人
+        if instance.visibility != 'public' and instance.author != request.user:
+            raise NotFound("该旅行计划不可访问")
+        
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
     
     def perform_update(self, serializer):
         """更新时检查权限"""

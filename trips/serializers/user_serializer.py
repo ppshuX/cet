@@ -34,9 +34,12 @@ class UserSerializer(serializers.ModelSerializer):
     def get_stats(self, obj):
         """获取用户统计信息"""
         return {
+            # 总旅行数（包括私有的，用户自己查看）
             'trips_count': obj.trips.count(),
+            # 公开的旅行数（对外显示的，只有公开的才算入等级）
             'public_trips_count': obj.trips.filter(visibility='public').count(),
-            'comments_count': obj.comment_set.count(),
+            # 评论数
+            'comments_count': obj.comments.count(),  # 使用 'comments' 因为 Comment 模型的 related_name 是 'comments'
         }
 
 

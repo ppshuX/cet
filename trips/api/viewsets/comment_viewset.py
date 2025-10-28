@@ -7,13 +7,14 @@ import os
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
+from rest_framework.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import CharFilter
 from django_filters.rest_framework import FilterSet
 from django.conf import settings
 
-from ...models import Comment
+from ...models import Comment, Trip
 from ...serializers import (
     CommentSerializer,
     CommentCreateSerializer,
@@ -24,6 +25,15 @@ from ...serializers import (
 class CommentFilter(FilterSet):
     """评论过滤器 - 使用 'trip' 参数代替 'page' 以避免与分页冲突"""
     trip = CharFilter(field_name='page', lookup_expr='exact')
+    include_replies = CharFilter(method='filter_replies', help_text='包含回复：yes/no')
+    
+    def filter_replies(self, queryset, name, value):
+        """根据参数决定是否包含回复"""
+        if value and value.lower() == 'yes':
+            # 返回所有评论（包括回复）
+            return Comment.objects.all()
+        # 默认只返回顶层评论
+        return queryset.filter(parent__isnull=True)
     
     class Meta:
         model = Comment
@@ -34,8 +44,8 @@ class CommentFilter(FilterSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     """评论ViewSet"""
-    queryset = Comment.objects.all().order_by('-timestamp')
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = Comment.objects.all().order_by('-timestamp')  # 默认包含所有评论
+    permission_classes = [AllowAny]  # 允许所有人查看评论
     filter_backends = [DjangoFilterBackend]
     # 使用自定义过滤器类，将 'trip' 参数映射到模型的 'page' 字段
     filterset_class = CommentFilter
@@ -48,6 +58,14 @@ class CommentViewSet(viewsets.ModelViewSet):
             return CommentUpdateSerializer
         return CommentSerializer
     
+    def get_queryset(self):
+        """根据action过滤queryset"""
+        if self.action == 'list':
+            # 列表页面只返回顶层评论
+            return Comment.objects.filter(parent__isnull=True).order_by('-timestamp')
+        # 其他action（包括retrieve, destroy等）需要访问所有评论
+        return Comment.objects.all().order_by('-timestamp')
+    
     def get_permissions(self):
         """根据action设置权限"""
         if self.action == 'create':
@@ -55,7 +73,9 @@ class CommentViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated()]
         elif self.action in ['update', 'partial_update', 'destroy']:
             return [IsAuthenticated()]
-        return [IsAuthenticatedOrReadOnly()]
+        else:
+            # list和retrieve允许所有人访问
+            return [AllowAny()]
     
     def perform_create(self, serializer):
         """创建评论时自动设置用户"""
@@ -71,7 +91,52 @@ class CommentViewSet(viewsets.ModelViewSet):
             ext = os.path.splitext(video.name)[-1]
             video.name = f"{uuid.uuid4().hex}{ext}"
         
-        serializer.save(user=self.request.user)
+        try:
+            parent = serializer.validated_data.get('parent')
+            page = serializer.validated_data.get('page')
+            
+            # 如果没有parent，说明要创建顶层评论，需要检查权限
+            if not parent:
+                # 尝试通过page找到对应的Trip
+                trip = None
+                try:
+                    # page可能是slug，尝试查找Trip
+                    trip = Trip.objects.filter(slug=page).first()
+                except Exception:
+                    pass
+                
+                # 如果找到Trip，检查是否为作者
+                if trip:
+                    if trip.author != self.request.user and not self.request.user.is_superuser:
+                        raise PermissionDenied('只有旅行作者可以创建评论，其他人只能回复')
+                else:
+                    # 如果没有找到Trip，检查是否已有顶层评论
+                    existing_top_level = Comment.objects.filter(page=page, parent__isnull=True).first()
+                    
+                    # 如果有顶层评论，检查是否为该评论的作者
+                    if existing_top_level:
+                        if existing_top_level.user != self.request.user and not self.request.user.is_superuser:
+                            raise PermissionDenied('只有评论作者可以创建新的顶层评论，其他人只能回复')
+            
+            # 如果有parent，说明是回复
+            if parent:
+                # 获取父评论所属的页面
+                parent_page = parent.page
+                
+                # 确保回复的页面与父评论一致
+                if 'page' in serializer.validated_data and serializer.validated_data['page'] != parent_page:
+                    from rest_framework.exceptions import ValidationError
+                    raise ValidationError({'detail': '回复必须与父评论在同一页面'})
+                
+                # 将page设置为父评论的页面
+                serializer.validated_data['page'] = parent_page
+            
+            serializer.save(user=self.request.user)
+        except Exception as e:
+            print(f"创建评论时发生错误: {e}")
+            import traceback
+            traceback.print_exc()
+            raise
     
     def perform_update(self, serializer):
         """更新评论时检查权限"""
@@ -86,13 +151,36 @@ class CommentViewSet(viewsets.ModelViewSet):
         """删除评论"""
         try:
             comment = self.get_object()
+            user = request.user
             
-            # 权限检查：只有评论作者或管理员可以删除
-            if comment.user != request.user and not request.user.is_superuser:
-                return Response(
-                    {'detail': '无权删除此评论'},
-                    status=status.HTTP_403_FORBIDDEN
+            # 权限检查：回复只能由回复作者或旅行作者删除
+            if comment.parent:  # 这是一个回复
+                # 获取旅行作者
+                trip = None
+                try:
+                    trip = Trip.objects.filter(slug=comment.page).first()
+                except Exception:
+                    pass
+                
+                # 检查权限：回复作者、旅行作者或管理员可以删除
+                has_permission = (
+                    comment.user == user or  # 回复作者
+                    (trip and trip.user == user) or  # 旅行作者
+                    user.is_superuser  # 管理员
                 )
+                
+                if not has_permission:
+                    return Response(
+                        {'detail': '无权删除此回复（只有回复作者或旅行作者可以删除）'},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+            else:  # 这是顶层评论
+                # 只有评论作者或管理员可以删除顶层评论
+                if comment.user != user and not user.is_superuser:
+                    return Response(
+                        {'detail': '无权删除此评论'},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
             
             # 执行删除操作
             self.perform_destroy(comment)
@@ -139,6 +227,14 @@ class CommentViewSet(viewsets.ModelViewSet):
                     print(f"成功删除视频文件: {video_path}")
             except Exception as e:
                 print(f"删除视频文件失败: {e}")
+    
+    @action(detail=True, methods=['get'], permission_classes=[AllowAny])
+    def replies(self, request, pk=None):
+        """获取评论的回复列表"""
+        comment = self.get_object()
+        replies = Comment.objects.filter(parent_id=comment.id).order_by('timestamp')
+        serializer = CommentSerializer(replies, many=True, context={'request': request})
+        return Response(serializer.data)
     
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def add_image(self, request, pk=None):

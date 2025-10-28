@@ -73,22 +73,24 @@ class UserProfile(models.Model):
     
     def calculate_level(self):
         """根据旅行和评论数量自动计算等级"""
-        trips_count = self.user.trips.count()
-        comments_count = self.user.comment_set.count()
+        # 只计算公开的旅行数量，用于等级提升
+        trips_count = self.user.trips.filter(visibility='public').count()
+        comments_count = self.user.comments.count()  # 使用 'comments' 因为 Comment 模型的 related_name 是 'comments'
         
-        # 等级计算逻辑（更平衡）
-        # 新手 → 探索者：至少1个旅行 OR 5条评论
-        # 探索者 → 漫游者：至少5个旅行 OR (3个旅行+20条评论)
-        # 漫游者 → 冒险家：至少10个旅行 OR (5个旅行+50条评论)
-        # 冒险家 → 旅行大师：至少20个旅行 OR (10个旅行+100条评论)
+        # 等级计算逻辑（必须同时满足旅行数和评论数）
+        # 新手：无要求
+        # 探索者：至少1个公开旅行 AND 5条评论
+        # 漫游者：至少3个公开旅行 AND 20条评论
+        # 冒险家：至少6个公开旅行 AND 50条评论
+        # 旅行大师：至少10个公开旅行 AND 100条评论
         
-        if trips_count >= 20:
+        if trips_count >= 10 and comments_count >= 100:
             self.level = 'master'
-        elif trips_count >= 10 or (trips_count >= 5 and comments_count >= 50):
+        elif trips_count >= 6 and comments_count >= 50:
             self.level = 'adventurer'
-        elif trips_count >= 5 or (trips_count >= 3 and comments_count >= 20):
+        elif trips_count >= 3 and comments_count >= 20:
             self.level = 'wanderer'
-        elif trips_count >= 1 or comments_count >= 5:
+        elif trips_count >= 1 and comments_count >= 5:
             self.level = 'explorer'
         else:
             self.level = 'novice'

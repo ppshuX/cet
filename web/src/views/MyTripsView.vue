@@ -132,14 +132,6 @@ export default {
         const data = await getMyTrips()
         const tripsList = data.results || data || []
         
-        // 调试：检查slug是否存在
-        console.log('获取到的旅行列表:', tripsList)
-        tripsList.forEach(trip => {
-          if (!trip.slug) {
-            console.error('旅行计划缺少slug:', trip)
-          }
-        })
-        
         trips.value = tripsList
         await checkTreeStatus() // 检查是否在旅行树中
       } catch (error) {
@@ -164,7 +156,6 @@ export default {
     
     // 显示高级设置模态框
     const showAdvancedSettings = (slug) => {
-      console.log('显示高级设置，slug:', slug)
       if (!slug) {
         alert('错误：该旅行计划缺少标识符')
         return
@@ -182,7 +173,6 @@ export default {
     // 确认删除旅行计划
     const confirmDeleteTrip = () => {
       const slug = currentTripSlug.value
-      console.log('准备删除旅行计划，slug:', slug)
       
       if (!slug) {
         alert('错误：无法获取旅行计划标识')
