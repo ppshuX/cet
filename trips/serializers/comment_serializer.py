@@ -85,6 +85,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class CommentCreateSerializer(serializers.ModelSerializer):
     """评论创建序列化器"""
     parent = serializers.PrimaryKeyRelatedField(queryset=Comment.objects.all(), required=False, allow_null=True)
+    content = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     
     class Meta:
         model = Comment
@@ -92,7 +93,11 @@ class CommentCreateSerializer(serializers.ModelSerializer):
     
     def validate(self, attrs):
         """验证至少有一项内容"""
-        if not any([attrs.get('content'), attrs.get('image'), attrs.get('video')]):
+        content = attrs.get('content', '').strip() if attrs.get('content') else ''
+        image = attrs.get('image')
+        video = attrs.get('video')
+        
+        if not content and not image and not video:
             raise serializers.ValidationError(
                 "评论内容、图片或视频至少需要提供一项"
             )
