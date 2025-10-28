@@ -47,6 +47,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().order_by('-timestamp')  # 默认包含所有评论
     permission_classes = [AllowAny]  # 允许所有人查看评论
     filter_backends = [DjangoFilterBackend]
+    pagination_class = None  # 禁用分页，显示所有评论
     # 使用自定义过滤器类，将 'trip' 参数映射到模型的 'page' 字段
     filterset_class = CommentFilter
     

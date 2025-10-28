@@ -11,7 +11,7 @@ class Comment(models.Model):
     """评论模型"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')  # 谁发的评论
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')  # 父评论（用于回复）
-    content = models.TextField()
+    content = models.TextField(blank=True, default='')  # 允许空白内容
     image = models.ImageField(upload_to='comment_images/', blank=True, null=True)  # 图片字段
     video = models.FileField(upload_to='comment_videos/', blank=True, null=True)  # 视频字段
     timestamp = models.DateTimeField(auto_now_add=True)
