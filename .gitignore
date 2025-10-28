@@ -16,3 +16,6 @@ DEPLOYMENT_NOTES.md
 docs/*.md
 !docs/README.md
 !README.md
+
+db.sqlite3
+media/
