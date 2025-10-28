@@ -20,17 +20,21 @@ def trip_page(request):
 
 
 def trip1(request):
-    """三岔河一日游页面"""
-    stats = SiteStat.objects.filter(page='trip1').first()
-    if not stats:
-        stats = SiteStat.objects.create(page='trip1')
-    stats.views += 1
-    stats.save()
-    comments = Comment.objects.filter(page='trip1').order_by('-timestamp')
-    return render(request, 'trips/trip1.html', {
-        'comments': comments,
-        'stats': stats,
-    })
+    """三岔河一日游页面 - 重定向到新的旅行计划"""
+    from django.shortcuts import redirect
+    from ..models.trip import Trip
+    
+    # 尝试查找对应 slug 的旅行计划
+    try:
+        trip = Trip.objects.filter(slug='trip1').first()
+        if trip:
+            # 重定向到新的旅行计划URL
+            return redirect(f'/trip/{trip.slug}/', permanent=True)
+    except Exception:
+        pass
+    
+    # 如果找不到，重定向到首页
+    return redirect('/', permanent=False)
 
 
 def trip2(request):
