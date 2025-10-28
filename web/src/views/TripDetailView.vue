@@ -333,31 +333,54 @@ export default {
         return
       }
       
+      // 先向后端发送删除请求
       try {
         await deleteComment(commentId)
-        
-        // 找到被删除的评论
-        const deletedComment = comments.value.find(c => c.id === commentId)
-        
-        if (deletedComment && deletedComment.parent_id) {
-          // 这是回复的删除，需要同时更新CommentSection的replyLists
-          const parentComment = comments.value.find(c => c.id === deletedComment.parent_id)
-          if (parentComment && parentComment.replies) {
-            // 立即从UI中移除
-            parentComment.replies = parentComment.replies.filter(r => r.id !== commentId)
-            // 更新CommentSection的replyLists
-            if (commentSectionRef.value && commentSectionRef.value.updateReplyList) {
-              commentSectionRef.value.updateReplyList(parentComment.id, parentComment.replies)
-            }
-          }
-        } else {
-          // 这是顶层评论的删除，从列表中立即移除
-          comments.value = comments.value.filter(c => c.id !== commentId)
-        }
       } catch (error) {
         console.error('删除评论失败:', error)
         const errorMsg = error.response?.data?.detail || error.message || '删除失败，请稍后重试'
         alert(errorMsg)
+        return
+      }
+      
+      // 删除成功后，从UI中移除
+      const deletedComment = comments.value.find(c => c.id === commentId)
+      
+      if (!deletedComment) {
+        // 如果是回复，从replyLists中删除
+        for (const comment of comments.value) {
+          if (commentSectionRef.value && commentSectionRef.value.replyLists) {
+            const replyList = commentSectionRef.value.replyLists[comment.id]
+            if (replyList && replyList.some(r => r.id === commentId)) {
+              const filteredReplies = replyList.filter(r => r.id !== commentId)
+              if (commentSectionRef.value.updateReplyList) {
+                commentSectionRef.value.updateReplyList(comment.id, filteredReplies)
+              }
+              return
+            }
+          }
+        }
+        return
+      }
+      
+      const isReply = !!deletedComment.parent_id
+      const parentId = deletedComment.parent_id
+      let parentComment = null
+      
+      if (isReply) {
+        // 这是回复的删除
+        parentComment = comments.value.find(c => c.id === parentId)
+        if (parentComment && parentComment.replies) {
+          // 立即从UI中移除
+          parentComment.replies = parentComment.replies.filter(r => r.id !== commentId)
+          // 更新CommentSection的replyLists
+          if (commentSectionRef.value && commentSectionRef.value.updateReplyList) {
+            commentSectionRef.value.updateReplyList(parentId, parentComment.replies)
+          }
+        }
+      } else {
+        // 这是顶层评论的删除，从列表中立即移除
+        comments.value = comments.value.filter(c => c.id !== commentId)
       }
     }
     
@@ -412,9 +435,7 @@ export default {
     // 加载回复列表
     const handleLoadReplies = async (commentId) => {
       try {
-        console.log(`开始加载评论 ${commentId} 的回复列表...`)
         const replies = await getCommentReplies(commentId)
-        console.log(`评论 ${commentId} 的回复列表加载成功，回复数量: ${replies?.length || 0}`)
         
         // 将回复列表保存到comments数组中对应评论的replies属性
         const comment = comments.value.find(c => c.id === commentId)
@@ -428,9 +449,6 @@ export default {
         // 更新CommentSection组件的replyLists
         if (commentSectionRef.value && commentSectionRef.value.updateReplyList) {
           commentSectionRef.value.updateReplyList(commentId, replies || [])
-          console.log(`已更新CommentSection的replyLists[${commentId}]`)
-        } else {
-          console.warn(`commentSectionRef.value 不存在或没有 updateReplyList 方法, ref:`, commentSectionRef.value)
         }
       } catch (error) {
         console.error(`加载评论 ${commentId} 的回复列表失败:`, error)

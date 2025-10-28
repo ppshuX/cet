@@ -1,6 +1,14 @@
 .DS_Store
 node_modules
 /dist
+**.swp
+**.pyc
+__pycache__/
+media/comment_images/
+media/comment_videos/
+media/user_avatars/
+backups/
+*.log
 
 
 # local env files

@@ -350,8 +350,6 @@ export default {
         ...replyLists.value,
         [commentId]: replies || []
       }
-      // 强制Vue更新，确保视图刷新
-      console.log(`更新评论 ${commentId} 的回复列表，回复数量: ${replies?.length || 0}`)
     }
     
     return {

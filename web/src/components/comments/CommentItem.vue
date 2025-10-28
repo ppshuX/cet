@@ -224,10 +224,12 @@ export default {
 .reply-toggle-btn {
   font-weight: 500;
   transition: all 0.2s ease;
+  text-decoration: none !important;
 }
 
 .reply-toggle-btn:hover {
   transform: translateX(2px);
+  text-decoration: none !important;
 }
 
 @media (max-width: 768px) {

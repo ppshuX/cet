@@ -14,12 +14,13 @@ class CommentSerializer(serializers.ModelSerializer):
     video = serializers.SerializerMethodField()
     is_top_level = serializers.SerializerMethodField()
     parent_id = serializers.SerializerMethodField()
+    replies_count = serializers.SerializerMethodField()
     
     class Meta:
         model = Comment
         fields = [
             'id', 'user', 'parent_id', 'content', 'image', 'video', 
-            'page', 'timestamp', 'can_delete', 'is_top_level'
+            'page', 'timestamp', 'can_delete', 'is_top_level', 'replies_count'
         ]
         read_only_fields = ['id', 'user', 'timestamp']
     
@@ -73,6 +74,12 @@ class CommentSerializer(serializers.ModelSerializer):
     def get_parent_id(self, obj):
         """获取父评论ID"""
         return obj.parent_id if obj.parent else None
+    
+    def get_replies_count(self, obj):
+        """获取回复数量（仅对顶层评论有效）"""
+        if obj.parent:
+            return 0  # 回复本身没有回复数
+        return Comment.objects.filter(parent=obj).count()
 
 
 class CommentCreateSerializer(serializers.ModelSerializer):

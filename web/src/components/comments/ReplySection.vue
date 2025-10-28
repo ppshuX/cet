@@ -175,6 +175,14 @@ export default {
   flex-shrink: 0;
 }
 
+.reply-item a {
+  text-decoration: none;
+}
+
+.reply-item a:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .reply-section {
     padding: 0.75rem;

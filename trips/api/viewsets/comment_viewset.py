@@ -150,7 +150,16 @@ class CommentViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         """删除评论"""
         try:
-            comment = self.get_object()
+            # 手动获取评论对象，确保能够找到（包括回复）
+            comment_id = kwargs.get('pk')
+            try:
+                comment = Comment.objects.get(id=comment_id)
+            except Comment.DoesNotExist:
+                return Response(
+                    {'detail': '评论不存在'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            
             user = request.user
             
             # 权限检查：回复只能由回复作者或旅行作者删除
