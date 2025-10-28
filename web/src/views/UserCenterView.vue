@@ -52,10 +52,13 @@
               <h4 class="username-display mb-1">{{ username }}</h4>
               <p class="email-display mb-3">{{ email || '未设置邮箱' }}</p>
               
-              <!-- 标签 -->
-              <div class="mb-3">
+              <!-- 标签和等级 -->
+              <div class="mb-3 d-flex gap-2 justify-content-center align-items-center">
                 <span v-if="isAdmin" class="badge bg-danger">管理员</span>
                 <span v-else class="badge bg-primary">普通用户</span>
+                <span :class="'badge level-badge-small ' + getLevelClass(profileData.level)">
+                  {{ getLevelText(profileData.level) }}
+                </span>
               </div>
               
               <!-- 注册时间 -->
@@ -65,24 +68,99 @@
             </div>
           </div>
           
-          <!-- 退出登录 -->
+          <!-- 我的统计 -->
+          <div class="card shadow-sm mt-3">
+            <div class="card-header bg-white">
+              <h5 class="mb-0">📊 我的统计</h5>
+            </div>
+            <div class="card-body">
+              <div class="row text-center">
+                <div class="col-12 mb-3">
+                  <div class="stat-box-small">
+                    <h4 class="text-primary mb-1">{{ stats.comments_count || 0 }}</h4>
+                    <p class="text-muted mb-0 small">评论数</p>
+                  </div>
+                </div>
+                <div class="col-6 mb-3">
+                  <div class="stat-box-small">
+                    <h4 class="text-success mb-1">{{ stats.trips_count || 0 }}</h4>
+                    <p class="text-muted mb-0 small">旅行数</p>
+                  </div>
+                </div>
+                <div class="col-6 mb-3">
+                  <div class="stat-box-small">
+                    <h4 class="text-warning mb-1">{{ stats.public_trips_count || 0 }}</h4>
+                    <p class="text-muted mb-0 small">公开旅行</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 编辑个人中心按钮 -->
           <button
-            class="btn btn-outline-danger w-100 mt-3"
-            @click="handleLogout"
+            v-if="!isEditingBasic && !isEditingProfile"
+            class="btn btn-primary w-100 mt-3"
+            @click="startEditing"
           >
-            退出登录
+            ✏️ 编辑个人中心
           </button>
+          
+          <!-- 保存/取消按钮 -->
+          <template v-else>
+            <button
+              class="btn btn-success w-100 mt-3"
+              @click="saveAllChanges"
+              :disabled="savingAll"
+            >
+              <span v-if="savingAll" class="spinner-border spinner-border-sm me-2"></span>
+              {{ savingAll ? '保存中...' : '💾 保存所有更改' }}
+            </button>
+            <button
+              class="btn btn-outline-secondary w-100 mt-2"
+              @click="cancelAllEdit"
+              :disabled="savingAll"
+            >
+              取消编辑
+            </button>
+          </template>
         </div>
         
         <!-- 右侧：信息编辑 -->
         <div class="col-md-8">
           <!-- 基本信息 -->
           <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
               <h5 class="mb-0">基本信息</h5>
+              <button
+                v-if="!isEditingBasic"
+                class="btn btn-sm btn-outline-primary"
+                @click="isEditingBasic = true"
+              >
+                ✏️ 编辑
+              </button>
             </div>
             <div class="card-body">
-              <form @submit.prevent="handleUpdateInfo">
+              <!-- 只读显示 -->
+              <template v-if="!isEditingBasic">
+                <div class="info-display">
+                  <div class="info-card mb-3">
+                    <div class="info-item">
+                      <label class="info-label">用户名</label>
+                      <p class="info-content">{{ editForm.username }}</p>
+                    </div>
+                  </div>
+                  <div class="info-card">
+                    <div class="info-item">
+                      <label class="info-label">邮箱</label>
+                      <p class="info-content">{{ editForm.email || '未设置' }}</p>
+                    </div>
+                  </div>
+                </div>
+              </template>
+              
+              <!-- 编辑表单 -->
+              <form v-else @submit.prevent="handleUpdateInfo">
                 <!-- 用户名 -->
                 <div class="mb-3">
                   <label class="form-label">用户名</label>
@@ -105,45 +183,140 @@
                   />
                 </div>
                 
-                <!-- 提交按钮 -->
-                <button
-                  type="submit"
-                  class="btn btn-primary"
-                  :disabled="updating"
-                >
-                  <span v-if="updating" class="spinner-border spinner-border-sm me-2"></span>
-                  {{ updating ? '保存中...' : '保存修改' }}
-                </button>
+                <!-- 操作按钮 -->
+                <div class="d-flex gap-2">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    :disabled="updating"
+                  >
+                    <span v-if="updating" class="spinner-border spinner-border-sm me-2"></span>
+                    {{ updating ? '保存中...' : '💾 保存' }}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    @click="cancelBasicEdit"
+                    :disabled="updating"
+                  >
+                    取消
+                  </button>
+                </div>
               </form>
             </div>
           </div>
           
-          <!-- 统计信息 -->
-          <div class="card shadow-sm">
-            <div class="card-header bg-white">
-              <h5 class="mb-0">我的统计</h5>
+          <!-- 旅行者资料 -->
+          <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">✨ 旅行者资料</h5>
+              <button
+                v-if="!isEditingProfile"
+                class="btn btn-sm btn-outline-primary"
+                @click="isEditingProfile = true"
+              >
+                ✏️ 编辑
+              </button>
             </div>
             <div class="card-body">
-              <div class="row text-center">
-                <div class="col-4">
-                  <div class="stat-box">
-                    <h3 class="text-primary">{{ stats.comments_count }}</h3>
-                    <p class="text-muted mb-0">评论数</p>
-                  </div>
+              <!-- 用户等级 -->
+              <div class="mb-3">
+                <label class="form-label">🎖️ 当前等级</label>
+                <div>
+                  <span :class="'badge level-badge ' + getLevelClass(profileData.level)">
+                    {{ getLevelText(profileData.level) }}
+                  </span>
                 </div>
-                <div class="col-4">
-                  <div class="stat-box">
-                    <h3 class="text-success">{{ stats.likes_count || 0 }}</h3>
-                    <p class="text-muted mb-0">获赞数</p>
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="stat-box">
-                    <h3 class="text-warning">{{ stats.views_count || 0 }}</h3>
-                    <p class="text-muted mb-0">浏览数</p>
-                  </div>
-                </div>
+                <small class="text-muted">根据旅行和评论数量自动计算</small>
               </div>
+              
+              <!-- 只读显示 -->
+              <template v-if="!isEditingProfile">
+                <div class="info-display">
+                  <div class="info-card mb-3">
+                    <label class="info-label">📝 个人简介</label>
+                    <p class="info-content">{{ profileData.bio || '还没有写个人简介' }}</p>
+                  </div>
+                  <div class="info-card mb-3">
+                    <label class="info-label">🏷️ 个人标签</label>
+                    <div v-if="profileData.tags">
+                      <span 
+                        v-for="(tag, index) in profileData.tags.split(',')" 
+                        :key="index"
+                        class="badge bg-light text-dark me-1"
+                      >
+                        {{ tag.trim() }}
+                      </span>
+                    </div>
+                    <p v-else class="info-content text-muted">还没有添加标签</p>
+                  </div>
+                  <div class="info-card">
+                    <label class="info-label">🌍 访问过的国家</label>
+                    <p class="info-content">{{ profileData.visited_countries || '还没有记录' }}</p>
+                  </div>
+                </div>
+              </template>
+              
+              <!-- 编辑表单 -->
+              <form v-else @submit.prevent="handleUpdateProfile">
+                <!-- 个人简介 -->
+                <div class="mb-3">
+                  <label class="form-label">📝 个人简介</label>
+                  <textarea
+                    class="form-control"
+                    v-model="profileData.bio"
+                    rows="4"
+                    maxlength="500"
+                    placeholder="介绍一下自己吧..."
+                  ></textarea>
+                  <small class="text-muted">{{ profileData.bio?.length || 0 }}/500</small>
+                </div>
+                
+                <!-- 用户标签 -->
+                <div class="mb-3">
+                  <label class="form-label">🏷️ 个人标签</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    v-model="profileData.tags"
+                    placeholder="例如：摄影爱好者,美食达人,户外运动"
+                    maxlength="200"
+                  />
+                  <small class="text-muted">逗号分隔，最多10个标签，每个不超过20字</small>
+                </div>
+                
+                <!-- 访问过的国家 -->
+                <div class="mb-3">
+                  <label class="form-label">🌍 访问过的国家</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    v-model="profileData.visited_countries"
+                    placeholder="例如：中国,日本,泰国"
+                    maxlength="200"
+                  />
+                  <small class="text-muted">逗号分隔的国家列表</small>
+                </div>
+                
+                <div class="d-flex gap-2">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    :disabled="updatingProfile"
+                  >
+                    <span v-if="updatingProfile" class="spinner-border spinner-border-sm me-2"></span>
+                    {{ updatingProfile ? '保存中...' : '💾 保存' }}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    @click="cancelProfileEdit"
+                    :disabled="updatingProfile"
+                  >
+                    取消
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -157,7 +330,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
-import { getUserStats, updateUserInfo, uploadAvatar } from '@/api/user'
+import { getUserStats, updateProfile, updateUser, uploadAvatar } from '@/api/user'
 import NavBar from '@/components/NavBar.vue'
 
 export default {
@@ -173,10 +346,14 @@ export default {
     
     const loading = ref(false)
     const updating = ref(false)
+    const updatingProfile = ref(false)
+    const savingAll = ref(false)
+    const isEditingBasic = ref(false)
+    const isEditingProfile = ref(false)
     const stats = ref({
       comments_count: 0,
-      likes_count: 0,
-      views_count: 0
+      trips_count: 0,
+      public_trips_count: 0
     })
     
     const avatarInput = ref(null)
@@ -184,6 +361,25 @@ export default {
     const editForm = ref({
       username: '',
       email: ''
+    })
+    
+    const originalForm = ref({
+      username: '',
+      email: ''
+    })
+    
+    const profileData = ref({
+      bio: '',
+      tags: '',
+      visited_countries: '',
+      level: 'novice'
+    })
+    
+    const originalProfile = ref({
+      bio: '',
+      tags: '',
+      visited_countries: '',
+      level: 'novice'
     })
     
     // 从store获取用户信息
@@ -214,9 +410,125 @@ export default {
     
     // 初始化编辑表单
     const initEditForm = () => {
-      editForm.value = {
-        username: userInfo.value?.username || '',
-        email: userInfo.value?.email || ''
+      const username = userInfo.value?.username || ''
+      const email = userInfo.value?.email || ''
+      
+      editForm.value = { username, email }
+      originalForm.value = { username, email }
+      
+      const bio = userInfo.value?.profile?.bio || ''
+      const tags = userInfo.value?.profile?.tags || ''
+      const visited_countries = userInfo.value?.profile?.visited_countries || ''
+      const level = userInfo.value?.profile?.level || 'novice'
+      
+      profileData.value = { bio, tags, visited_countries, level }
+      originalProfile.value = { bio, tags, visited_countries, level }
+    }
+    
+    // 取消编辑基本信息
+    const cancelBasicEdit = () => {
+      editForm.value = { ...originalForm.value }
+      isEditingBasic.value = false
+    }
+    
+    // 取消编辑旅行者资料
+    const cancelProfileEdit = () => {
+      profileData.value = { ...originalProfile.value }
+      isEditingProfile.value = false
+    }
+    
+    // 开始编辑
+    const startEditing = () => {
+      isEditingBasic.value = true
+      isEditingProfile.value = true
+    }
+    
+    // 取消所有编辑
+    const cancelAllEdit = () => {
+      cancelBasicEdit()
+      cancelProfileEdit()
+    }
+    
+    // 保存所有更改
+    const saveAllChanges = async () => {
+      savingAll.value = true
+      
+      try {
+        // 保存基本信息
+        if (editForm.value.username !== originalForm.value.username || 
+            editForm.value.email !== originalForm.value.email) {
+          await updateUser(userInfo.value.id, editForm.value)
+        }
+        
+        // 保存旅行者资料
+        if (profileData.value.bio !== originalProfile.value.bio ||
+            profileData.value.tags !== originalProfile.value.tags ||
+            profileData.value.visited_countries !== originalProfile.value.visited_countries) {
+          await updateProfile({
+            bio: profileData.value.bio,
+            tags: profileData.value.tags,
+            visited_countries: profileData.value.visited_countries
+          })
+        }
+        
+        // 重新获取用户信息
+        await userStore.fetchUserInfo()
+        initEditForm()
+        
+        alert('所有更改已保存！')
+      } catch (error) {
+        console.error('保存失败:', error)
+        alert('保存失败，请稍后重试')
+      } finally {
+        savingAll.value = false
+      }
+    }
+    
+    // 等级文本
+    const getLevelText = (level) => {
+      const levels = {
+        'novice': '新手',
+        'explorer': '探索者',
+        'wanderer': '漫游者',
+        'adventurer': '冒险家',
+        'master': '旅行大师'
+      }
+      return levels[level] || '新手'
+    }
+    
+    // 等级样式类
+    const getLevelClass = (level) => {
+      const classes = {
+        'novice': 'level-novice',
+        'explorer': 'level-explorer',
+        'wanderer': 'level-wanderer',
+        'adventurer': 'level-adventurer',
+        'master': 'level-master'
+      }
+      return classes[level] || 'level-novice'
+    }
+    
+    // 更新个人资料
+    const handleUpdateProfile = async () => {
+      updatingProfile.value = true
+      
+      try {
+        await updateProfile({
+          bio: profileData.value.bio,
+          tags: profileData.value.tags,
+          visited_countries: profileData.value.visited_countries
+        })
+        
+        // 重新获取用户信息
+        await userStore.fetchUserInfo()
+        initEditForm()
+        
+        alert('资料更新成功！')
+      } catch (error) {
+        console.error('更新失败:', error)
+        alert('更新失败，请稍后重试')
+      } finally {
+        updatingProfile.value = false
       }
     }
     
@@ -225,11 +537,13 @@ export default {
       updating.value = true
       
       try {
-        await updateUserInfo(userInfo.value.id, editForm.value)
+        await updateUser(userInfo.value.id, editForm.value)
         
         // 重新获取用户信息
         await userStore.fetchUserInfo()
+        initEditForm()
         
+        isEditingBasic.value = false
         alert('更新成功！')
       } catch (error) {
         console.error('更新失败:', error)
@@ -262,10 +576,7 @@ export default {
       }
       
       try {
-        const formData = new FormData()
-        formData.append('avatar', file)
-        
-        await uploadAvatar(userInfo.value.id, formData)
+        await uploadAvatar(userInfo.value.id, file)
         
         // 重新获取用户信息
         await userStore.fetchUserInfo()
@@ -316,9 +627,14 @@ export default {
     return {
       loading,
       updating,
+      updatingProfile,
+      savingAll,
+      isEditingBasic,
+      isEditingProfile,
       stats,
       avatarInput,
       editForm,
+      profileData,
       userInfo,
       username,
       email,
@@ -327,6 +643,14 @@ export default {
       formatDate,
       goBack,
       handleUpdateInfo,
+      handleUpdateProfile,
+      cancelBasicEdit,
+      cancelProfileEdit,
+      startEditing,
+      cancelAllEdit,
+      saveAllChanges,
+      getLevelText,
+      getLevelClass,
       triggerFileInput,
       handleAvatarChange,
       handleLogout
@@ -549,7 +873,109 @@ h2 {
   box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
 }
 
-/* 响应式设计 */
+/* 信息卡片样式 */
+.info-card {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.info-card:hover {
+  background: #ffffff;
+  border-color: #dee2e6;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: #6c757d;
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-content {
+  color: #2c3e50;
+  font-size: 1rem;
+  line-height: 1.8;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.badge.bg-light {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+  border: 1px solid #dee2e6;
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+}
+
+.d-flex.gap-2 {
+  gap: 0.5rem;
+}
+
+/* 小统计盒子样式 */
+.stat-box-small {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.stat-box-small:hover {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.stat-box-small h4 {
+  margin: 0;
+  font-weight: 700;
+}
+
+/* 等级徽章样式 */
+.level-badge {
+  font-size: 1rem;
+  padding: 0.5rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 700;
+}
+
+.level-badge-small {
+  font-size: 0.85rem;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.level-novice {
+  background: linear-gradient(135deg, #e0e0e0 0%, #bdbdbd 100%);
+  color: #666;
+}
+
+.level-explorer {
+  background: linear-gradient(135deg, #bbdefb 0%, #90caf9 100%);
+  color: #1976d2;
+}
+
+.level-wanderer {
+  background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+  color: #388e3c;
+}
+
+.level-adventurer {
+  background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
+  color: #f57f17;
+}
+
+.level-master {
+  background: linear-gradient(135deg, #ffeb3b 0%, #ffc107 100%);
+  color: #f57f17;
+}
+
 @media (max-width: 768px) {
   .user-center-container {
     padding: 1rem 0;

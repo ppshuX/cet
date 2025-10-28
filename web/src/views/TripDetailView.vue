@@ -30,7 +30,7 @@
         <!-- 页面标题 -->
         <div class="card shadow-lg mb-4">
           <div class="card-body p-5">
-            <h1 class="mb-3">{{ trip.name }}</h1>
+            <h1 class="mb-3">{{ trip.name || trip.title }}</h1>
             <p class="text-muted mb-0">{{ trip.description }}</p>
           </div>
         </div>
@@ -115,28 +115,30 @@
           </div>
           
           <!-- 预算参考 -->
-          <h4>💰 预算参考</h4>
-          <table>
-            <thead>
-              <tr>
-                <th>项目</th>
-                <th>金额（元）</th>
-                <th>备注</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(item, index) in tripConfig.overview.budget.items" :key="index">
-                <td>{{ item.name }}</td>
-                <td>¥{{ item.amount }}</td>
-                <td>{{ item.note }}</td>
-              </tr>
-              <tr class="total-row">
-                <td><strong>总计</strong></td>
-                <td><strong>¥{{ tripConfig.overview.budget.total }}</strong></td>
-                <td>人均预算</td>
-              </tr>
-            </tbody>
-          </table>
+          <div v-if="tripConfig.overview.budget && tripConfig.overview.budget.items">
+            <h4>💰 预算参考</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>项目</th>
+                  <th>金额（元）</th>
+                  <th>备注</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in tripConfig.overview.budget.items" :key="index">
+                  <td>{{ item.name }}</td>
+                  <td>¥{{ item.amount }}</td>
+                  <td>{{ item.note }}</td>
+                </tr>
+                <tr class="total-row">
+                  <td><strong>总计</strong></td>
+                  <td><strong>¥{{ tripConfig.overview.budget.total }}</strong></td>
+                  <td>人均预算</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
           <!-- 实用提示 -->
           <div v-if="tripConfig.overview.tips && tripConfig.overview.tips.length" class="tips-section">
@@ -234,12 +236,18 @@ export default {
         // 如果是旧SiteStat模型，使用getTripConfig
         if (trip.value.overview) {
           // 新Trip模型，已经有完整的配置和数据
+          // 处理 budget.summary -> budget.total 的兼容性
+          const overview = { ...trip.value.overview }
+          if (overview.budget && overview.budget.summary) {
+            overview.budget.total = overview.budget.summary
+          }
+          
           tripConfig.value = {
             dates: {
               start: trip.value.start_date,
               end: trip.value.end_date
             },
-            overview: trip.value.overview
+            overview
           }
         } else {
           // 旧SiteStat模型，使用静态配置

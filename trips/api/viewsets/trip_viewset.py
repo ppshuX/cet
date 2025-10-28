@@ -1,0 +1,83 @@
+"""
+旅行页面相关 ViewSet
+处理旅行页面的展示、点赞、打卡、评论等功能
+"""
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+
+from ...models import SiteStat, Comment
+from ...serializers import (
+    TripSerializer,
+    SiteStatSerializer,
+    CommentSerializer,
+)
+
+
+class TripViewSet(viewsets.ReadOnlyModelViewSet):
+    """旅行页面ViewSet"""
+    queryset = SiteStat.objects.all().order_by('id')  # 按ID排序，保持创建时间顺序
+    serializer_class = TripSerializer
+    lookup_field = 'page'
+    permission_classes = [AllowAny]
+    
+    def list(self, request, *args, **kwargs):
+        """获取旅行列表"""
+        queryset = self.get_queryset()
+        
+        # 分页
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    def retrieve(self, request, *args, **kwargs):
+        """获取旅行详情，并增加浏览量"""
+        instance = self.get_object()
+        instance.views += 1
+        instance.save()
+        
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['post'])
+    def like(self, request, page=None):
+        """点赞"""
+        stat = self.get_object()
+        stat.likes += 1
+        stat.save()
+        return Response({'likes': stat.likes})
+    
+    @action(detail=True, methods=['post'])
+    def checkin(self, request, page=None):
+        """打卡"""
+        stat = self.get_object()
+        stat.checked_in = True
+        stat.save()
+        return Response({'checked_in': True})
+    
+    @action(detail=True, methods=['get'])
+    def stats(self, request, page=None):
+        """获取统计信息"""
+        stat = self.get_object()
+        serializer = SiteStatSerializer(stat)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['get'])
+    def comments(self, request, page=None):
+        """获取该页面的评论列表"""
+        stat = self.get_object()
+        comments = Comment.objects.filter(page=stat.page).order_by('-timestamp')
+        
+        # 分页
+        page_obj = self.paginate_queryset(comments)
+        if page_obj is not None:
+            serializer = CommentSerializer(page_obj, many=True, context={'request': request})
+            return self.get_paginated_response(serializer.data)
+        
+        serializer = CommentSerializer(comments, many=True, context={'request': request})
+        return Response(serializer.data)

@@ -14,3 +14,8 @@ nginx_full_config.conf
 nginx_roamio_config.conf
 server_deploy_commands.md
 DEPLOYMENT_NOTES.md
+
+# 文档（除了 README）
+docs/*.md
+!docs/README.md
+!README.md

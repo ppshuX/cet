@@ -30,17 +30,18 @@ class TripDetailSerializer(serializers.ModelSerializer):
     days_count = serializers.ReadOnlyField()
     is_published = serializers.ReadOnlyField()
     is_public = serializers.ReadOnlyField()
+    name = serializers.CharField(source='title', read_only=True)  # 前端兼容字段
     
     class Meta:
         model = Trip
         fields = [
-            'id', 'slug', 'title', 'description', 'icon',
+            'id', 'slug', 'title', 'name', 'description', 'icon',
             'author', 'start_date', 'end_date', 'days_count',
             'status', 'visibility', 'is_published', 'is_public',
             'config', 'overview', 'theme_color', 'background_music',
             'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'slug', 'author', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'slug', 'author', 'created_at', 'updated_at', 'name']
 
 
 class TripListSerializer(serializers.ModelSerializer):

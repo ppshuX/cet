@@ -7,6 +7,7 @@ from .user_serializer import (
     UserProfileSerializer, 
     RegisterSerializer,
     UpdateUserSerializer,
+    UserProfileUpdateSerializer,
     AvatarUploadSerializer,
 )
 from .comment_serializer import CommentSerializer, CommentCreateSerializer, CommentUpdateSerializer
@@ -25,6 +26,7 @@ __all__ = [
     'UserProfileSerializer',
     'RegisterSerializer',
     'UpdateUserSerializer',
+    'UserProfileUpdateSerializer',
     'AvatarUploadSerializer',
     # 评论
     'CommentSerializer',

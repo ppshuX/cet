@@ -30,7 +30,8 @@ urlpatterns = [
     
     # ==================== Vue单页应用 ⭐（必须在最后） ====================
     path('', views.vue_app, name='home'),  # 首页
-    re_path(r'^.*/$', views.vue_app),  # Catch-all：所有以 / 结尾的路径都返回 Vue 应用
+    # Catch-all：匹配非管理路径和非静态资源路径
+    re_path(r'^(?!admin|api|static|media|trips|accounts).*$', views.vue_app),
 ]
 
 # 静态文件和媒体文件

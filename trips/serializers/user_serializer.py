@@ -13,7 +13,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = UserProfile
-        fields = ['avatar', 'avatar_url']
+        fields = ['avatar', 'avatar_url', 'bio', 'tags', 'level', 'visited_countries']
     
     def get_avatar_url(self, obj):
         """获取头像URL"""
@@ -23,11 +23,21 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     """用户序列化器"""
     profile = UserProfileSerializer(read_only=True)
+    stats = serializers.SerializerMethodField()
+    is_superuser = serializers.BooleanField(read_only=True)
     
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'date_joined', 'profile']
-        read_only_fields = ['id', 'date_joined']
+        fields = ['id', 'username', 'email', 'date_joined', 'is_superuser', 'is_staff', 'profile', 'stats']
+        read_only_fields = ['id', 'date_joined', 'is_superuser', 'is_staff']
+    
+    def get_stats(self, obj):
+        """获取用户统计信息"""
+        return {
+            'trips_count': obj.trips.count(),
+            'public_trips_count': obj.trips.filter(visibility='public').count(),
+            'comments_count': obj.comment_set.count(),
+        }
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -49,15 +59,44 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'email', 'password', 'password2']
         extra_kwargs = {
-            'email': {'required': False}
+            'email': {'required': False},
+            'username': {'error_messages': {'required': '用户名不能为空'}},
+            'password': {'error_messages': {'required': '密码不能为空'}},
+            'password2': {'error_messages': {'required': '请确认密码'}}
         }
+    
+    def validate_username(self, value):
+        """验证用户名"""
+        if not value or not value.strip():
+            raise serializers.ValidationError("用户名不能为空")
+        value = value.strip()
+        if len(value) < 3:
+            raise serializers.ValidationError("用户名至少需要3个字符")
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("该用户名已被使用，请选择其他用户名")
+        return value
+    
+    def validate_email(self, value):
+        """验证邮箱"""
+        if value and User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("该邮箱已被注册")
+        return value
     
     def validate(self, attrs):
         """验证两次密码是否一致"""
-        if attrs['password'] != attrs['password2']:
+        password = attrs.get('password')
+        password2 = attrs.get('password2')
+        
+        if password and password2 and password != password2:
             raise serializers.ValidationError({
-                "password": "两次输入的密码不一致"
+                "password2": "两次输入的密码不一致"
             })
+        
+        if password and len(password) < 8:
+            raise serializers.ValidationError({
+                "password": "密码至少需要8个字符"
+            })
+        
         return attrs
     
     def create(self, validated_data):
@@ -77,8 +116,38 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     def validate_username(self, value):
         """验证用户名唯一性"""
         user = self.context['request'].user
+        if not value or not value.strip():
+            raise serializers.ValidationError("用户名不能为空")
+        value = value.strip()
         if User.objects.exclude(pk=user.pk).filter(username=value).exists():
-            raise serializers.ValidationError("该用户名已被使用")
+            raise serializers.ValidationError("该用户名已被使用，请选择其他用户名")
+        return value
+
+
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    """更新用户配置序列化器"""
+    
+    class Meta:
+        model = UserProfile
+        fields = ['bio', 'tags', 'visited_countries']
+    
+    def validate_bio(self, value):
+        """验证个人简介长度"""
+        if value and len(value) > 500:
+            raise serializers.ValidationError("个人简介不能超过500字")
+        return value
+    
+    def validate_tags(self, value):
+        """验证标签格式"""
+        if value:
+            tags = [tag.strip() for tag in value.split(',') if tag.strip()]
+            # 最多10个标签
+            if len(tags) > 10:
+                raise serializers.ValidationError("标签数量不能超过10个")
+            # 每个标签最多20个字符
+            for tag in tags:
+                if len(tag) > 20:
+                    raise serializers.ValidationError(f"标签'{tag}'长度不能超过20个字符")
         return value
 
 

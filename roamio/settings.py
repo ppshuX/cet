@@ -58,6 +58,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# CSRF配置 - 仅用于 Django Admin 和表单
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+    'http://localhost:8080',
+    'http://127.0.0.1:8080',
+]
+CSRF_COOKIE_SECURE = False  # 开发环境设为 False
+CSRF_COOKIE_SAMESITE = 'Lax'
+
 ROOT_URLCONF = 'roamio.urls'
 
 TEMPLATES = [
@@ -104,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'  # 中文简体
 
 TIME_ZONE = 'Asia/Shanghai'
 
@@ -150,10 +160,10 @@ DATA_UPLOAD_MAX_NUMBER_FILES = 100
 from datetime import timedelta
 
 REST_FRAMEWORK = {
-    # 认证
+    # 认证 - 统一使用 JWT
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',  # 保留session认证用于浏览器API调试
+        # 移除 SessionAuthentication - 完全使用 JWT，避免 CSRF 问题
     ],
     # 权限
     'DEFAULT_PERMISSION_CLASSES': [

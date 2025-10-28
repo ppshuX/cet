@@ -23,7 +23,11 @@ export const useUserStore = defineStore('user', {
         avatar: (state) => getAvatarUrl(state.userInfo?.profile?.avatar_url),
 
         // 是否是管理员
-        isAdmin: (state) => state.userInfo?.is_superuser || false,
+        isAdmin: (state) => {
+            const isSuperuser = state.userInfo?.is_superuser || false
+            const isStaff = state.userInfo?.is_staff || false
+            return isSuperuser || isStaff
+        },
     },
 
     actions: {
@@ -44,6 +48,9 @@ export const useUserStore = defineStore('user', {
                 return data
             } catch (error) {
                 console.error('登录失败:', error)
+                if (error.response?.data) {
+                    console.error('错误详情:', error.response.data)
+                }
                 throw error
             }
         },

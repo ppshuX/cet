@@ -93,7 +93,27 @@ export default {
         // 登录成功，跳转到首页
         router.push('/')
       } catch (err) {
-        error.value = err.message || '登录失败，请检查用户名和密码'
+        // 优先显示API返回的中文错误信息
+        if (err.response?.data) {
+          const data = err.response.data
+          
+          // 处理字段错误
+          if (data.username && Array.isArray(data.username)) {
+            error.value = data.username[0]
+          } else if (data.password && Array.isArray(data.password)) {
+            error.value = data.password[0]
+          } else if (data.non_field_errors && Array.isArray(data.non_field_errors)) {
+            error.value = data.non_field_errors[0]
+          } else if (typeof data === 'string') {
+            error.value = data
+          } else if (data.detail) {
+            error.value = data.detail
+          } else {
+            error.value = '登录失败，请检查用户名和密码'
+          }
+        } else {
+          error.value = err.message || '登录失败，请检查用户名和密码'
+        }
       } finally {
         loading.value = false
       }

@@ -223,9 +223,18 @@ export default {
               errors.value.password2 = Array.isArray(data.password2) ? data.password2[0] : data.password2
             }
             
+            // 处理非字段错误
+            if (data.non_field_errors) {
+              errorMessage.value = Array.isArray(data.non_field_errors) ? data.non_field_errors[0] : data.non_field_errors
+            }
+            
             // 如果有通用错误消息
-            if (data.detail || data.message || data.error) {
+            if (!errorMessage.value && (data.detail || data.message || data.error)) {
               errorMessage.value = data.detail || data.message || data.error
+            }
+            
+            if (!errorMessage.value) {
+              errorMessage.value = '注册失败，请稍后重试'
             }
           } else {
             errorMessage.value = '注册失败，请稍后重试'

@@ -96,9 +96,11 @@ const request = {
 
             try {
                 const errorData = await response.json()
+                console.log('[API Error]', url, errorData)
                 error.message = errorData.detail || errorData.message || error.message
                 error.response.data = errorData
-            } catch {
+            } catch (e) {
+                console.log('[API Error]', url, 'Failed to parse error response')
                 error.message = response.statusText || error.message
             }
 
