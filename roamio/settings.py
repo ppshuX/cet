@@ -314,17 +314,17 @@ if USE_REDIS_CACHE:
     else:
         REDIS_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'
     
-    # 配置Redis缓存（尝试连接，如果失败则会在运行时自动降级）
+    # 配置Redis缓存（使用django-redis包）
     CACHES = {
         'default': {
-            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'BACKEND': 'django_redis.cache.RedisCache',  # 使用django-redis，不是Django自带的
             'LOCATION': REDIS_URL,
             'OPTIONS': {
                 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
                 'SOCKET_CONNECT_TIMEOUT': 5,
                 'SOCKET_TIMEOUT': 5,
                 'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
-                'IGNORE_EXCEPTIONS': True,  # 忽略异常，自动降级
+                'IGNORE_EXCEPTIONS': True,  # 忽略异常，自动降级到数据库缓存
             },
             'KEY_PREFIX': 'roamio',
             'TIMEOUT': 300,
@@ -332,22 +332,8 @@ if USE_REDIS_CACHE:
         }
     }
     
-    # 尝试测试Redis连接（延迟导入避免循环依赖）
-    try:
-        import django
-        if not django.setup.__self__:
-            from django.core.cache import cache
-            cache.set('redis_test', 'ok', 1)
-            if cache.get('redis_test') == 'ok':
-                print("=" * 50)
-                print("[CACHE] Redis缓存配置成功")
-                print(f"[CACHE] Redis地址: {REDIS_HOST}:{REDIS_PORT}")
-                print("=" * 50)
-    except Exception:
-        # 初始化阶段可能无法测试，会在运行时自动降级
-        pass
 else:
-    # 使用数据库缓存
+    # 使用数据库缓存（作为备选方案）
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
@@ -360,6 +346,11 @@ else:
             'TIMEOUT': 300,
         }
     }
+    if DEBUG:
+        print("=" * 50)
+        print("[CACHE] 使用数据库缓存")
+        print("[提示] 运行 python manage.py createcachetable 创建缓存表")
+        print("=" * 50)
 
 # ==================== QQ OAuth 配置 ====================
 QQ_APP_ID = os.getenv('QQ_APP_ID', '102813859')
