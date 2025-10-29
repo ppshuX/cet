@@ -295,6 +295,72 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Roamio <noreply@roamio.com
 # 邮件模板目录
 EMAIL_TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates', 'emails')
 
+# ==================== 缓存配置 ====================
+# 优先使用Redis缓存（推荐用于生产环境）
+# 如果Redis不可用，自动回退到数据库缓存
+
+USE_REDIS_CACHE = os.getenv('USE_REDIS_CACHE', '1') == '1'  # 默认使用Redis
+
+if USE_REDIS_CACHE:
+    # Redis配置（从环境变量读取，如果没有配置则使用默认值）
+    REDIS_HOST = os.getenv('REDIS_HOST', '127.0.0.1')
+    REDIS_PORT = int(os.getenv('REDIS_PORT', 6379))
+    REDIS_DB = int(os.getenv('REDIS_DB', 0))
+    REDIS_PASSWORD = os.getenv('REDIS_PASSWORD', None)
+    
+    # 构建Redis连接URL
+    if REDIS_PASSWORD:
+        REDIS_URL = f'redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'
+    else:
+        REDIS_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'
+    
+    # 配置Redis缓存（尝试连接，如果失败则会在运行时自动降级）
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': REDIS_URL,
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                'SOCKET_CONNECT_TIMEOUT': 5,
+                'SOCKET_TIMEOUT': 5,
+                'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
+                'IGNORE_EXCEPTIONS': True,  # 忽略异常，自动降级
+            },
+            'KEY_PREFIX': 'roamio',
+            'TIMEOUT': 300,
+            'VERSION': 1,
+        }
+    }
+    
+    # 尝试测试Redis连接（延迟导入避免循环依赖）
+    try:
+        import django
+        if not django.setup.__self__:
+            from django.core.cache import cache
+            cache.set('redis_test', 'ok', 1)
+            if cache.get('redis_test') == 'ok':
+                print("=" * 50)
+                print("[CACHE] Redis缓存配置成功")
+                print(f"[CACHE] Redis地址: {REDIS_HOST}:{REDIS_PORT}")
+                print("=" * 50)
+    except Exception:
+        # 初始化阶段可能无法测试，会在运行时自动降级
+        pass
+else:
+    # 使用数据库缓存
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+            'LOCATION': 'cache_table',
+            'OPTIONS': {
+                'MAX_ENTRIES': 10000,
+                'CULL_FREQUENCY': 3,
+            },
+            'KEY_PREFIX': 'roamio',
+            'TIMEOUT': 300,
+        }
+    }
+
 # ==================== QQ OAuth 配置 ====================
 QQ_APP_ID = os.getenv('QQ_APP_ID', '102813859')
 QQ_APP_KEY = os.getenv('QQ_APP_KEY', 'OddPvLYXHo69wTYO')

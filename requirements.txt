@@ -28,6 +28,10 @@ urllib3==2.1.0
 uwsgi==2.0.23
 python-dotenv==1.0.0
 
+# 缓存（Redis支持）
+django-redis==5.4.0
+redis==5.0.1
+
 # 开发工具
 ipython==8.12.0
 
