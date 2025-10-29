@@ -224,12 +224,18 @@ class AuthViewSet(viewsets.GenericViewSet):
         state = generate_state()
         authorize_url, state_generated = get_qq_authorize_url(state)
         
-        # 将state存储到缓存（用于后续验证，有效期10分钟）
+        # 将state存储到缓存（用于后续验证，有效期30分钟）
+        # 增加有效期，以防用户授权时间过长
         cache.set(
             f'qq_oauth_state:{state_generated}',
             True,
-            timeout=600
+            timeout=1800  # 30分钟有效期
         )
+        
+        # 调试日志
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.debug(f'QQ OAuth state generated: {state_generated[:10]}...')
         
         return Response({
             'authorize_url': authorize_url,  # 修复：统一使用 authorize_url
@@ -250,10 +256,19 @@ class AuthViewSet(viewsets.GenericViewSet):
         state = serializer.validated_data['state']
         
         # 验证state（CSRF防护）
-        state_valid = cache.get(f'qq_oauth_state:{state}')
+        cache_key = f'qq_oauth_state:{state}'
+        state_valid = cache.get(cache_key)
+        
+        # 调试日志
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f'QQ OAuth callback received - state: {state[:10] if state else None}..., state_valid: {state_valid}')
+        
         if not state_valid:
+            # 检查是否过期或被删除
+            logger.warning(f'QQ OAuth state validation failed - state: {state[:10] if state else None}..., cache_key: {cache_key}')
             return Response({
-                'error': '无效的state参数，请重新登录'
+                'error': '无效的state参数，请重新登录（可能已过期或已被使用）'
             }, status=status.HTTP_400_BAD_REQUEST)
         
         # 删除state（一次性使用）
