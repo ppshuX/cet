@@ -95,9 +95,9 @@
         
         <!-- 右侧：信息编辑 -->
         <div class="col-md-8">
-          <!-- 邮箱绑定（如果邮箱未绑定或未验证） -->
+          <!-- 邮箱绑定（编辑模式下，如果邮箱未绑定或未验证） -->
           <EmailBindingEditor
-            v-if="!email || !isEmailVerified"
+            v-if="(isEditingBasic || isEditingProfile) && (!email || !isEmailVerified)"
             :current-email="email || ''"
             :email-verified="isEmailVerified"
             :user-id="userInfo?.id"

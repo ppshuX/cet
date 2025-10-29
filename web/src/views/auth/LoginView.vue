@@ -34,13 +34,6 @@
                   />
                 </div>
                 
-                <!-- 忘记密码 -->
-                <div class="mb-3 text-end">
-                  <router-link to="/forgot-password/" class="text-decoration-none small text-primary">
-                    忘记密码？
-                  </router-link>
-                </div>
-                
                 <!-- 错误提示 -->
                 <div v-if="error" class="alert alert-danger" role="alert">
                   {{ error }}
@@ -49,12 +42,19 @@
                 <!-- 登录按钮 -->
                 <button
                   type="submit"
-                  class="btn btn-primary w-100 mb-3"
+                  class="btn btn-primary w-100 mb-2"
                   :disabled="loading"
                 >
                   <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
                   {{ loading ? '登录中...' : '登录' }}
                 </button>
+                
+                <!-- 忘记密码 -->
+                <div class="text-end mb-3">
+                  <router-link to="/forgot-password/" class="text-decoration-none small text-primary">
+                    忘记密码？
+                  </router-link>
+                </div>
                 
                 <!-- QQ登录 -->
                 <div class="text-center mb-3">
