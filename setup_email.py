@@ -26,24 +26,8 @@ def create_env_file():
     
     if use_real_email == '1':
         print("\n请输入SMTP配置：")
-        email_host = input("SMTP服务器 (默认: smtp.qq.com): ").strip() or 'smtp.qq.com'
-        
-        # QQ邮箱通常使用465端口+SSL或587端口+TLS
-        email_port = input("SMTP端口 (默认: 465): ").strip() or '465'
-        email_port = int(email_port)
-        
-        # 根据端口自动判断使用SSL还是TLS
-        if email_port == 465:
-            use_ssl = True
-            use_tls = False
-        elif email_port == 587:
-            use_ssl = False
-            use_tls = True
-        else:
-            ssl_choice = input("使用SSL? (Y/n，默认Y): ").strip().lower()
-            use_ssl = ssl_choice != 'n'
-            use_tls = not use_ssl
-        
+        email_host = input("SMTP服务器 (默认: smtp.exmail.qq.com): ").strip() or 'smtp.exmail.qq.com'
+        email_port = input("SMTP端口 (默认: 587): ").strip() or '587'
         email_user = input("发件邮箱地址: ").strip()
         email_password = input("邮箱授权码/密码: ").strip()
         default_from = input(f"发件人显示名称 (默认: Roamio <{email_user}>): ").strip() or f'Roamio <{email_user}>'
@@ -52,34 +36,24 @@ def create_env_file():
             print("❌ 邮箱地址和授权码不能为空！")
             return
         
-        env_content = f"""# ==================== 邮件配置 ====================
+        env_content = f"""# 邮件配置
 USE_REAL_EMAIL=1
-
-# SMTP服务器配置（以QQ邮箱为例）
 EMAIL_HOST={email_host}
 EMAIL_PORT={email_port}
-EMAIL_USE_SSL={str(use_ssl)}
-EMAIL_USE_TLS={str(use_tls)}
-
-
-# ⚠️ 邮箱账号和授权码（不是登录密码）
 EMAIL_HOST_USER={email_user}
 EMAIL_HOST_PASSWORD={email_password}
-
-# 发件人显示名称
 DEFAULT_FROM_EMAIL={default_from}
 
-# ==================== QQ OAuth 配置 ====================
+# QQ OAuth 配置（已配置）
 QQ_APP_ID=102813859
 QQ_APP_KEY=OddPvLYXHo69wTYO
 QQ_REDIRECT_URI=https://app7508.acapp.acwing.com.cn/settings/qq/receive_code
 """
     else:
-        env_content = """# ==================== 邮件配置 ====================
-# 开发环境：验证码输出到控制台
+        env_content = """# 邮件配置（开发环境：验证码输出到控制台）
 USE_REAL_EMAIL=0
 
-# ==================== QQ OAuth 配置 ====================
+# QQ OAuth 配置（已配置）
 QQ_APP_ID=102813859
 QQ_APP_KEY=OddPvLYXHo69wTYO
 QQ_REDIRECT_URI=https://app7508.acapp.acwing.com.cn/settings/qq/receive_code

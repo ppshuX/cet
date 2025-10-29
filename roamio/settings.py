@@ -277,15 +277,9 @@ if DEBUG and not USE_REAL_EMAIL:
     print("=" * 50)
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.qq.com')  # SMTP服务器（默认QQ邮箱）
+    EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.exmail.qq.com')  # 腾讯企业邮箱SMTP
     EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
-    
-    # 支持SSL和TLS两种方式（从环境变量读取）
-    # EMAIL_USE_SSL=True 用于465端口
-    # EMAIL_USE_TLS=True 用于587端口
-    EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False').lower() in ('true', '1', 'yes')
-    EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() in ('true', '1', 'yes') if not EMAIL_USE_SSL else False
-    
+    EMAIL_USE_TLS = True
     EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')  # 从环境变量读取
     EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')  # 从环境变量读取
     if USE_REAL_EMAIL and DEBUG:
@@ -299,70 +293,6 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Roamio <noreply@roamio.com
 
 # 邮件模板目录
 EMAIL_TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates', 'emails')
-
-# ==================== 缓存配置 ====================
-# 优先使用Redis缓存（推荐用于生产环境）
-# 如果Redis不可用，自动回退到数据库缓存
-
-USE_REDIS_CACHE = os.getenv('USE_REDIS_CACHE', '1') == '1'  # 默认使用Redis
-
-if USE_REDIS_CACHE:
-    # Redis配置（从环境变量读取，如果没有配置则使用默认值）
-    REDIS_HOST = os.getenv('REDIS_HOST', '127.0.0.1')
-    REDIS_PORT = int(os.getenv('REDIS_PORT', 6379))
-    REDIS_DB = int(os.getenv('REDIS_DB', 0))
-    REDIS_PASSWORD = os.getenv('REDIS_PASSWORD', None)
-    
-    # 构建Redis连接URL
-    if REDIS_PASSWORD:
-        REDIS_URL = f'redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'
-    else:
-        REDIS_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'
-    
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-            'LOCATION': REDIS_URL,
-            'OPTIONS': {
-                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-                'SOCKET_CONNECT_TIMEOUT': 5,      # 连接超时（秒）
-                'SOCKET_TIMEOUT': 5,              # 操作超时（秒）
-                'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',  # 数据压缩
-                'IGNORE_EXCEPTIONS': True,        # 忽略Redis连接异常（优雅降级）
-                'PARSER_CLASS': 'redis.connection.HiredisParser',  # 使用更快的解析器（如果可用）
-            },
-            'KEY_PREFIX': 'roamio',              # 缓存key前缀，避免与其他应用冲突
-            'TIMEOUT': 300,                      # 默认缓存超时时间（5分钟）
-            'VERSION': 1,                       # 缓存版本，用于批量失效
-        }
-    }
-    
-    # 开发环境提示
-    if DEBUG:
-        print("=" * 50)
-        print("[CACHE] 配置Redis缓存")
-        print(f"[CACHE] Redis地址: {REDIS_HOST}:{REDIS_PORT}")
-        print("[提示] 启动Django后会测试Redis连接")
-        print("=" * 50)
-else:
-    # 使用数据库缓存（备用方案）
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-            'LOCATION': 'cache_table',
-            'OPTIONS': {
-                'MAX_ENTRIES': 10000,
-                'CULL_FREQUENCY': 3,  # 每3条清理1条过期项
-            },
-            'KEY_PREFIX': 'roamio',
-            'TIMEOUT': 300,
-        }
-    }
-    if DEBUG:
-        print("=" * 50)
-        print("[CACHE] 使用数据库缓存")
-        print("[提示] 如需使用Redis，设置 USE_REDIS_CACHE=1")
-        print("=" * 50)
 
 # ==================== QQ OAuth 配置 ====================
 QQ_APP_ID = os.getenv('QQ_APP_ID', '102813859')

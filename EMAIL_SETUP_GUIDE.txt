@@ -13,14 +13,12 @@
    # 设置为 1 启用真实邮件发送，0 则只在控制台显示
    USE_REAL_EMAIL=1
    
-   # SMTP服务器配置（以QQ邮箱为例）
+   # SMTP服务器配置（QQ邮箱示例）
    EMAIL_HOST=smtp.qq.com
-   EMAIL_PORT=465
-   EMAIL_USE_SSL=True
-   EMAIL_USE_TLS=False
+   EMAIL_PORT=587
    
-   
-   # ⚠️ 邮箱账号和授权码（不是登录密码）
+   # 你的邮箱账号和授权码
+   # ⚠️ 注意：QQ邮箱需要使用授权码，不是登录密码！
    EMAIL_HOST_USER=你的邮箱@qq.com
    EMAIL_HOST_PASSWORD=你的授权码
    
