@@ -22,7 +22,7 @@
           <li class="nav-item">
             <router-link to="/" class="nav-link">
               <i class="bi bi-house-door me-1"></i>
-              旅行列表
+              旅行大厅
             </router-link>
           </li>
           <li v-if="isLoggedIn" class="nav-item">

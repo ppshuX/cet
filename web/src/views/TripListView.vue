@@ -107,7 +107,7 @@ export default {
         const data = await getTripList()
         trips.value = data.results || data || []
       } catch (error) {
-        console.error('获取旅行列表失败:', error)
+        console.error('获取旅行大厅失败:', error)
       } finally {
         loading.value = false
       }

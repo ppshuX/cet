@@ -5,7 +5,7 @@ const routes = [
     path: '/',
     name: 'home',
     component: () => import('@/views/TripListView.vue'),
-    meta: { title: '旅行列表' }
+    meta: { title: '旅行大厅' }
   },
   {
     path: '/login/',
@@ -38,7 +38,7 @@ const routes = [
     path: '/trip/:slug/',
     name: 'trip-detail',
     component: () => import('@/views/TripDetailView.vue'),
-    meta: { title: '旅行详情' }
+    meta: { title: '旅行详情', dynamicTitle: true }
   },
   {
     path: '/my-trips/',

@@ -135,7 +135,7 @@ export default {
         trips.value = tripsList
         await checkTreeStatus() // 检查是否在旅行树中
       } catch (error) {
-        console.error('获取旅行列表失败:', error)
+        console.error('获取旅行大厅失败:', error)
         alert('加载失败')
       } finally {
         loading.value = false

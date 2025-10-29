@@ -254,6 +254,11 @@ export default {
           // 旧SiteStat模型，使用静态配置
           tripConfig.value = getTripConfig(slug)
         }
+        
+        // 更新页面标题为旅行名称
+        if (trip.value?.name || trip.value?.title) {
+          document.title = `${trip.value.name || trip.value.title} - Roamio 旅行平台`
+        }
       } catch (error) {
         console.error('获取旅行详情失败:', error)
         if (error.response?.status === 404 || error.status === 404) {
