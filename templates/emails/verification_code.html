@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roamio 邮箱验证</title>
+</head>
+
+<body style="margin: 0; padding: 0; font-family: Arial, 'Microsoft YaHei', sans-serif; background-color: #f5f5f5;">
+    <div
+        style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">🌍 Roamio</h1>
+            <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">旅行规划平台</p>
+        </div>
+
+        <!-- Content -->
+        <div style="padding: 40px 30px;">
+            <h2 style="color: #333333; margin: 0 0 20px 0; font-size: 24px;">
+                {% if verification_type == 'register' %}
+                欢迎注册 Roamio！
+                {% elif verification_type == 'login' %}
+                登录验证
+                {% elif verification_type == 'reset_password' %}
+                重置密码
+                {% elif verification_type == 'bind_email' %}
+                绑定邮箱验证
+                {% else %}
+                邮箱验证
+                {% endif %}
+            </h2>
+
+            <p style="color: #666666; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
+                您好！我们收到了您的验证请求。您的验证码是：
+            </p>
+
+            <!-- Verification Code -->
+            <div
+                style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 12px; padding: 30px; text-align: center; margin: 30px 0;">
+                <div
+                    style="font-size: 42px; font-weight: bold; color: #667eea; letter-spacing: 8px; font-family: 'Courier New', monospace;">
+                    {{ code }}
+                </div>
+            </div>
+
+            <p style="color: #999999; font-size: 14px; line-height: 1.6; margin: 20px 0;">
+                ⏰ 验证码有效期：<strong style="color: #667eea;">{{ expires_in }} 分钟</strong>
+            </p>
+
+            <div style="border-top: 1px solid #eeeeee; margin: 30px 0; padding-top: 20px;">
+                <p style="color: #999999; font-size: 12px; line-height: 1.6; margin: 0;">
+                    💡 <strong>安全提示：</strong><br>
+                    • 请不要将验证码告诉任何人<br>
+                    • Roamio 工作人员不会向您索要验证码<br>
+                    • 如果这不是您的操作，请忽略此邮件<br>
+                    • 如有疑问，请联系客服
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="background-color: #fafafa; padding: 20px; text-align: center; border-top: 1px solid #eeeeee;">
+            <p style="color: #999999; font-size: 12px; margin: 0;">
+                © 2024 Roamio. All rights reserved.
+            </p>
+            <p style="color: #cccccc; font-size: 11px; margin: 5px 0 0 0;">
+                This is an automated email, please do not reply.
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>

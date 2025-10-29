@@ -44,7 +44,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    """用户注册序列化器"""
+    """用户注册序列化器（需要邮箱验证）"""
     password = serializers.CharField(
         write_only=True, 
         required=True, 
@@ -57,12 +57,17 @@ class RegisterSerializer(serializers.ModelSerializer):
         style={'input_type': 'password'},
         label="确认密码"
     )
+    verification_token = serializers.CharField(
+        write_only=True,
+        required=True,
+        help_text='邮箱验证token，通过验证验证码API获取'
+    )
     
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'password2']
+        fields = ['username', 'email', 'password', 'password2', 'verification_token']
         extra_kwargs = {
-            'email': {'required': False},
+            'email': {'required': True},
             'username': {'error_messages': {'required': '用户名不能为空'}},
             'password': {'error_messages': {'required': '密码不能为空'}},
             'password2': {'error_messages': {'required': '请确认密码'}}
@@ -81,15 +86,24 @@ class RegisterSerializer(serializers.ModelSerializer):
     
     def validate_email(self, value):
         """验证邮箱"""
-        if value and User.objects.filter(email=value).exists():
+        if not value or not value.strip():
+            raise serializers.ValidationError("邮箱不能为空")
+        value = value.strip().lower()
+        if User.objects.filter(email=value).exists():
             raise serializers.ValidationError("该邮箱已被注册")
         return value
     
     def validate(self, attrs):
-        """验证两次密码是否一致"""
+        """验证数据"""
+        from django.core.cache import cache
+        from django.utils import timezone
+        
         password = attrs.get('password')
         password2 = attrs.get('password2')
+        verification_token = attrs.get('verification_token')
+        email = attrs.get('email', '').strip().lower()
         
+        # 验证两次密码是否一致
         if password and password2 and password != password2:
             raise serializers.ValidationError({
                 "password2": "两次输入的密码不一致"
@@ -100,12 +114,54 @@ class RegisterSerializer(serializers.ModelSerializer):
                 "password": "密码至少需要8个字符"
             })
         
+        # 验证邮箱验证token
+        if verification_token:
+            cache_key = f'email_verified_token:{verification_token}'
+            token_data = cache.get(cache_key)
+            
+            if not token_data:
+                raise serializers.ValidationError({
+                    "verification_token": "邮箱验证token无效或已过期，请重新验证邮箱"
+                })
+            
+            # 检查token中的邮箱是否匹配
+            if token_data.get('email') != email:
+                raise serializers.ValidationError({
+                    "verification_token": "邮箱验证token与邮箱地址不匹配"
+                })
+            
+            # 检查验证类型是否为注册
+            if token_data.get('verification_type') != 'register':
+                raise serializers.ValidationError({
+                    "verification_token": "验证token类型错误"
+                })
+        else:
+            raise serializers.ValidationError({
+                "verification_token": "请先验证邮箱"
+            })
+        
         return attrs
     
     def create(self, validated_data):
-        """创建用户"""
+        """创建用户（标记邮箱已验证）"""
+        from django.utils import timezone
+        
+        verification_token = validated_data.pop('verification_token')
         validated_data.pop('password2')
+        
+        # 创建用户
         user = User.objects.create_user(**validated_data)
+        
+        # 标记邮箱已验证
+        if hasattr(user, 'profile'):
+            user.profile.email_verified = True
+            user.profile.email_verified_at = timezone.now()
+            user.profile.save()
+        
+        # 删除验证token（只能使用一次）
+        from django.core.cache import cache
+        cache.delete(f'email_verified_token:{verification_token}')
+        
         return user
 
 

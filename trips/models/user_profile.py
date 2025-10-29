@@ -15,6 +15,10 @@ class UserProfile(models.Model):
     avatar = models.ImageField(upload_to='user_avatars/', blank=True, null=True, 
                               help_text='用户头像，推荐上传正方形图片')
     
+    # ========== 邮箱验证相关 ==========
+    email_verified = models.BooleanField(default=False, verbose_name='邮箱已验证')
+    email_verified_at = models.DateTimeField(null=True, blank=True, verbose_name='邮箱验证时间')
+    
     # ========== 扩展字段 - 旅行者信息 ==========
     # 个人简介
     bio = models.TextField(blank=True, max_length=500, help_text='个人简介')

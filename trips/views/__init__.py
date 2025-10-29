@@ -9,7 +9,7 @@ from .base_views import (
 )
 
 # 认证相关视图
-from .auth_views import (
+from .auth import (
     custom_login,
     register,
     custom_logout,
@@ -35,7 +35,7 @@ from .comment_views import (
 )
 
 # 用户中心视图
-from .user_views import (
+from .user import (
     user_center,
     upload_avatar,
 )

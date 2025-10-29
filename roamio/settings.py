@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# 加载 .env 文件中的环境变量
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -257,3 +261,44 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # CORS相关配置
 CORS_ALLOW_CREDENTIALS = True  # 允许携带Cookie
+
+# ==================== 邮件配置 ====================
+# 是否使用真实邮件发送（如果USE_REAL_EMAIL=1，即使是开发环境也会真实发送邮件）
+USE_REAL_EMAIL = os.getenv('USE_REAL_EMAIL', '0') == '1'
+
+# 开发环境默认使用控制台后端（验证码会打印到控制台）
+# 如果设置了 USE_REAL_EMAIL=1，则使用真实SMTP发送
+# 生产环境始终使用SMTP后端
+if DEBUG and not USE_REAL_EMAIL:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    print("=" * 50)
+    print("[DEV] 开发环境：邮件将输出到控制台")
+    print("[提示] 要发送真实邮件，请设置环境变量: USE_REAL_EMAIL=1")
+    print("=" * 50)
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.exmail.qq.com')  # 腾讯企业邮箱SMTP
+    EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')  # 从环境变量读取
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')  # 从环境变量读取
+    if USE_REAL_EMAIL and DEBUG:
+        print("=" * 50)
+        print("[DEV] 使用真实SMTP发送邮件")
+        if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
+            print("[警告] EMAIL_HOST_USER 或 EMAIL_HOST_PASSWORD 未配置，邮件发送可能失败")
+        print("=" * 50)
+
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Roamio <noreply@roamio.com>')
+
+# 邮件模板目录
+EMAIL_TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates', 'emails')
+
+# ==================== QQ OAuth 配置 ====================
+QQ_APP_ID = os.getenv('QQ_APP_ID', '102813859')
+QQ_APP_KEY = os.getenv('QQ_APP_KEY', 'OddPvLYXHo69wTYO')
+QQ_REDIRECT_URI = os.getenv('QQ_REDIRECT_URI', 'https://app7508.acapp.acwing.com.cn/settings/qq/receive_code')
+QQ_AUTHORIZE_URL = 'https://graph.qq.com/oauth2.0/authorize'
+QQ_ACCESS_TOKEN_URL = 'https://graph.qq.com/oauth2.0/token'
+QQ_GET_USER_INFO_URL = 'https://graph.qq.com/oauth2.0/me'
+QQ_GET_USER_DETAIL_URL = 'https://graph.qq.com/user/get_user_info'

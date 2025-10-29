@@ -18,7 +18,14 @@ from .trip_detail_serializer import (
     TripListSerializer,
     TripUpdateSerializer,
 )
-from .auth_serializer import LoginSerializer, TokenObtainSerializer
+from .auth_serializer import (
+    LoginSerializer, 
+    TokenObtainSerializer,
+    SendVerificationCodeSerializer,
+    VerifyCodeSerializer,
+    QQLoginSerializer,
+    QQBindSerializer,
+)
 
 __all__ = [
     # 用户
@@ -43,5 +50,9 @@ __all__ = [
     # 认证
     'LoginSerializer',
     'TokenObtainSerializer',
+    'SendVerificationCodeSerializer',
+    'VerifyCodeSerializer',
+    'QQLoginSerializer',
+    'QQBindSerializer',
 ]
 

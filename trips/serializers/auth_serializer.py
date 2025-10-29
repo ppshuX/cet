@@ -75,3 +75,72 @@ class TokenObtainSerializer(serializers.Serializer):
             return UserSerializer(user).data
         return None
 
+
+class SendVerificationCodeSerializer(serializers.Serializer):
+    """发送验证码序列化器"""
+    email = serializers.EmailField(required=True, error_messages={'required': '请输入邮箱地址'})
+    type = serializers.ChoiceField(
+        choices=[
+            ('register', '注册验证'),
+            ('login', '登录验证'),
+            ('reset_password', '重置密码'),
+            ('bind_email', '绑定邮箱'),
+        ],
+        required=True,
+        error_messages={'required': '请选择验证类型'}
+    )
+    
+    def validate_email(self, value):
+        """验证邮箱格式"""
+        if not value or not value.strip():
+            raise serializers.ValidationError('邮箱地址不能为空')
+        return value.strip().lower()
+
+
+class VerifyCodeSerializer(serializers.Serializer):
+    """验证验证码序列化器"""
+    email = serializers.EmailField(required=True, error_messages={'required': '请输入邮箱地址'})
+    code = serializers.CharField(
+        required=True,
+        max_length=10,
+        error_messages={'required': '请输入验证码'}
+    )
+    type = serializers.ChoiceField(
+        choices=[
+            ('register', '注册验证'),
+            ('login', '登录验证'),
+            ('reset_password', '重置密码'),
+            ('bind_email', '绑定邮箱'),
+        ],
+        required=True,
+        error_messages={'required': '请选择验证类型'}
+    )
+    
+    def validate_email(self, value):
+        """验证邮箱格式"""
+        if not value or not value.strip():
+            raise serializers.ValidationError('邮箱地址不能为空')
+        return value.strip().lower()
+    
+    def validate_code(self, value):
+        """验证验证码格式"""
+        if not value or not value.strip():
+            raise serializers.ValidationError('验证码不能为空')
+        if not value.isdigit():
+            raise serializers.ValidationError('验证码必须是数字')
+        return value.strip()
+
+
+class QQLoginSerializer(serializers.Serializer):
+    """QQ登录序列化器"""
+    code = serializers.CharField(required=True, help_text='QQ OAuth返回的code')
+    state = serializers.CharField(required=True, help_text='CSRF防护state参数')
+
+
+class QQBindSerializer(serializers.Serializer):
+    """QQ绑定序列化器"""
+    code = serializers.CharField(required=True, help_text='QQ OAuth返回的code')
+    state = serializers.CharField(required=True, help_text='CSRF防护state参数')
+    email = serializers.EmailField(required=False, help_text='首次QQ登录需要绑定邮箱')
+    verification_token = serializers.CharField(required=False, help_text='邮箱验证token（首次QQ登录时需要）')
+

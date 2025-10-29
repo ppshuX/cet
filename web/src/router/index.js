@@ -10,19 +10,19 @@ const routes = [
   {
     path: '/login/',
     name: 'login',
-    component: () => import('@/views/LoginView.vue'),
+    component: () => import('@/views/auth/LoginView.vue'),
     meta: { title: '用户登录' }
   },
   {
     path: '/register/',
     name: 'register',
-    component: () => import('@/views/RegisterView.vue'),
+    component: () => import('@/views/auth/RegisterView.vue'),
     meta: { title: '用户注册' }
   },
   {
     path: '/user/center/',
     name: 'user-center',
-    component: () => import('@/views/UserCenterView.vue'),
+    component: () => import('@/views/user-center/UserCenterView.vue'),
     meta: {
       title: '个人中心',
       requiresAuth: true
@@ -63,6 +63,15 @@ const routes = [
     meta: {
       title: '编辑旅行计划',
       requiresAuth: true
+    }
+  },
+  {
+    path: '/settings/qq/receive_code',
+    name: 'qq-callback',
+    component: () => import('@/views/auth/QQCallbackView.vue'),
+    meta: {
+      title: 'QQ登录回调',
+      requiresAuth: false
     }
   }
 ]
