@@ -95,6 +95,17 @@
         
         <!-- 右侧：信息编辑 -->
         <div class="col-md-8">
+          <!-- 邮箱绑定（如果邮箱未绑定或未验证） -->
+          <EmailBindingEditor
+            v-if="!email || !isEmailVerified"
+            :current-email="email || ''"
+            :email-verified="isEmailVerified"
+            :user-id="userInfo?.id"
+            @email-bound="handleEmailBound"
+            @update="handleRefreshUserInfo"
+            class="mb-4"
+          />
+          
           <!-- 基本信息 -->
           <div class="card shadow-sm mb-4">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
@@ -302,6 +313,7 @@ import NavBar from '@/components/NavBar.vue'
 import UserProfileCard from './UserProfileCard.vue'
 import UserStats from './UserStats.vue'
 import AdvancedSettingsModal from '@/components/AdvancedSettingsModal.vue'
+import EmailBindingEditor from './EmailBindingEditor.vue'
 
 export default {
   name: 'UserCenterView',
@@ -310,7 +322,8 @@ export default {
     NavBar,
     UserProfileCard,
     UserStats,
-    AdvancedSettingsModal
+    AdvancedSettingsModal,
+    EmailBindingEditor
   },
   
   setup() {
@@ -360,6 +373,7 @@ export default {
     const email = computed(() => userInfo.value?.email)
     const isAdmin = computed(() => userStore.isAdmin)
     const userAvatar = computed(() => userStore.avatar)
+    const isEmailVerified = computed(() => userInfo.value?.profile?.email_verified || false)
     
     // 格式化日期
     const formatDate = (dateStr) => {
@@ -560,6 +574,22 @@ export default {
       router.push('/')
     }
     
+    // 处理邮箱绑定成功
+    const handleEmailBound = async () => {
+      // 刷新用户信息
+      await handleRefreshUserInfo()
+    }
+    
+    // 刷新用户信息
+    const handleRefreshUserInfo = async () => {
+      try {
+        await userStore.fetchUserInfo()
+        initEditForm()
+      } catch (error) {
+        console.error('刷新用户信息失败:', error)
+      }
+    }
+    
     // 确认并删除账号（用于高级设置模态框）
     const confirmAndDeleteAccount = () => {
       if (!confirm('⚠️ 请再次确认：您确定要删除账号吗？\n\n此操作无法撤销！')) {
@@ -642,6 +672,7 @@ export default {
       userInfo,
       username,
       email,
+      isEmailVerified,
       isAdmin,
       userAvatar,
       formatDate,
@@ -658,7 +689,9 @@ export default {
       handleAvatarChange,
       handleLogout,
       handleDeleteAccount,
-      confirmAndDeleteAccount
+      confirmAndDeleteAccount,
+      handleEmailBound,
+      handleRefreshUserInfo
     }
   }
 }

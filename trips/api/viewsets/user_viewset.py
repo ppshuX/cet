@@ -118,6 +118,78 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet,
             'profile': UserProfileSerializer(profile).data
         })
     
+    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
+    def bind_email(self, request):
+        """
+        绑定邮箱（需要邮箱验证码验证）
+        
+        流程：
+        1. 前端发送验证码（type=bind_email）
+        2. 前端验证验证码获取verification_token
+        3. 调用此接口，传入email和verification_token，完成绑定并标记邮箱为已验证
+        """
+        from django.core.cache import cache
+        from django.utils import timezone
+        
+        email = request.data.get('email', '').strip().lower()
+        verification_token = request.data.get('verification_token', '')
+        
+        if not email:
+            return Response({
+                'error': '邮箱地址不能为空'
+            }, status=400)
+        
+        if not verification_token:
+            return Response({
+                'error': '验证token不能为空'
+            }, status=400)
+        
+        # 验证邮箱验证token
+        cache_key = f'email_verified_token:{verification_token}'
+        token_data = cache.get(cache_key)
+        
+        if not token_data:
+            return Response({
+                'error': '验证token无效或已过期，请重新验证邮箱'
+            }, status=400)
+        
+        # 检查token中的邮箱是否匹配
+        if token_data.get('email') != email:
+            return Response({
+                'error': '验证token与邮箱地址不匹配'
+            }, status=400)
+        
+        # 检查验证类型是否为绑定邮箱
+        if token_data.get('verification_type') != 'bind_email':
+            return Response({
+                'error': '验证token类型错误'
+            }, status=400)
+        
+        # 检查邮箱是否已被其他用户使用
+        if User.objects.exclude(pk=request.user.pk).filter(email=email).exists():
+            return Response({
+                'error': '该邮箱已被其他用户使用'
+            }, status=400)
+        
+        # 更新用户邮箱
+        request.user.email = email
+        request.user.save()
+        
+        # 标记邮箱为已验证
+        if hasattr(request.user, 'profile'):
+            request.user.profile.email_verified = True
+            request.user.profile.email_verified_at = timezone.now()
+            request.user.profile.save()
+        
+        # 删除验证token（只能使用一次）
+        cache.delete(cache_key)
+        
+        return Response({
+            'success': True,
+            'message': '邮箱绑定成功，邮箱已标记为已验证',
+            'email': email
+        })
+    
     @action(detail=True, methods=['get'])
     def stats(self, request, pk=None):
         """获取用户统计信息"""

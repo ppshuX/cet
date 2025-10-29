@@ -54,3 +54,11 @@ export const getUserStats = (userId) => {
 export const deleteUser = (userId) => {
     return request.delete(`/users/${userId}/`)
 }
+
+/**
+ * 绑定邮箱（需要验证码验证）
+ * @param {Object} data - {email, verification_token}
+ */
+export const bindEmail = (data) => {
+    return request.post('/users/bind_email/', data)
+}

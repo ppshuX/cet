@@ -23,12 +23,7 @@
                 
                 <!-- 密码 -->
                 <div class="mb-3">
-                  <div class="d-flex justify-content-between align-items-center mb-2">
-                    <label for="password" class="form-label mb-0">密码</label>
-                    <router-link to="/forgot-password/" class="text-decoration-none small text-primary">
-                      忘记密码？
-                    </router-link>
-                  </div>
+                  <label for="password" class="form-label">密码</label>
                   <input
                     type="password"
                     class="form-control"
@@ -37,6 +32,13 @@
                     required
                     placeholder="请输入密码"
                   />
+                </div>
+                
+                <!-- 忘记密码 -->
+                <div class="mb-3 text-end">
+                  <router-link to="/forgot-password/" class="text-decoration-none small text-primary">
+                    忘记密码？
+                  </router-link>
                 </div>
                 
                 <!-- 错误提示 -->
