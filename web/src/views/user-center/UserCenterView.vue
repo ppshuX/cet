@@ -299,8 +299,8 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
 import { getUserStats, updateProfile, updateUser, uploadAvatar, deleteUser } from '@/api/user'
 import NavBar from '@/components/NavBar.vue'
-import UserProfileCard from './user-center/UserProfileCard.vue'
-import UserStats from './user-center/UserStats.vue'
+import UserProfileCard from './UserProfileCard.vue'
+import UserStats from './UserStats.vue'
 import AdvancedSettingsModal from '@/components/AdvancedSettingsModal.vue'
 
 export default {

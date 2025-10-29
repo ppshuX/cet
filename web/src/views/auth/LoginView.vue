@@ -49,6 +49,23 @@
                   {{ loading ? '登录中...' : '登录' }}
                 </button>
                 
+                <!-- QQ登录 -->
+                <div class="text-center mb-3">
+                  <div class="divider">
+                    <span class="divider-text">或</span>
+                  </div>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary w-100 qq-login-btn"
+                    :disabled="qqLoginLoading"
+                    @click="handleQQLogin"
+                  >
+                    <img src="@/assets/qq_logo.png" alt="QQ登录" class="qq-login-icon" width="20" height="20">
+                    <span v-if="qqLoginLoading">跳转中...</span>
+                    <span v-else>使用QQ登录</span>
+                  </button>
+                </div>
+                
                 <!-- 注册链接 -->
                 <div class="text-center">
                   <span class="text-muted">还没有账号？</span>
@@ -67,6 +84,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
+import { getQQLoginUrl } from '@/api/auth'
 
 export default {
   name: 'LoginView',
@@ -82,6 +100,7 @@ export default {
     
     const loading = ref(false)
     const error = ref('')
+    const qqLoginLoading = ref(false)
     
     const handleLogin = async () => {
       loading.value = true
@@ -119,11 +138,32 @@ export default {
       }
     }
     
+    const handleQQLogin = async () => {
+      qqLoginLoading.value = true
+      try {
+        const response = await getQQLoginUrl()
+        if (response.authorize_url && response.state) {
+          // 保存state到sessionStorage用于验证
+          sessionStorage.setItem('qq_oauth_state', response.state)
+          // 跳转到QQ授权页面
+          window.location.href = response.authorize_url
+        } else {
+          error.value = '获取QQ登录链接失败，请重试'
+          qqLoginLoading.value = false
+        }
+      } catch (err) {
+        error.value = err.response?.data?.error || 'QQ登录失败，请重试'
+        qqLoginLoading.value = false
+      }
+    }
+    
     return {
       form,
       loading,
       error,
-      handleLogin
+      qqLoginLoading,
+      handleLogin,
+      handleQQLogin
     }
   }
 }
@@ -150,6 +190,58 @@ export default {
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.divider {
+  position: relative;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 45%;
+  height: 1px;
+  background: #dee2e6;
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+.divider-text {
+  background: white;
+  padding: 0 10px;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.qq-login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  transition: all 0.3s ease;
+}
+
+.qq-login-btn:hover {
+  background-color: #f8f9fa;
+  border-color: #adb5bd;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.qq-login-icon {
+  margin-right: 5px;
 }
 </style>
 
