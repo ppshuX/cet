@@ -232,7 +232,7 @@ class AuthViewSet(viewsets.GenericViewSet):
         )
         
         return Response({
-            'authorization_url': authorize_url,
+            'authorize_url': authorize_url,  # 修复：统一使用 authorize_url
             'state': state_generated
         }, status=status.HTTP_200_OK)
     
