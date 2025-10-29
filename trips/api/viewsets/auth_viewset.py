@@ -30,6 +30,9 @@ from ...models import EmailVerificationCode, SocialAccount
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.cache import cache
+import re
+import secrets
+import traceback
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -291,50 +294,64 @@ class AuthViewSet(viewsets.GenericViewSet):
             
         except SocialAccount.DoesNotExist:
             # 未绑定，首次QQ登录：直接创建账号，邮箱可选
-            # 使用QQ昵称作为用户名，如果重复则添加数字后缀
-            qq_nickname = qq_info.get('nickname', 'QQ用户')
-            base_username = qq_nickname.replace(' ', '_')[:20]  # 限制长度，替换空格
-            username = base_username
-            counter = 1
-            
-            while User.objects.filter(username=username).exists():
-                username = f"{base_username}_{counter}"
-                counter += 1
-            
-            # 生成随机密码（用户不需要记住，以后用QQ登录即可）
-            import secrets
-            random_password = secrets.token_urlsafe(16)
-            
-            # 创建用户（邮箱为None，后续可在个人中心补全）
-            user = User.objects.create_user(
-                username=username,
-                email=None,  # 邮箱可选，首次登录不强制（使用None而不是空字符串）
-                password=random_password
-            )
-            
-            # 创建QQ绑定
-            from ..models import SocialAccount
-            SocialAccount.objects.create(
-                user=user,
-                provider='qq',
-                uid=openid,
-                unionid=unionid if unionid else None,
-                nickname=qq_info.get('nickname', ''),
-                avatar_url=qq_info.get('avatar_url', '')
-            )
-            
-            # 生成JWT Token
-            refresh = RefreshToken.for_user(user)
-            
-            return Response({
-                'success': True,
-                'access': str(refresh.access_token),
-                'refresh': str(refresh),
-                'user': UserSerializer(user).data,
-                'message': 'QQ登录成功',
-                'email_optional': True,  # 提示邮箱可选
-                'tip': '建议在个人中心绑定邮箱以便接收重要通知'
-            }, status=status.HTTP_200_OK)
+            try:
+                # 使用QQ昵称作为用户名，如果重复则添加数字后缀
+                qq_nickname = qq_info.get('nickname', 'QQ用户') or 'QQ用户'
+                # 清理用户名：移除特殊字符，只保留字母、数字、下划线和连字符
+                base_username = re.sub(r'[^\w\u4e00-\u9fff-]', '_', qq_nickname)[:20]  # 限制长度，替换特殊字符
+                if not base_username or not base_username.strip():
+                    base_username = 'qq_user'
+                
+                username = base_username
+                counter = 1
+                
+                while User.objects.filter(username=username).exists():
+                    username = f"{base_username}_{counter}"
+                    counter += 1
+                    if counter > 1000:  # 防止无限循环
+                        username = f"qq_{secrets.token_hex(4)}"
+                        break
+                
+                # 生成随机密码（用户不需要记住，以后用QQ登录即可）
+                random_password = secrets.token_urlsafe(16)
+                
+                # 创建用户（邮箱为空字符串，后续可在个人中心补全）
+                user = User.objects.create_user(
+                    username=username,
+                    email='',  # 邮箱可选，使用空字符串而不是None（Django User模型兼容性更好）
+                    password=random_password
+                )
+                
+                # 创建QQ绑定
+                SocialAccount.objects.create(
+                    user=user,
+                    provider='qq',
+                    uid=openid,
+                    unionid=unionid if unionid else None,
+                    nickname=qq_info.get('nickname', ''),
+                    avatar_url=qq_info.get('avatar_url', '')
+                )
+                
+                # 生成JWT Token
+                refresh = RefreshToken.for_user(user)
+                
+                return Response({
+                    'success': True,
+                    'access': str(refresh.access_token),
+                    'refresh': str(refresh),
+                    'user': UserSerializer(user).data,
+                    'message': 'QQ登录成功',
+                    'email_optional': True,  # 提示邮箱可选
+                    'tip': '建议在个人中心绑定邮箱以便接收重要通知'
+                }, status=status.HTTP_200_OK)
+            except Exception as e:
+                # 捕获并记录详细错误信息
+                error_detail = traceback.format_exc()
+                print(f"QQ登录创建账号失败: {e}")
+                print(f"错误详情: {error_detail}")
+                return Response({
+                    'error': f'创建账号失败: {str(e)}'
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def qq_bind(self, request):
