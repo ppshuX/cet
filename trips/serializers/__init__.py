@@ -25,6 +25,7 @@ from .auth_serializer import (
     VerifyCodeSerializer,
     QQLoginSerializer,
     QQBindSerializer,
+    ResetPasswordSerializer,
 )
 
 __all__ = [
@@ -54,5 +55,6 @@ __all__ = [
     'VerifyCodeSerializer',
     'QQLoginSerializer',
     'QQBindSerializer',
+    'ResetPasswordSerializer',
 ]
 

@@ -20,6 +20,12 @@ const routes = [
     meta: { title: '用户注册' }
   },
   {
+    path: '/forgot-password/',
+    name: 'forgot-password',
+    component: () => import('@/views/auth/ForgotPasswordView.vue'),
+    meta: { title: '找回密码' }
+  },
+  {
     path: '/user/center/',
     name: 'user-center',
     component: () => import('@/views/user-center/UserCenterView.vue'),
@@ -95,8 +101,8 @@ router.beforeEach((to, from, next) => {
       path: '/login/',
       query: { redirect: to.fullPath }  // 保存原本要去的页面
     })
-  } else if ((to.path === '/login/' || to.path === '/register/') && token) {
-    // 已登录用户访问登录/注册页，跳转到首页
+  } else if ((to.path === '/login/' || to.path === '/register/' || to.path === '/forgot-password/') && token) {
+    // 已登录用户访问登录/注册/忘记密码页，跳转到首页
     next('/')
   } else {
     next()

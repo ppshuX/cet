@@ -18,6 +18,7 @@ from ...serializers import (
     VerifyCodeSerializer,
     QQLoginSerializer,
     QQBindSerializer,
+    ResetPasswordSerializer,
 )
 from ...utils.email_service import send_verification_code
 from ...utils.rate_limit import check_email_rate_limit, check_ip_rate_limit, get_client_ip
@@ -140,6 +141,14 @@ class AuthViewSet(viewsets.GenericViewSet):
             if User.objects.filter(email=email).exists():
                 return Response({
                     'error': '该邮箱已被注册'
+                }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 对于重置密码类型，检查邮箱是否已注册
+        if verification_type == 'reset_password':
+            from django.contrib.auth.models import User
+            if not User.objects.filter(email=email).exists():
+                return Response({
+                    'error': '该邮箱尚未注册，请先注册账号'
                 }, status=status.HTTP_400_BAD_REQUEST)
         
         # 发送验证码
@@ -332,6 +341,15 @@ class AuthViewSet(viewsets.GenericViewSet):
                     avatar_url=qq_info.get('avatar_url', '')
                 )
                 
+                # 自动下载并设置QQ头像（如果QQ头像URL存在）
+                if qq_info.get('avatar_url'):
+                    from ...utils.avatar_downloader import set_user_avatar_from_url
+                    try:
+                        set_user_avatar_from_url(user, qq_info.get('avatar_url'))
+                    except Exception as e:
+                        # 头像下载失败不影响登录，只记录错误
+                        print(f"QQ头像下载失败: {e}")
+                
                 # 生成JWT Token
                 refresh = RefreshToken.for_user(user)
                 
@@ -449,6 +467,15 @@ class AuthViewSet(viewsets.GenericViewSet):
             avatar_url=qq_info.get('avatar_url', '')
         )
         
+        # 自动下载并设置QQ头像（如果QQ头像URL存在且用户还没有头像）
+        if qq_info.get('avatar_url') and (not hasattr(user, 'profile') or not user.profile.avatar):
+            from ...utils.avatar_downloader import set_user_avatar_from_url
+            try:
+                set_user_avatar_from_url(user, qq_info.get('avatar_url'))
+            except Exception as e:
+                # 头像下载失败不影响绑定，只记录错误
+                print(f"QQ头像下载失败: {e}")
+        
         # 删除验证token
         cache.delete(cache_key)
         
@@ -512,6 +539,15 @@ class AuthViewSet(viewsets.GenericViewSet):
             avatar_url=qq_info.get('avatar_url', '')
         )
         
+        # 自动下载并设置QQ头像（如果QQ头像URL存在且用户还没有头像）
+        if qq_info.get('avatar_url') and (not hasattr(request.user, 'profile') or not request.user.profile.avatar):
+            from ...utils.avatar_downloader import set_user_avatar_from_url
+            try:
+                set_user_avatar_from_url(request.user, qq_info.get('avatar_url'))
+            except Exception as e:
+                # 头像下载失败不影响绑定，只记录错误
+                print(f"QQ头像下载失败: {e}")
+        
         return Response({
             'success': True,
             'message': 'QQ绑定成功'
@@ -536,3 +572,61 @@ class AuthViewSet(viewsets.GenericViewSet):
             return Response({
                 'error': '您未绑定QQ账号'
             }, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=False, methods=['post'], permission_classes=[AllowAny])
+    def reset_password(self, request):
+        """
+        重置密码
+        
+        流程：
+        1. 用户输入邮箱，发送验证码（type=reset_password）
+        2. 用户输入验证码，验证后获得verification_token
+        3. 用户输入新密码和确认密码，提交此接口重置密码
+        """
+        serializer = ResetPasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        email = serializer.validated_data['email']
+        verification_token = serializer.validated_data['verification_token']
+        new_password = serializer.validated_data['new_password']
+        
+        # 验证邮箱验证token
+        cache_key = f'email_verified_token:{verification_token}'
+        token_data = cache.get(cache_key)
+        
+        if not token_data:
+            return Response({
+                'error': '验证token无效或已过期，请重新验证邮箱'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 检查token中的邮箱是否匹配
+        if token_data.get('email') != email:
+            return Response({
+                'error': '验证token与邮箱地址不匹配'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 检查验证类型是否为重置密码
+        if token_data.get('verification_type') != 'reset_password':
+            return Response({
+                'error': '验证token类型错误'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 查找用户
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({
+                'error': '该邮箱尚未注册'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 设置新密码
+        user.set_password(new_password)
+        user.save()
+        
+        # 删除验证token（只能使用一次）
+        cache.delete(cache_key)
+        
+        return Response({
+            'success': True,
+            'message': '密码重置成功，请使用新密码登录'
+        }, status=status.HTTP_200_OK)

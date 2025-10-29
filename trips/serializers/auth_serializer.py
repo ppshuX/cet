@@ -144,3 +144,51 @@ class QQBindSerializer(serializers.Serializer):
     email = serializers.EmailField(required=False, help_text='首次QQ登录需要绑定邮箱')
     verification_token = serializers.CharField(required=False, help_text='邮箱验证token（首次QQ登录时需要）')
 
+
+class ResetPasswordSerializer(serializers.Serializer):
+    """重置密码序列化器"""
+    email = serializers.EmailField(required=True, error_messages={'required': '请输入邮箱地址'})
+    verification_token = serializers.CharField(required=True, help_text='邮箱验证token，通过验证验证码API获取')
+    new_password = serializers.CharField(
+        required=True,
+        write_only=True,
+        min_length=8,
+        error_messages={
+            'required': '请输入新密码',
+            'min_length': '密码长度至少为8位'
+        }
+    )
+    new_password2 = serializers.CharField(
+        required=True,
+        write_only=True,
+        error_messages={'required': '请确认新密码'}
+    )
+    
+    def validate_email(self, value):
+        """验证邮箱格式"""
+        if not value or not value.strip():
+            raise serializers.ValidationError('邮箱地址不能为空')
+        return value.strip().lower()
+    
+    def validate(self, attrs):
+        """验证密码一致性"""
+        new_password = attrs.get('new_password')
+        new_password2 = attrs.get('new_password2')
+        
+        if new_password and new_password2:
+            if new_password != new_password2:
+                raise serializers.ValidationError({
+                    'new_password2': '两次输入的密码不一致'
+                })
+            
+            # 验证密码强度
+            from django.contrib.auth.password_validation import validate_password
+            try:
+                validate_password(new_password)
+            except Exception as e:
+                raise serializers.ValidationError({
+                    'new_password': list(e.messages) if hasattr(e, 'messages') else ['密码不符合安全要求']
+                })
+        
+        return attrs
+

@@ -96,3 +96,11 @@ export const qqUnbind = async () => {
     return request.delete('/auth/qq_unbind/')
 }
 
+/**
+ * 重置密码
+ * @param {Object} data - {email, verification_token, new_password, new_password2}
+ */
+export const resetPassword = (data) => {
+    return request.post('/auth/reset_password/', data)
+}
+
