@@ -17,5 +17,5 @@ docs/*.md
 !docs/README.md
 !README.md
 
-db.sqlite3
+# db.sqlite3  # 临时允许提交，用于云服务器同步
 media/
