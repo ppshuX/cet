@@ -25,16 +25,72 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'user', 'timestamp']
     
     def get_image(self, obj):
-        """返回相对路径（Vue会自动处理）"""
-        if obj.image:
-            return obj.image.url
-        return None
+        """返回完整URL（包含域名）或相对路径"""
+        if not obj.image:
+            return None
+        
+        # 获取原始 URL
+        image_url = obj.image.url
+        
+        # 处理 URL 中可能存在的 /media/media/ 重复问题
+        image_url = image_url.replace('/media/media/', '/media/')
+        
+        # 获取 request 对象
+        request = self.context.get('request')
+        
+        if request:
+            # 检查 URL 是否已经包含域名
+            if image_url.startswith('http://') or image_url.startswith('https://'):
+                return image_url
+            
+            # 如果有 request，手动构建完整 URL
+            # 确保以 /media/ 开头
+            if image_url.startswith('/media/'):
+                full_url = f"{request.scheme}://{request.get_host()}{image_url}"
+            else:
+                # 如果路径不是以 /media/ 开头，添加它
+                if not image_url.startswith('/'):
+                    image_url = f"/media/{image_url}"
+                full_url = f"{request.scheme}://{request.get_host()}{image_url}"
+            
+            return full_url
+        else:
+            # 没有 request 对象，返回相对路径
+            return image_url
     
     def get_video(self, obj):
-        """返回相对路径（Vue会自动处理）"""
-        if obj.video:
-            return obj.video.url
-        return None
+        """返回完整URL（包含域名）或相对路径"""
+        if not obj.video:
+            return None
+        
+        # 获取原始 URL
+        video_url = obj.video.url
+        
+        # 处理 URL 中可能存在的 /media/media/ 重复问题
+        video_url = video_url.replace('/media/media/', '/media/')
+        
+        # 获取 request 对象
+        request = self.context.get('request')
+        
+        if request:
+            # 检查 URL 是否已经包含域名
+            if video_url.startswith('http://') or video_url.startswith('https://'):
+                return video_url
+            
+            # 如果有 request，手动构建完整 URL
+            # 确保以 /media/ 开头
+            if video_url.startswith('/media/'):
+                full_url = f"{request.scheme}://{request.get_host()}{video_url}"
+            else:
+                # 如果路径不是以 /media/ 开头，添加它
+                if not video_url.startswith('/'):
+                    video_url = f"/media/{video_url}"
+                full_url = f"{request.scheme}://{request.get_host()}{video_url}"
+            
+            return full_url
+        else:
+            # 没有 request 对象，返回相对路径
+            return video_url
     
     def get_can_delete(self, obj):
         """判断当前用户是否可以删除此评论"""
@@ -141,16 +197,72 @@ class CommentListSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'content', 'image', 'video', 'timestamp']
     
     def get_image(self, obj):
-        """返回相对路径（Vue会自动处理）"""
-        if obj.image:
-            return obj.image.url
-        return None
+        """返回完整URL（包含域名）或相对路径"""
+        if not obj.image:
+            return None
+        
+        # 获取原始 URL
+        image_url = obj.image.url
+        
+        # 处理 URL 中可能存在的 /media/media/ 重复问题
+        image_url = image_url.replace('/media/media/', '/media/')
+        
+        # 获取 request 对象
+        request = self.context.get('request')
+        
+        if request:
+            # 检查 URL 是否已经包含域名
+            if image_url.startswith('http://') or image_url.startswith('https://'):
+                return image_url
+            
+            # 如果有 request，手动构建完整 URL
+            # 确保以 /media/ 开头
+            if image_url.startswith('/media/'):
+                full_url = f"{request.scheme}://{request.get_host()}{image_url}"
+            else:
+                # 如果路径不是以 /media/ 开头，添加它
+                if not image_url.startswith('/'):
+                    image_url = f"/media/{image_url}"
+                full_url = f"{request.scheme}://{request.get_host()}{image_url}"
+            
+            return full_url
+        else:
+            # 没有 request 对象，返回相对路径
+            return image_url
     
     def get_video(self, obj):
-        """返回相对路径（Vue会自动处理）"""
-        if obj.video:
-            return obj.video.url
-        return None
+        """返回完整URL（包含域名）或相对路径"""
+        if not obj.video:
+            return None
+        
+        # 获取原始 URL
+        video_url = obj.video.url
+        
+        # 处理 URL 中可能存在的 /media/media/ 重复问题
+        video_url = video_url.replace('/media/media/', '/media/')
+        
+        # 获取 request 对象
+        request = self.context.get('request')
+        
+        if request:
+            # 检查 URL 是否已经包含域名
+            if video_url.startswith('http://') or video_url.startswith('https://'):
+                return video_url
+            
+            # 如果有 request，手动构建完整 URL
+            # 确保以 /media/ 开头
+            if video_url.startswith('/media/'):
+                full_url = f"{request.scheme}://{request.get_host()}{video_url}"
+            else:
+                # 如果路径不是以 /media/ 开头，添加它
+                if not video_url.startswith('/'):
+                    video_url = f"/media/{video_url}"
+                full_url = f"{request.scheme}://{request.get_host()}{video_url}"
+            
+            return full_url
+        else:
+            # 没有 request 对象，返回相对路径
+            return video_url
     
     def get_user(self, obj):
         """只返回用户的基本信息"""

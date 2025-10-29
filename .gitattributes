@@ -1,5 +1,1 @@
-*.sqlite3 filter=lfs diff=lfs merge=lfs -text
-*.jpg filter=lfs diff=lfs merge=lfs -text
-*.png filter=lfs diff=lfs merge=lfs -text
-*.mp3 filter=lfs diff=lfs merge=lfs -text
-db.sqlite3
+# 不追踪数据库和媒体文件，它们已经在.gitignore中被忽略
