@@ -471,6 +471,7 @@ export default {
   height: auto;
   border-radius: 8px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  object-fit: contain;
 }
 
 .close-button {
