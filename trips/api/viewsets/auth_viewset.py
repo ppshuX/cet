@@ -290,27 +290,50 @@ class AuthViewSet(viewsets.GenericViewSet):
             }, status=status.HTTP_200_OK)
             
         except SocialAccount.DoesNotExist:
-            # 未绑定，返回需要绑定邮箱的信息
-            # 临时存储QQ信息（用于后续绑定）
+            # 未绑定，首次QQ登录：直接创建账号，邮箱可选
+            # 使用QQ昵称作为用户名，如果重复则添加数字后缀
+            qq_nickname = qq_info.get('nickname', 'QQ用户')
+            base_username = qq_nickname.replace(' ', '_')[:20]  # 限制长度，替换空格
+            username = base_username
+            counter = 1
+            
+            while User.objects.filter(username=username).exists():
+                username = f"{base_username}_{counter}"
+                counter += 1
+            
+            # 生成随机密码（用户不需要记住，以后用QQ登录即可）
             import secrets
-            temp_token = secrets.token_urlsafe(32)
-            cache.set(
-                f'qq_bind_temp:{openid}',
-                qq_info,
-                timeout=600  # 10分钟有效期
+            random_password = secrets.token_urlsafe(16)
+            
+            # 创建用户（邮箱为None，后续可在个人中心补全）
+            user = User.objects.create_user(
+                username=username,
+                email=None,  # 邮箱可选，首次登录不强制（使用None而不是空字符串）
+                password=random_password
             )
             
+            # 创建QQ绑定
+            from ..models import SocialAccount
+            SocialAccount.objects.create(
+                user=user,
+                provider='qq',
+                uid=openid,
+                unionid=unionid if unionid else None,
+                nickname=qq_info.get('nickname', ''),
+                avatar_url=qq_info.get('avatar_url', '')
+            )
+            
+            # 生成JWT Token
+            refresh = RefreshToken.for_user(user)
+            
             return Response({
-                'success': False,
-                'need_bind_email': True,
-                'qq_info': {
-                    'openid': openid,
-                    'unionid': unionid,
-                    'nickname': qq_info.get('nickname', ''),
-                    'avatar_url': qq_info.get('avatar_url', ''),
-                },
-                'temp_token': temp_token,
-                'message': '首次QQ登录，请绑定邮箱'
+                'success': True,
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
+                'user': UserSerializer(user).data,
+                'message': 'QQ登录成功',
+                'email_optional': True,  # 提示邮箱可选
+                'tip': '建议在个人中心绑定邮箱以便接收重要通知'
             }, status=status.HTTP_200_OK)
     
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])

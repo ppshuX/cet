@@ -53,31 +53,16 @@ export default {
           localStorage.setItem('refresh_token', response.refresh)
           localStorage.setItem('user_info', JSON.stringify(response.user))
           
-          message.value = '登录成功！正在跳转...'
+          // 如果邮箱为空，提示用户后续绑定
+          if (response.email_optional && !response.user?.email) {
+            message.value = '登录成功！建议在个人中心绑定邮箱以便接收重要通知'
+          } else {
+            message.value = '登录成功！正在跳转...'
+          }
           
           setTimeout(() => {
             router.push('/')
-          }, 1000)
-        } else if (response.need_bind_email) {
-          // 需要绑定邮箱
-          message.value = '首次QQ登录，需要绑定邮箱'
-          
-          // 保存QQ信息，跳转到邮箱绑定页面
-          sessionStorage.setItem('qq_bind_info', JSON.stringify({
-            qq_info: response.qq_info,
-            temp_token: response.temp_token
-          }))
-          
-          setTimeout(() => {
-            router.push({
-              path: '/register/',
-              query: {
-                qq_bind: 'true',
-                code: code,
-                state: state
-              }
-            })
-          }, 1500)
+          }, response.email_optional ? 2500 : 1000)
         } else {
           message.value = response.error || 'QQ登录失败，请重试'
           setTimeout(() => {
