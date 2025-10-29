@@ -9,6 +9,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import CharFilter
 from django_filters.rest_framework import FilterSet
@@ -20,6 +21,25 @@ from ...serializers import (
     CommentCreateSerializer,
     CommentUpdateSerializer,
 )
+
+
+class NoPagination(PageNumberPagination):
+    """无分页类 - 用于禁用分页"""
+    page_size = None
+    
+    def paginate_queryset(self, queryset, request, view=None):
+        """
+        重写此方法以禁用分页
+        返回 None 表示不使用分页，直接返回所有数据
+        """
+        return None
+    
+    def get_paginated_response(self, data):
+        """
+        即使不使用分页，也确保返回正确的响应格式
+        """
+        from rest_framework.response import Response
+        return Response(data)
 
 
 class CommentFilter(FilterSet):
@@ -47,7 +67,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().order_by('-timestamp')  # 默认包含所有评论
     permission_classes = [AllowAny]  # 允许所有人查看评论
     filter_backends = [DjangoFilterBackend]
-    pagination_class = None  # 禁用分页，显示所有评论
+    pagination_class = NoPagination  # 禁用分页，显示所有评论
     # 使用自定义过滤器类，将 'trip' 参数映射到模型的 'page' 字段
     filterset_class = CommentFilter
     
