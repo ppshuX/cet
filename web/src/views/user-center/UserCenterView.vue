@@ -148,6 +148,8 @@
                     class="form-control"
                     v-model="editForm.username"
                     :disabled="updating"
+                    pattern="^\S+$"
+                    title="用户名不能包含空格"
                   />
                 </div>
                 
@@ -448,6 +450,13 @@ export default {
     }
     
     // 保存所有更改
+    const isValidUsername = (name) => {
+      if (!name || !name.trim()) return { ok: false, msg: '用户名不能为空' }
+      if (/\s/.test(name)) return { ok: false, msg: '用户名不能包含空格' }
+      if (name.trim().length < 3) return { ok: false, msg: '用户名至少需要3个字符' }
+      return { ok: true }
+    }
+
     const saveAllChanges = async () => {
       savingAll.value = true
       
@@ -455,6 +464,8 @@ export default {
         // 保存基本信息
         if (editForm.value.username !== originalForm.value.username || 
             editForm.value.email !== originalForm.value.email) {
+          const v = isValidUsername(editForm.value.username)
+          if (!v.ok) { alert(v.msg); throw new Error(v.msg) }
           await updateUser(userInfo.value.id, editForm.value)
         }
         
@@ -545,6 +556,8 @@ export default {
       updating.value = true
       
       try {
+        const v = isValidUsername(editForm.value.username)
+        if (!v.ok) { alert(v.msg); throw new Error(v.msg) }
         await updateUser(userInfo.value.id, editForm.value)
         
         // 重新获取用户信息
