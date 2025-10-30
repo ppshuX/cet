@@ -106,11 +106,15 @@ const request = {
 
             // 处理401未授权
             if (response.status === 401) {
+                // 清掉本地失效令牌（避免公共页携带坏token导致跳转）
                 localStorage.removeItem('access_token')
                 localStorage.removeItem('refresh_token')
                 localStorage.removeItem('user_info')
 
-                if (window.location.pathname !== '/login/' && window.location.pathname !== '/login') {
+                // 仅在需要登录的路由上跳转登录，其余公共页不跳转
+                const path = window.location.pathname || ''
+                const needAuth = path.startsWith('/user') || path.startsWith('/editor') || path.startsWith('/my-trips')
+                if (needAuth && path !== '/login/' && path !== '/login') {
                     window.location.href = '/login/'
                 }
             }
