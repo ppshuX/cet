@@ -289,6 +289,12 @@ export default {
   line-height: 1.5;
   margin-bottom: 0.7rem;
   transition: color 0.18s;
+  /* 超长简介显示省略号 */
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* 最多显示三行 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .fruit:hover .desc {
@@ -483,6 +489,8 @@ export default {
   .fruit .desc {
     font-size: 0.9rem;
     transition: color 0.25s ease;
+    /* 移动端可再压缩为两行 */
+    -webkit-line-clamp: 2;
   }
   
   .fruit:hover .desc {
