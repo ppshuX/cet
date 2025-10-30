@@ -178,7 +178,7 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
 import { getTripDetail, likeTrip, checkinTrip } from '@/api/trip'
@@ -216,8 +216,10 @@ export default {
     const isPlaying = ref(false)
     const audioPlayer = ref(null)
     const musicSrc = computed(() => {
-      // 从trip数据中获取背景音乐，如果没有则使用默认音乐
-      return trip.value?.background_music || '/static/music/rain.mp3'
+      // 显式选择“无背景音乐”时返回空字符串；未设置时使用默认雨声
+      const bg = trip.value?.background_music
+      if (bg === '') return ''
+      return bg || '/static/music/rain.mp3'
     })
     
     const isAdmin = computed(() => userStore.isAdmin)
@@ -482,6 +484,18 @@ export default {
       isPlaying.value = !isPlaying.value
     }
     
+    // 当音乐源变化时，重新加载并在需要时继续播放
+    watch(musicSrc, async () => {
+      if (!audioPlayer.value) return
+      try { audioPlayer.value.load() } catch (e) { /* ignore */ }
+      if (isPlaying.value) {
+        try {
+          audioPlayer.value.volume = 0.3
+          await audioPlayer.value.play()
+        } catch (e) { /* ignore */ }
+      }
+    })
+
     onMounted(async () => {
       await fetchTripDetail()
       await fetchComments()

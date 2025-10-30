@@ -55,11 +55,20 @@
           class="form-select"
         >
           <option value="">无背景音乐</option>
-          <option value="/static/music/rain.mp3">🌧️ 雨声</option>
-          <option value="/static/music/road.mp3">🛤️ 旅途</option>
-          <option value="/static/music/windy.mp3">💨 风声</option>
+          <option value="/static/music/rain.mp3">BGM 1</option>
+          <option value="/static/music/road.mp3">BGM 2</option>
+          <option value="/static/music/windy.mp3">BGM 3</option>
         </select>
         <small class="text-muted">选择适合旅行场景的背景音乐</small>
+
+        <!-- 预览控制 -->
+        <div class="mt-2 d-flex align-items-center gap-2">
+          <button type="button" class="btn btn-sm btn-outline-primary" :disabled="!hasMusic" @click="togglePreview">
+            {{ isPreviewPlaying ? '暂停预览' : '预览播放' }}
+          </button>
+          <small class="text-muted" v-if="!hasMusic">未选择音乐</small>
+        </div>
+        <audio ref="previewAudio" :src="modelValue.background_music || ''" preload="auto"></audio>
       </div>
       
       <!-- 图标 -->
@@ -95,6 +104,7 @@
 </template>
 
 <script>
+import { ref, computed, watch } from 'vue'
 export default {
   name: 'EditorSidebar',
   
@@ -111,15 +121,66 @@ export default {
   
   emits: ['update:modelValue'],
   
-  setup() {
+  setup(props) {
     const formatDate = (dateStr) => {
       if (!dateStr) return '暂无'
       const date = new Date(dateStr)
       return date.toLocaleString('zh-CN')
     }
+    // 音乐预览
+    const previewAudio = ref(null)
+    const isPreviewPlaying = ref(false)
+    const hasMusic = computed(() => !!props.modelValue.background_music)
+    const stopIfPlaying = () => {
+      if (previewAudio.value) {
+        try {
+          previewAudio.value.pause()
+        } catch (e) {
+          // ignore pause errors
+          void e
+        }
+        isPreviewPlaying.value = false
+      }
+    }
+    const togglePreview = () => {
+      if (!hasMusic.value || !previewAudio.value) return
+      if (isPreviewPlaying.value) {
+        previewAudio.value.pause()
+        isPreviewPlaying.value = false
+      } else {
+        previewAudio.value.currentTime = 0
+        previewAudio.value.volume = 0.2
+        previewAudio.value.play().then(() => {
+          isPreviewPlaying.value = true
+        }).catch(() => { return null })
+      }
+    }
+    watch(() => props.modelValue.background_music, () => {
+      // 音乐切换时停止并重新加载资源
+      stopIfPlaying()
+      if (previewAudio.value) {
+        try { previewAudio.value.load() } catch (e) { void e }
+      }
+    })
+
+    // 同步播放状态
+    const attachListeners = () => {
+      if (!previewAudio.value) return
+      previewAudio.value.addEventListener('ended', () => { isPreviewPlaying.value = false })
+      previewAudio.value.addEventListener('pause', () => { isPreviewPlaying.value = false })
+      previewAudio.value.addEventListener('play', () => { 
+        previewAudio.value.volume = 0.2
+        isPreviewPlaying.value = true 
+      })
+    }
+    setTimeout(attachListeners, 0)
     
     return {
-      formatDate
+      formatDate,
+      previewAudio,
+      isPreviewPlaying,
+      hasMusic,
+      togglePreview
     }
   }
 }

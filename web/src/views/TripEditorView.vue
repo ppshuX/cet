@@ -23,7 +23,7 @@
               >
                 <span v-if="saving" class="spinner-border spinner-border-sm me-1"></span>
                 <i v-else class="bi bi-save me-1"></i>
-                保存草稿
+                保存
               </button>
               <button 
                 class="btn btn-primary" 

@@ -20,7 +20,7 @@
       <!-- 旅行列表 -->
       <div v-else-if="trips.length > 0" class="row">
         <div v-for="trip in trips" :key="trip.id" class="col-md-6 col-lg-4 mb-4">
-          <div class="trip-card">
+          <div class="trip-card" @click="viewTrip(trip.slug)" style="cursor: pointer;">
             <div class="trip-header" :style="{ background: trip.theme_color || '#f0e68c' }">
               <div class="trip-icon">{{ trip.icon }}</div>
               <div class="trip-meta">
@@ -45,24 +45,22 @@
               </div>
             </div>
             <div class="trip-actions">
-              <button class="btn btn-sm btn-outline-primary" @click="editTrip(trip.slug)">
+              <button class="btn btn-sm btn-outline-primary" @click.stop="editTrip(trip.slug)">
                 <i class="bi bi-pencil me-1"></i>编辑
               </button>
-              <button class="btn btn-sm btn-outline-secondary" @click="viewTrip(trip.slug)">
-                <i class="bi bi-eye me-1"></i>预览
-              </button>
+              
               <!-- 管理员可直接添加/移除旅行树 -->
               <template v-if="userStore.isAdmin">
                 <button 
                   v-if="trip.isOnTree" 
                   class="btn btn-sm btn-danger" 
-                  @click="removeFromTree(trip.slug)">
+                  @click.stop="removeFromTree(trip.slug)">
                   <i class="bi bi-x-circle me-1"></i>摘下果实
                 </button>
                 <button 
                   v-else
                   class="btn btn-sm btn-success" 
-                  @click="addToTree(trip.slug)">
+                  @click.stop="addToTree(trip.slug)">
                   <i class="bi bi-tree me-1"></i>运用到旅行树
                 </button>
               </template>
@@ -70,11 +68,11 @@
               <template v-else>
                 <button 
                   class="btn btn-sm btn-success" 
-                  @click="requestApplyToTree()">
+                  @click.stop="requestApplyToTree()">
                   <i class="bi bi-tree me-1"></i>申请运用到旅行树
                 </button>
               </template>
-              <button class="btn btn-sm btn-outline-secondary" @click="showAdvancedSettings(trip.slug)" title="高级选项">
+              <button class="btn btn-sm btn-outline-secondary" @click.stop="showAdvancedSettings(trip.slug)" title="高级选项">
                 ⚙️
               </button>
             </div>
