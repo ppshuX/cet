@@ -1,5 +1,5 @@
 <template>
-  <div class="trip-detail-container">
+  <div class="trip-detail-container" :style="{ background: (trip && trip.theme_color) || '#f0e68c' }">
     <!-- 导航栏 -->
     <NavBar />
     
@@ -57,7 +57,7 @@
             <h4>🧭 基本信息</h4>
             <div class="info-grid">
               <div v-if="tripConfig.overview.basicInfo.participants" class="info-item">
-                <span class="info-label">👥 旅行人员：</span>
+                <span class="info-label">👥 Roamioer：</span>
                 <span class="info-value">{{ tripConfig.overview.basicInfo.participants }}</span>
               </div>
               <div v-if="tripConfig.overview.basicInfo.departure" class="info-item">
@@ -255,9 +255,9 @@ export default {
           tripConfig.value = getTripConfig(slug)
         }
         
-        // 更新页面标题为旅行名称
+        // 更新页面标题为旅行名称（去掉平台后缀）
         if (trip.value?.name || trip.value?.title) {
-          document.title = `${trip.value.name || trip.value.title} - Roamio 旅行平台`
+          document.title = `${trip.value.name || trip.value.title}`
         }
       } catch (error) {
         console.error('获取旅行详情失败:', error)

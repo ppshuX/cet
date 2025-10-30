@@ -66,6 +66,7 @@ class TripListSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'slug', 'title', 'description', 'icon',
             'author', 'days_count', 'status', 'visibility',
+            'theme_color', 'background_music',
             'created_at', 'updated_at'
         ]
 

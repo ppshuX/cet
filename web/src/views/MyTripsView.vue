@@ -51,18 +51,29 @@
               <button class="btn btn-sm btn-outline-secondary" @click="viewTrip(trip.slug)">
                 <i class="bi bi-eye me-1"></i>预览
               </button>
-              <button 
-                v-if="trip.isOnTree" 
-                class="btn btn-sm btn-danger" 
-                @click="removeFromTree(trip.slug)">
-                <i class="bi bi-x-circle me-1"></i>摘下果实
-              </button>
-              <button 
-                v-else
-                class="btn btn-sm btn-success" 
-                @click="addToTree(trip.slug)">
-                <i class="bi bi-tree me-1"></i>运用到旅行树
-              </button>
+              <!-- 管理员可直接添加/移除旅行树 -->
+              <template v-if="userStore.isAdmin">
+                <button 
+                  v-if="trip.isOnTree" 
+                  class="btn btn-sm btn-danger" 
+                  @click="removeFromTree(trip.slug)">
+                  <i class="bi bi-x-circle me-1"></i>摘下果实
+                </button>
+                <button 
+                  v-else
+                  class="btn btn-sm btn-success" 
+                  @click="addToTree(trip.slug)">
+                  <i class="bi bi-tree me-1"></i>运用到旅行树
+                </button>
+              </template>
+              <!-- 非管理员显示申请按钮 -->
+              <template v-else>
+                <button 
+                  class="btn btn-sm btn-success" 
+                  @click="requestApplyToTree()">
+                  <i class="bi bi-tree me-1"></i>申请运用到旅行树
+                </button>
+              </template>
               <button class="btn btn-sm btn-outline-secondary" @click="showAdvancedSettings(trip.slug)" title="高级选项">
                 ⚙️
               </button>
@@ -235,6 +246,11 @@ export default {
       }
     }
     
+    // 非管理员：申请运用到旅行树
+    const requestApplyToTree = () => {
+      alert('该功能暂未开放')
+    }
+
     const checkTreeStatus = async () => {
       try {
         const treeData = await getTripList()
@@ -268,6 +284,7 @@ export default {
       trips,
       loading,
       showModal,
+      userStore,
       createNew,
       editTrip,
       viewTrip,
@@ -277,6 +294,7 @@ export default {
       deleteTrip,
       addToTree,
       removeFromTree,
+      requestApplyToTree,
       formatDate
     }
   }

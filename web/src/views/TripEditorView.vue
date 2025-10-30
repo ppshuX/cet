@@ -132,7 +132,8 @@ export default {
           departure: '',
           destination: '',
           transport: '',
-          accommodation: ''
+          accommodation: '',
+          participants: ''
         },
         highlights: [],
         itinerary: [],
@@ -209,7 +210,11 @@ export default {
         return
       }
       
-      if (!confirm('确定要发布这个旅行计划吗？发布后将可以被其他用户看到。')) {
+      const isPublicVisibility = tripData.value.visibility === 'public'
+      const confirmMsg = isPublicVisibility
+        ? '确定要发布这个旅行计划吗？发布后将可被访问。'
+        : '确定要发布这个旅行计划吗？它将保持私有，仅自己可见。'
+      if (!confirm(confirmMsg)) {
         return
       }
       
@@ -248,6 +253,11 @@ export default {
       
       // 如果是新建模式，不加载
       if (!slug || slug === 'new') {
+        // 为新建行程自动填充作者昵称
+        const nickname = userStore.userInfo?.profile?.nickname || userStore.username || ''
+        if (nickname) {
+          tripData.value.overview.basicInfo.participants = nickname
+        }
         return
       }
       
@@ -260,6 +270,11 @@ export default {
           // 确保overview和config有默认值
           overview: data.overview || tripData.value.overview,
           config: data.config || tripData.value.config
+        }
+        // 若缺少作者昵称则补充
+        const nickname = userStore.userInfo?.profile?.nickname || userStore.username || ''
+        if (nickname && !tripData.value.overview.basicInfo?.participants) {
+          tripData.value.overview.basicInfo.participants = nickname
         }
       } catch (error) {
         console.error('加载失败:', error)

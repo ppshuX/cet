@@ -89,8 +89,8 @@ const router = createRouter({
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
-  // 设置页面标题
-  document.title = to.meta.title || 'Roamio 旅行平台'
+  // 设置页面标题（不带平台后缀）
+  document.title = to.meta.title || ''
 
   // 权限检查
   const token = localStorage.getItem('access_token')
