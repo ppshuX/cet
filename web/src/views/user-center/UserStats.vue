@@ -1,7 +1,10 @@
 <template>
   <div class="card shadow-sm mt-3">
-    <div class="card-header bg-white">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
       <h5 class="mb-0">📊 我的统计</h5>
+      <button class="btn btn-sm btn-outline-secondary" @click="$emit('refresh')" title="刷新统计">
+        🔄
+      </button>
     </div>
     <div class="card-body">
       <div class="row text-center">

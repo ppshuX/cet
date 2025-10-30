@@ -59,6 +59,19 @@ export const getTripStats = (slug) => {
     return request.get(`/trips/${slug}/stats/`)
 }
 
+// 新Trip（编辑器）统计接口
+export const getTripPlanStats = (slug) => {
+    return request.get(`/trip-plans/${slug}/stats/`)
+}
+
+export const likeTripPlan = (slug) => {
+    return request.post(`/trip-plans/${slug}/like/`)
+}
+
+export const viewTripPlan = (slug) => {
+    return request.post(`/trip-plans/${slug}/view/`)
+}
+
 /**
  * 获取旅行评论
  * @param {string} slug - 旅行标识符

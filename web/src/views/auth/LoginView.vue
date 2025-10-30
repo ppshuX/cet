@@ -5,7 +5,8 @@
         <div class="col-md-6 col-lg-4">
           <div class="card shadow-lg">
             <div class="card-body p-5">
-              <h2 class="text-center mb-4">用户登录</h2>
+              <h2 class="text-center mb-2">用户登录</h2>
+              <p class="login-slogan text-center mb-4">Hello Roamioer!</p>
               
               <form @submit.prevent="handleLogin">
                 <!-- 用户名 -->
@@ -197,6 +198,13 @@ export default {
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.login-slogan {
+  color: #6c63ff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 8px rgba(108, 99, 255, 0.25);
 }
 
 .divider {

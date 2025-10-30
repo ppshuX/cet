@@ -9,7 +9,8 @@
     
     <div class="container py-5">
       <!-- 页面标题 -->
-      <h2 class="mb-4">个人中心</h2>
+      <h2 class="mb-1">个人中心</h2>
+      <p class="mb-4 slogan-text" :class="getLevelTextClass(profileData.level)">Hello Roamioer!</p>
       
       <!-- Loading状态 -->
       <div v-if="loading" class="text-center py-5">
@@ -37,7 +38,7 @@
           />
           
           <!-- 我的统计 -->
-          <UserStats :stats="stats" />
+          <UserStats :stats="stats" @refresh="loadStats" />
           
           <!-- 编辑个人中心按钮 -->
           <button
@@ -389,6 +390,17 @@ export default {
       try {
         const data = await getUserStats(userInfo.value.id)
         stats.value = data
+        // 额外从我的旅行计算一次，作为后端统计的即时补充
+        try {
+          const myTrips = await (await import('@/api/tripPlan')).getMyTrips()
+          const list = myTrips.results || myTrips || []
+          const total = Array.isArray(list) ? list.length : 0
+          const publics = Array.isArray(list) ? list.filter(t => t.visibility === 'public').length : 0
+          stats.value.trips_count = total
+          stats.value.public_trips_count = publics
+        } catch (e) {
+          // 忽略补充统计错误
+        }
       } catch (error) {
         console.error('加载统计失败:', error)
       }
@@ -492,6 +504,16 @@ export default {
         'master': 'level-master'
       }
       return classes[level] || 'level-novice'
+    }
+    const getLevelTextClass = (level) => {
+      const classes = {
+        'novice': 'level-novice-text',
+        'explorer': 'level-explorer-text',
+        'wanderer': 'level-wanderer-text',
+        'adventurer': 'level-adventurer-text',
+        'master': 'level-master-text'
+      }
+      return classes[level] || 'level-novice-text'
     }
     
     // 更新个人资料
@@ -675,7 +697,9 @@ export default {
       isEmailVerified,
       isAdmin,
       userAvatar,
+      loadStats,
       formatDate,
+      getLevelTextClass,
       goBack,
       handleUpdateInfo,
       handleUpdateProfile,
@@ -1016,6 +1040,14 @@ h2 {
   background: linear-gradient(135deg, #ffeb3b 0%, #ffc107 100%) !important;
   color: #f57f17 !important;
 }
+
+/* Slogan text colors by level */
+.slogan-text { letter-spacing: 0.3px; font-weight: 600; }
+.level-novice-text { color: #666; }
+.level-explorer-text { color: #1565c0; }
+.level-wanderer-text { color: #388e3c; }
+.level-adventurer-text { color: #f57f17; }
+.level-master-text { color: #f57f17; }
 
 
 @media (max-width: 768px) {

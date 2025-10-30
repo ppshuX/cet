@@ -5,7 +5,7 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from rest_framework.exceptions import NotFound
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -95,7 +95,7 @@ class TripPlanViewSet(viewsets.ModelViewSet):
         trip = self.get_object()
         if trip.author != self.request.user and not self.request.user.is_superuser:
             raise PermissionError("无权修改他人的旅行计划")
-        serializer.save()
+        instance = serializer.save()
     
     def perform_destroy(self, instance):
         """删除时检查权限"""
@@ -116,6 +116,45 @@ class TripPlanViewSet(viewsets.ModelViewSet):
         
         serializer = TripListSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    # ==================== 公共统计接口（新Trip也可点赞/统计） ====================
+    @action(detail=True, methods=['get'], permission_classes=[AllowAny])
+    def stats(self, request, slug=None):
+        """获取该旅行的统计信息（自动创建）"""
+        trip = self.get_object()
+        stat, _ = SiteStat.objects.get_or_create(page=f'tp:{trip.slug}', defaults={
+            'views': 0,
+            'likes': 0,
+            'checked_in': False,
+        })
+        serializer = SiteStatSerializer(stat)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['post'], permission_classes=[AllowAny])
+    def like(self, request, slug=None):
+        """点赞（公开与私有均可，但通常用于公开）"""
+        trip = self.get_object()
+        stat, _ = SiteStat.objects.get_or_create(page=f'tp:{trip.slug}', defaults={
+            'views': 0,
+            'likes': 0,
+            'checked_in': False,
+        })
+        stat.likes += 1
+        stat.save()
+        return Response({'likes': stat.likes})
+
+    @action(detail=True, methods=['post'], permission_classes=[AllowAny])
+    def view(self, request, slug=None):
+        """记录浏览量（幂等性由前端控制频率）"""
+        trip = self.get_object()
+        stat, _ = SiteStat.objects.get_or_create(page=f'tp:{trip.slug}', defaults={
+            'views': 0,
+            'likes': 0,
+            'checked_in': False,
+        })
+        stat.views += 1
+        stat.save()
+        return Response({'views': stat.views})
     
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def clone(self, request, slug=None):

@@ -13,9 +13,7 @@
       {{ isPlaying ? '🔊' : '🔇' }}
     </button>
     
-    <audio ref="audioPlayer" loop>
-      <source :src="musicSrc" type="audio/mpeg">
-    </audio>
+    <audio ref="audioPlayer" :src="musicSrc || ''" preload="auto" loop></audio>
     
     <div class="container py-5">
       <!-- Loading状态 -->
@@ -35,11 +33,11 @@
           </div>
         </div>
         
-        <!-- 统计组件 ⭐ (仅旧页面) -->
+        <!-- 统计组件：显示浏览量与点赞；若无统计则显示0并禁用点赞 -->
         <TripStats
-          v-if="trip.stats"
-          :views="trip.stats.views"
-          :likes="trip.stats.likes"
+          :views="trip.stats?.views || 0"
+          :likes="trip.stats?.likes || 0"
+          :can-like="trip.visibility === 'public'"
           @like="handleLike"
         />
         
@@ -162,9 +160,7 @@
           :comments="comments"
           :is-admin="isAdmin"
           :is-author="isAuthor"
-          :has-checked-in="trip.stats?.checked_in || false"
           :get-avatar-url="getAvatarUrl"
-          @checkin="handleCheckin"
           @submit-comment="handleSubmitComment"
           @delete-comment="handleDeleteComment"
           @add-image="handleAddImage"
@@ -178,10 +174,10 @@
 </template>
 
 <script>
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
-import { getTripDetail, likeTrip, checkinTrip } from '@/api/trip'
+import { getTripDetail, likeTrip, getTripStats, getTripPlanStats, likeTripPlan, viewTripPlan } from '@/api/trip'
 import { getCommentList, createComment, deleteComment, addCommentImage, updateComment, getCommentReplies } from '@/api/comment'
 import { getAvatarUrl } from '@/config/api'
 import { getTripConfig } from '@/config/tripConfig'
@@ -234,6 +230,10 @@ export default {
       const slug = route.params.slug
       try {
         trip.value = await getTripDetail(slug)
+        // 确保有stats对象用于前端展示
+        if (!trip.value.stats) {
+          trip.value.stats = { views: 0, likes: 0 }
+        }
         
         // 如果是新Trip模型，不需要getTripConfig
         // 如果是旧SiteStat模型，使用getTripConfig
@@ -256,6 +256,18 @@ export default {
           // 旧SiteStat模型，使用静态配置
           tripConfig.value = getTripConfig(slug)
         }
+        // 首次获取实时统计
+        try {
+          let stats
+          if (trip.value && trip.value.overview) {
+            stats = await getTripPlanStats(slug)
+          } else {
+            stats = await getTripStats(slug)
+          }
+          if (stats) {
+            trip.value.stats = { views: stats.views, likes: stats.likes }
+          }
+        } catch (e) { /* ignore */ }
         
         // 更新页面标题为旅行名称（去掉平台后缀）
         if (trip.value?.name || trip.value?.title) {
@@ -287,24 +299,20 @@ export default {
     // 点赞
     const handleLike = async () => {
       try {
-        const result = await likeTrip(route.params.slug)
-        trip.value.stats.likes = result.likes
+        const slug = route.params.slug
+        let result
+        if (trip.value && trip.value.overview) {
+          result = await likeTripPlan(slug)
+        } else {
+          result = await likeTrip(slug)
+        }
+        if (trip.value.stats) {
+          trip.value.stats.likes = result.likes
+        }
         alert('点赞成功！')
       } catch (error) {
         console.error('点赞失败:', error)
         alert('点赞失败，请稍后重试')
-      }
-    }
-    
-    // 打卡
-    const handleCheckin = async () => {
-      try {
-        await checkinTrip(route.params.slug)
-        alert('打卡成功！')
-        await fetchTripDetail() // 刷新数据以更新打卡状态
-      } catch (error) {
-        console.error('打卡失败:', error)
-        alert('打卡失败，请稍后重试')
       }
     }
     
@@ -496,9 +504,42 @@ export default {
       }
     })
 
+    let statsTimer = null
     onMounted(async () => {
       await fetchTripDetail()
       await fetchComments()
+      // 公开行程记录一次浏览
+      try {
+        const slug = route.params.slug
+        if (trip.value && trip.value.overview && trip.value.visibility === 'public') {
+          await viewTripPlan(slug)
+        }
+      } catch (e) {
+        // ignore view errors
+      }
+      // 统计轮询（不增加浏览量）
+      statsTimer = setInterval(async () => {
+        try {
+          const slug = route.params.slug
+          let stats
+          if (trip.value && trip.value.overview) {
+            stats = await getTripPlanStats(slug)
+          } else {
+            stats = await getTripStats(slug)
+          }
+          if (trip.value) {
+            if (!trip.value.stats) trip.value.stats = { views: 0, likes: 0 }
+            trip.value.stats.views = stats.views
+            trip.value.stats.likes = stats.likes
+          }
+        } catch (e) {
+          // ignore when stats not available
+        }
+      }, 15000)
+    })
+
+    onUnmounted(() => {
+      if (statsTimer) clearInterval(statsTimer)
     })
     
     return {
@@ -512,7 +553,6 @@ export default {
       musicSrc,
       commentSectionRef,
       handleLike,
-      handleCheckin,
       handleSubmitComment,
       handleDeleteComment,
       handleAddImage,

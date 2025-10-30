@@ -5,7 +5,8 @@
         <div class="col-md-6 col-lg-5">
           <div class="card shadow">
             <div class="card-body p-5">
-              <h2 class="text-center mb-4">用户注册</h2>
+              <h2 class="text-center mb-2">用户注册</h2>
+              <p class="register-slogan text-center mb-4">Become a Roamioer today.</p>
               
               <!-- 错误提示 -->
               <div v-if="errorMessage" class="alert alert-danger">
@@ -535,6 +536,13 @@ export default {
 h2 {
   color: #333;
   font-weight: 600;
+}
+
+.register-slogan {
+  color: #6c63ff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 8px rgba(108, 99, 255, 0.25);
 }
 
 .form-label {

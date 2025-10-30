@@ -1,26 +1,27 @@
 <template>
   <div class="card">
     <div class="card-body">
-      <h3 class="mb-4">📍 打卡与留言</h3>
+      <h3 class="mb-4">🌳 Roamio Stories.</h3>
       
-      <!-- 打卡按钮 -->
-      <div class="checkin-section mb-4">
+      <!-- 发表评论入口（仅作者可见） -->
+      <div v-if="isAuthor" class="mb-3">
         <button
-          class="btn btn-success btn-lg"
-          @click="handleCheckin"
-          :disabled="checking || hasCheckedIn"
+          v-if="!showForm"
+          class="btn btn-outline-primary"
+          @click="showForm = true"
         >
-          <span v-if="checking" class="spinner-border spinner-border-sm me-2"></span>
-          {{ checkinButtonText }}
+          ✍️ 记录一下
         </button>
-        <p v-if="hasCheckedIn" class="text-success mt-2 mb-0">
-          ✅ 您已打卡成功！
-        </p>
+        <button
+          v-else
+          class="btn btn-outline-secondary mb-3"
+          @click="showForm = false"
+        >
+          取消记录
+        </button>
       </div>
-      
-      <!-- 发表评论表单 - 只对作者显示 -->
       <CommentForm
-        v-if="isAuthor"
+        v-if="isAuthor && showForm"
         :submitting="submitting"
         @submit="handleSubmit"
       />
@@ -28,7 +29,7 @@
       <!-- 评论列表 -->
       <div class="comment-list">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 class="mb-0">评论列表 ({{ comments.length }}条)</h5>
+          <h5 class="mb-0">记录列表 ({{ comments.length }}条)</h5>
           <!-- 管理评论模式切换按钮 -->
           <button
             v-if="hasManageableComments"
@@ -42,7 +43,7 @@
         </div>
         
         <div v-if="comments.length === 0" class="text-center text-muted py-4">
-          暂无评论，快来留下第一条评论吧！
+          暂无记录，快来留下你的旅行脚印吧！
         </div>
         
         <CommentItem
@@ -164,21 +165,17 @@ export default {
       type: Boolean,
       default: false
     },
-    hasCheckedIn: {
-      type: Boolean,
-      default: false
-    },
     getAvatarUrl: {
       type: Function,
       required: true
     }
   },
   
-  emits: ['checkin', 'submit-comment', 'delete-comment', 'add-image', 'update-comment', 'submit-reply', 'load-replies'],
+  emits: ['submit-comment', 'delete-comment', 'add-image', 'update-comment', 'submit-reply', 'load-replies'],
   
   setup(props, { emit }) {
-    const checking = ref(false)
     const submitting = ref(false)
+    const showForm = ref(false)
     const editingComments = ref({})
     const isManageMode = ref(false)
     const showModal = ref(false)
@@ -196,23 +193,6 @@ export default {
       return props.comments.some(comment => comment.can_delete)
     })
     
-    const checkinButtonText = computed(() => {
-      if (props.hasCheckedIn) return '✓ 已打卡'
-      if (checking.value) return '打卡中...'
-      return '📍 我来过这里'
-    })
-    
-    // 打卡
-    const handleCheckin = async () => {
-      checking.value = true
-      try {
-        await emit('checkin')
-      } finally {
-        setTimeout(() => {
-          checking.value = false
-        }, 500)
-      }
-    }
     
     // 提交评论
     const handleSubmit = async (commentData) => {
@@ -353,12 +333,11 @@ export default {
     }
     
     return {
-      checking,
       submitting,
+      showForm,
       editingComments,
       isManageMode,
       hasManageableComments,
-      checkinButtonText,
       expandedReplies,
       replyForms,
       submittingReply,
@@ -366,7 +345,6 @@ export default {
       replyCounts,
       showModal,
       modalImageUrl,
-      handleCheckin,
       handleSubmit,
       handleDelete,
       showImageModal,

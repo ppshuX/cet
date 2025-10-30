@@ -1,6 +1,6 @@
 <template>
   <div class="comment-form mb-4">
-    <h5 class="mb-3">发表评论</h5>
+    <h5 class="mb-3">记录一下</h5>
     <form @submit.prevent="handleSubmit">
       <div class="mb-3">
         <textarea
@@ -39,7 +39,7 @@
         :disabled="submitting"
       >
         <span v-if="submitting" class="spinner-border spinner-border-sm me-2"></span>
-        {{ submitting ? '发布中...' : '发布评论' }}
+        {{ submitting ? '记录中...' : '记录一下' }}
       </button>
     </form>
   </div>

@@ -17,7 +17,8 @@ from ...serializers import (
 
 class TripViewSet(viewsets.ReadOnlyModelViewSet):
     """旅行页面ViewSet"""
-    queryset = SiteStat.objects.all().order_by('id')  # 按ID排序，保持创建时间顺序
+    # 仅展示手动“运用到旅行树”的条目：排除以"tp:"开头的统计（用于TripPlan即时统计）
+    queryset = SiteStat.objects.exclude(page__startswith='tp:').order_by('id')
     serializer_class = TripSerializer
     lookup_field = 'page'
     permission_classes = [AllowAny]

@@ -14,7 +14,9 @@
     <button 
       class="like-btn" 
       @click="handleLike"
-      :disabled="liking"
+      :disabled="liking || !canLike"
+
+      title="点赞（仅公开行程可用）"
     >
       <span v-if="liking" class="spinner-border spinner-border-sm me-2"></span>
       👍 {{ liking ? '点赞中...' : '点赞' }}
@@ -36,6 +38,10 @@ export default {
     likes: {
       type: Number,
       default: 0
+    },
+    canLike: {
+      type: Boolean,
+      default: true
     }
   },
   
