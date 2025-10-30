@@ -1,6 +1,7 @@
 <template>
-  <div class="login-container">
+  <div class="auth-wrapper">
     <NavBar />
+    <div class="login-container">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
@@ -86,7 +87,8 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
+    </div>
 </template>
 
 <script>
@@ -181,11 +183,16 @@ export default {
 </script>
 
 <style scoped>
-.login-container {
+.auth-wrapper {
   min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.login-container {
+  min-height: calc(100vh - 64px);
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding-top: 20px;
 }
 
 .card {

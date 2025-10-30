@@ -1,6 +1,7 @@
 <template>
-  <div class="register-container">
+  <div class="auth-wrapper">
     <NavBar />
+    <div class="register-container">
     <div class="container py-5">
       <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
@@ -178,6 +179,7 @@
           </div>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </template>
@@ -519,11 +521,16 @@ export default {
 </script>
 
 <style scoped>
-.register-container {
+.auth-wrapper {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.register-container {
+  min-height: calc(100vh - 64px);
   display: flex;
   align-items: center;
+  padding-top: 20px;
 }
 
 .card {
