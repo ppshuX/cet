@@ -228,7 +228,7 @@ export default {
     const ensureLoggedIn = () => {
       if (!userStore.isLoggedIn) {
         const next = route.fullPath || window.location.pathname
-        router.push({ path: '/login', query: { next } })
+        router.push({ path: '/login/', query: { next } })
         return false
       }
       return true
