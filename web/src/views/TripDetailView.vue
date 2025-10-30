@@ -8,6 +8,11 @@
       🏠
     </button>
     
+    <!-- 跳转到评论按钮（右上角） -->
+    <button class="scroll-btn" @click="scrollToComments" title="跳到评论区">
+      ⬇️
+    </button>
+    
     <!-- 背景音乐按钮 -->
     <button class="music-btn" @click="toggleMusic" :title="isPlaying ? '暂停音乐' : '播放音乐'">
       {{ isPlaying ? '🔊' : '🔇' }}
@@ -32,14 +37,6 @@
             <p class="text-muted mb-0">{{ trip.description }}</p>
           </div>
         </div>
-        
-        <!-- 统计组件：显示浏览量与点赞；若无统计则显示0并禁用点赞 -->
-        <TripStats
-          :views="trip.stats?.views || 0"
-          :likes="trip.stats?.likes || 0"
-          :can-like="trip.visibility === 'public'"
-          @like="handleLike"
-        />
         
         <!-- 旅行进度条组件 ⭐ -->
         <TripProgress
@@ -154,6 +151,14 @@
           <p class="text-muted text-center">行程内容正在筹划中，敬请期待...</p>
         </TripOverview>
         
+        <!-- 统计组件：显示浏览量与点赞；若无统计则显示0并禁用点赞（移动至评论区上方） -->
+        <TripStats
+          :views="trip.stats?.views || 0"
+          :likes="trip.stats?.likes || 0"
+          :can-like="trip.overview ? (trip.visibility === 'public') : true"
+          @like="handleLike"
+        />
+
         <!-- 评论区组件 ⭐ -->
         <CommentSection
           ref="commentSectionRef"
@@ -492,6 +497,18 @@ export default {
       isPlaying.value = !isPlaying.value
     }
     
+    // 滚动到评论区
+    const scrollToComments = () => {
+      // 优先使用组件根元素滚动
+      if (commentSectionRef.value && commentSectionRef.value.$el) {
+        commentSectionRef.value.$el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        return
+      }
+      // 回退：根据页面上第一个评论列表容器滚动
+      const el = document.querySelector('.comment-list')
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+    
     // 当音乐源变化时，重新加载并在需要时继续播放
     watch(musicSrc, async () => {
       if (!audioPlayer.value) return
@@ -561,6 +578,7 @@ export default {
       handleLoadReplies,
       goBack,
       toggleMusic,
+      scrollToComments,
       getAvatarUrl,
       isAuthor
     }
@@ -1011,6 +1029,32 @@ export default {
   background: white;
   transform: scale(1.1);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  opacity: 1;
+}
+
+/* 跳转到评论按钮 */
+.scroll-btn {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f7f7ff 100%);
+  border: 2px solid rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0.8;
+}
+
+.scroll-btn:hover {
+  transform: translateY(2px) scale(1.05);
   opacity: 1;
 }
 
