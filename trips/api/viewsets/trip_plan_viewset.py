@@ -98,9 +98,16 @@ class TripPlanViewSet(viewsets.ModelViewSet):
         instance = serializer.save()
     
     def perform_destroy(self, instance):
-        """删除时检查权限"""
+        """删除旅行计划：若在旅行树中，连同对应SiteStat一起删除"""
         if instance.author != self.request.user and not self.request.user.is_superuser:
             raise PermissionError("无权删除他人的旅行计划")
+        # 先尝试从旅行树移除（非 tp: 前缀，树用的是裸 slug）
+        try:
+            site_stat = SiteStat.objects.get(page=instance.slug)
+            site_stat.delete()
+        except SiteStat.DoesNotExist:
+            pass
+        # 再删除Trip本身
         instance.delete()
     
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
