@@ -1,5 +1,6 @@
 <template>
   <div class="register-container">
+    <NavBar />
     <div class="container py-5">
       <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
@@ -186,9 +187,11 @@ import { ref, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
 import { getQQLoginUrl, sendVerificationCode, verifyCode } from '@/api/auth'
+import NavBar from '@/components/NavBar.vue'
 
 export default {
   name: 'RegisterView',
+  components: { NavBar },
   
   setup() {
     const router = useRouter()

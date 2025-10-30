@@ -1,5 +1,6 @@
 <template>
   <div class="login-container">
+    <NavBar />
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
@@ -93,9 +94,11 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
 import { getQQLoginUrl } from '@/api/auth'
+import NavBar from '@/components/NavBar.vue'
 
 export default {
   name: 'LoginView',
+  components: { NavBar },
   
   setup() {
     const router = useRouter()
