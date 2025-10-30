@@ -12,7 +12,7 @@
       <div class="flex-grow-1">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <strong>{{ comment.user.username }}</strong>
-          <div class="d-flex gap-2 align-items-center">
+          <div class="d-flex gap-2 align-items-center actions-wrap">
             <small class="text-muted">{{ formatDate(comment.timestamp) }}</small>
             <!-- 操作按钮 -->
             <slot name="actions"></slot>
@@ -232,6 +232,14 @@ export default {
   text-decoration: none !important;
 }
 
+/* 让操作区在移动端自动换行，避免溢出 */
+.actions-wrap {
+  flex-wrap: wrap;
+  row-gap: 6px;
+  column-gap: 8px;
+  min-width: 0;
+}
+
 @media (max-width: 768px) {
   .comment-item {
     padding: 1rem;
@@ -253,6 +261,10 @@ export default {
   
   .replies-container {
     padding: 0.75rem;
+  }
+  .actions-wrap {
+    max-width: 60%;
+    justify-content: flex-end;
   }
 }
 </style>
