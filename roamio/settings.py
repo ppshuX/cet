@@ -215,8 +215,8 @@ SIMPLE_JWT = {
 
 # API文档配置
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'CET旅行平台 API',
-    'DESCRIPTION': '前后端分离的旅行分享平台',
+    'TITLE': 'Roamio 旅行平台 API',
+    'DESCRIPTION': 'Roamio - 前后端分离的旅行分享平台',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,

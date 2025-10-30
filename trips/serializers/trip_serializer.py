@@ -16,8 +16,12 @@ class SiteStatSerializer(serializers.ModelSerializer):
         read_only_fields = ['page', 'views', 'likes', 'checked_in']
     
     def get_comments_count(self, obj):
-        """获取评论数量"""
-        return Comment.objects.filter(page=obj.page).count()
+        """获取评论数量，兼容新老页面键：'slug' 与 'tp:slug' 均计入"""
+        page_key = obj.page
+        if page_key.startswith('tp:'):
+            raw = page_key[3:]
+            return Comment.objects.filter(page__in=[page_key, raw]).count()
+        return Comment.objects.filter(page=page_key).count()
 
 
 class TripSerializer(serializers.Serializer):

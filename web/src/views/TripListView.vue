@@ -84,9 +84,9 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { getTripList } from '@/api/trip'
+import { getTripList, getTripStats, getTripPlanStats } from '@/api/trip'
 import NavBar from '@/components/NavBar.vue'
 
 export default {
@@ -100,6 +100,7 @@ export default {
     const router = useRouter()
     const trips = ref([])
     const loading = ref(true)
+    let statsTimer = null
     
     const fetchTrips = async () => {
       loading.value = true
@@ -127,8 +128,41 @@ export default {
     const originalTrips = computed(() => trips.value.slice(0, 5))
     const newTrips = computed(() => trips.value.slice(5))
     
+    const refreshStats = async () => {
+      if (!trips.value?.length) return
+      try {
+        const updated = await Promise.all(
+          trips.value.map(async (t) => {
+            try {
+              // 优先新接口（tp: 前缀），失败再回退旧接口，确保与详情页一致
+              let stat
+              try {
+                stat = await getTripPlanStats(t.slug)
+              } catch (e1) {
+                stat = await getTripStats(t.slug)
+              }
+              return { ...t, stats: { ...t.stats, ...stat } }
+            } catch (e) {
+              return t
+            }
+          })
+        )
+        trips.value = updated
+      } catch (e) {
+        // ignore
+      }
+    }
+
     onMounted(() => {
-      fetchTrips()
+      fetchTrips().then(() => {
+        // 首次加载后刷新一次统计并开启轮询（云端接口）
+        refreshStats()
+        statsTimer = setInterval(refreshStats, 15000)
+      })
+    })
+
+    onBeforeUnmount(() => {
+      if (statsTimer) clearInterval(statsTimer)
     })
     
     return {

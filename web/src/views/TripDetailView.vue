@@ -483,6 +483,12 @@ export default {
     // 音乐控制
     const toggleMusic = async () => {
       if (!audioPlayer.value) return
+      // 若未选择或不支持的音乐源，给出提示，避免 NotSupportedError
+      const src = audioPlayer.value.getAttribute('src') || ''
+      if (!src) {
+        alert('未选择背景音乐，无法播放')
+        return
+      }
       
       if (isPlaying.value) {
         audioPlayer.value.pause()
@@ -492,6 +498,7 @@ export default {
           await audioPlayer.value.play()
         } catch (error) {
           console.error('播放音乐失败:', error)
+          alert('播放失败：该浏览器或当前格式不受支持')
         }
       }
       isPlaying.value = !isPlaying.value
