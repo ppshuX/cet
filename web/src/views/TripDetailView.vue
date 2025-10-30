@@ -224,6 +224,15 @@ export default {
     })
     
     const isAdmin = computed(() => userStore.isAdmin)
+    // 登录校验：未登录则跳转登录页并带 next
+    const ensureLoggedIn = () => {
+      if (!userStore.isLoggedIn) {
+        const next = route.fullPath || window.location.pathname
+        router.push({ path: '/login', query: { next } })
+        return false
+      }
+      return true
+    }
     
     // 判断是否为旅行作者
     const isAuthor = computed(() => {
@@ -303,6 +312,7 @@ export default {
     
     // 点赞
     const handleLike = async () => {
+      if (!ensureLoggedIn()) return
       try {
         const slug = route.params.slug
         let result
@@ -323,6 +333,7 @@ export default {
     
     // 提交评论（接收组件传来的数据）
     const handleSubmitComment = async (commentData) => {
+      if (!ensureLoggedIn()) return
       try {
         const formData = new FormData()
         formData.append('page', route.params.slug)
@@ -433,6 +444,7 @@ export default {
     
     // 提交回复
     const handleSubmitReply = async ({ commentId, content }) => {
+      if (!ensureLoggedIn()) return
       try {
         const formData = new FormData()
         formData.append('content', content)
