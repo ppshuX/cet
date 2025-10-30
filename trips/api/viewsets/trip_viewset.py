@@ -23,6 +23,20 @@ class TripViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'page'
     permission_classes = [AllowAny]
     
+    def get_object(self):
+        """确保旧页面或树上页面即使未初始化也能有统计记录"""
+        lookup_value = self.kwargs.get(self.lookup_field)
+        # 旅行树页面已排除 tp: 前缀；其余页面如不存在则初始化
+        stat, _ = SiteStat.objects.get_or_create(
+            page=lookup_value,
+            defaults={
+                'views': 0,
+                'likes': 0,
+                'checked_in': False,
+            }
+        )
+        return stat
+    
     def list(self, request, *args, **kwargs):
         """获取旅行列表"""
         queryset = self.get_queryset()
