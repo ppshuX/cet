@@ -4,7 +4,7 @@
     
     <div class="container py-5">
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>我的旅行计划</h2>
+        <h2>我的旅行列表</h2>
         <button class="btn btn-primary" @click="createNew">
           <i class="bi bi-plus-circle me-2"></i>创建新旅行
         </button>
@@ -83,8 +83,8 @@
       <!-- 空状态 -->
       <div v-else class="empty-state text-center py-5">
         <div class="empty-icon mb-3">📝</div>
-        <h4>还没有旅行计划</h4>
-        <p class="text-muted mb-4">开始创建你的第一个旅行计划吧！</p>
+        <h4>还没有旅行</h4>
+        <p class="text-muted mb-4">开始创建你的第一个旅行吧！</p>
         <button class="btn btn-primary btn-lg" @click="createNew">
           <i class="bi bi-plus-circle me-2"></i>创建新旅行
         </button>

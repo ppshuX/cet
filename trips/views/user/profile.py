@@ -15,6 +15,14 @@ def user_center(request):
         username = request.POST.get('username', '').strip()
         email = request.POST.get('email', '').strip()
         
+        # 基础校验：不允许包含空格
+        if ' ' in username:
+            messages.error(request, '用户名不能包含空格')
+            return redirect('user_center')
+        if not username:
+            messages.error(request, '用户名不能为空')
+            return redirect('user_center')
+
         # 验证用户名唯一性
         if username != request.user.username:
             if User.objects.filter(username=username).exists():

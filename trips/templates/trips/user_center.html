@@ -505,7 +505,7 @@
                                 <div class="form-group">
                                     <label for="username" class="form-label">用户名</label>
                                     <input type="text" class="form-control" id="username" name="username"
-                                        value="{{ user.username }}" required>
+                                        value="{{ user.username }}" required pattern="^[^\s]+$" title="用户名不能包含空格">
                                 </div>
                             </div>
                             <div class="col-md-6">
