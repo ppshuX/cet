@@ -174,12 +174,43 @@ class CommentViewSet(viewsets.ModelViewSet):
             raise
     
     def perform_update(self, serializer):
-        """更新评论时检查权限"""
+        """更新评论时检查权限并处理文件上传"""
         comment = self.get_object()
         # 权限检查：只有评论作者或管理员可以修改
         if comment.user != self.request.user and not self.request.user.is_superuser:
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied('无权修改此评论')
+        
+        # 处理图片和视频上传（如果有）
+        image = self.request.FILES.get('image')
+        video = self.request.FILES.get('video')
+        
+        # 如果上传了新图片
+        if image:
+            try:
+                # 删除旧图片
+                if comment.image:
+                    FileUploadHandler.delete_file(comment.image)
+                
+                # 上传新图片到 COS
+                image_url = FileUploadHandler.upload_comment_image(image, self.request.user.id)
+                serializer.validated_data['image'] = image_url
+            except Exception as e:
+                raise PermissionDenied(f'图片上传失败: {str(e)}')
+        
+        # 如果上传了新视频
+        if video:
+            try:
+                # 删除旧视频
+                if comment.video:
+                    FileUploadHandler.delete_file(comment.video)
+                
+                # 上传新视频到 COS
+                video_url = FileUploadHandler.upload_comment_video(video, self.request.user.id)
+                serializer.validated_data['video'] = video_url
+            except Exception as e:
+                raise PermissionDenied(f'视频上传失败: {str(e)}')
+        
         serializer.save()
     
     def destroy(self, request, *args, **kwargs):
