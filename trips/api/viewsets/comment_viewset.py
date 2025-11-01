@@ -335,18 +335,18 @@ class CommentViewSet(viewsets.ModelViewSet):
             )
         
         try:
-        # 如果评论已有图片，删除旧图片
-        if comment.image:
+            # 如果评论已有图片，删除旧图片
+            if comment.image:
                 old_image_url = comment.image
                 try:
                     FileUploadHandler.delete_file(old_image_url)
                     print(f"成功删除旧图片: {old_image_url}")
-            except Exception as e:
+                except Exception as e:
                     print(f"删除旧图片失败（已忽略）: {e}")
-        
+            
             # 上传新图片到 COS
             image_url = FileUploadHandler.upload_comment_image(image, request.user.id)
-        
+            
             # 保存新图片 URL
             comment.image = image_url
             comment.save()
