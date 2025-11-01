@@ -114,8 +114,8 @@ class CommentViewSet(viewsets.ModelViewSet):
         try:
             if image:
                 image_url = FileUploadHandler.upload_comment_image(image, self.request.user.id)
-        
-        if video:
+            
+            if video:
                 video_url = FileUploadHandler.upload_comment_video(video, self.request.user.id)
         except Exception as e:
             raise PermissionDenied(f'文件上传失败: {str(e)}')
