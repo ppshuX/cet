@@ -216,9 +216,9 @@ class AvatarUploadSerializer(serializers.Serializer):
     
     def validate_avatar(self, value):
         """验证头像文件"""
-        # 验证文件大小（5MB）
-        if value.size > 5 * 1024 * 1024:
-            raise serializers.ValidationError("图片大小不能超过5MB")
+        # 验证文件大小（放宽到 10MB）
+        if value.size > 10 * 1024 * 1024:
+            raise serializers.ValidationError("图片大小不能超过10MB")
         
         # 验证文件类型
         if not value.content_type.startswith('image/'):

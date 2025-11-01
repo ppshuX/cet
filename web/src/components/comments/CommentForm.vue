@@ -33,6 +33,23 @@
         </div>
       </div>
       
+      <!-- 上传进度条 -->
+      <div v-if="uploadProgress > 0 && uploadProgress < 100" class="mb-3">
+        <div class="progress">
+          <div
+            class="progress-bar progress-bar-striped progress-bar-animated"
+            role="progressbar"
+            :style="{ width: uploadProgress + '%' }"
+            :aria-valuenow="uploadProgress"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            {{ uploadProgress }}%
+          </div>
+        </div>
+        <small class="text-muted">{{ uploadMessage }}</small>
+      </div>
+      
       <button
         type="submit"
         class="btn btn-primary"
@@ -55,6 +72,14 @@ export default {
     submitting: {
       type: Boolean,
       default: false
+    },
+    uploadProgress: {
+      type: Number,
+      default: 0
+    },
+    uploadMessage: {
+      type: String,
+      default: ''
     }
   },
   

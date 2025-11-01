@@ -332,7 +332,7 @@ export default {
     }
     
     // 提交评论（接收组件传来的数据）
-    const handleSubmitComment = async (commentData) => {
+    const handleSubmitComment = async (commentData, onProgress) => {
       if (!ensureLoggedIn()) return
       try {
         const formData = new FormData()
@@ -348,7 +348,8 @@ export default {
           formData.append('video', commentData.video)
         }
         
-        await createComment(formData)
+        // 传递进度回调
+        await createComment(formData, onProgress)
         alert('评论发表成功！')
         await fetchComments()
       } catch (error) {

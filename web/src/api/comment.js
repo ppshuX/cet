@@ -17,12 +17,17 @@ export const getCommentList = async (params) => {
 /**
  * 创建评论
  * @param {FormData} data - 表单数据（包含文件）
+ * @param {Function} onUploadProgress - 上传进度回调函数
  */
-export const createComment = (data) => {
+export const createComment = (data, onUploadProgress) => {
     return request.post('/comments/', data, {
         headers: {
             'Content-Type': 'multipart/form-data'
-        }
+        },
+        onUploadProgress: onUploadProgress ? (progressEvent) => {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+            onUploadProgress(percentCompleted)
+        } : undefined
     })
 }
 
@@ -46,12 +51,17 @@ export const getCommentDetail = (id) => {
  * 为评论添加图片
  * @param {number} id - 评论ID
  * @param {FormData} data - 表单数据（包含图片文件）
+ * @param {Function} onUploadProgress - 上传进度回调函数
  */
-export const addCommentImage = (id, data) => {
+export const addCommentImage = (id, data, onUploadProgress) => {
     return request.post(`/comments/${id}/add_image/`, data, {
         headers: {
             'Content-Type': 'multipart/form-data'
-        }
+        },
+        onUploadProgress: onUploadProgress ? (progressEvent) => {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+            onUploadProgress(percentCompleted)
+        } : undefined
     })
 }
 
@@ -59,9 +69,20 @@ export const addCommentImage = (id, data) => {
  * 更新评论内容
  * @param {number} id - 评论ID
  * @param {Object} data - 评论数据 {content}
+ * @param {Function} onUploadProgress - 上传进度回调函数（如果包含文件）
  */
-export const updateComment = (id, data) => {
-    return request.patch(`/comments/${id}/`, data)
+export const updateComment = (id, data, onUploadProgress) => {
+    const config = {}
+    
+    // 如果是 FormData，添加进度回调
+    if (data instanceof FormData && onUploadProgress) {
+        config.onUploadProgress = (progressEvent) => {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+            onUploadProgress(percentCompleted)
+        }
+    }
+    
+    return request.patch(`/comments/${id}/`, data, config)
 }
 
 /**

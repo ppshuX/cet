@@ -327,10 +327,10 @@ class CommentViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        # 验证图片大小
-        if image.size > 10 * 1024 * 1024:
+        # 验证图片大小（放宽到 20MB）
+        if image.size > 20 * 1024 * 1024:
             return Response(
-                {'detail': '图片大小不能超过10MB'},
+                {'detail': '图片大小不能超过20MB'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
