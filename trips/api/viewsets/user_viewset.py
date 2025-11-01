@@ -2,8 +2,6 @@
 用户相关 ViewSet
 处理用户信息的查询、更新、头像上传等功能
 """
-import uuid
-import os
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -18,6 +16,7 @@ from ...serializers import (
     UserProfileUpdateSerializer,
     AvatarUploadSerializer,
 )
+from ...utils.file_upload_handler import FileUploadHandler
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet,
@@ -60,7 +59,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet,
     
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def upload_avatar(self, request, pk=None):
-        """上传头像"""
+        """上传头像到腾讯云 COS"""
         user = self.get_object()
         
         # 权限检查：只能修改自己的头像
@@ -74,28 +73,35 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet,
         serializer.is_valid(raise_exception=True)
         
         avatar_file = serializer.validated_data['avatar']
-        
-        # 生成唯一文件名
-        ext = os.path.splitext(avatar_file.name)[-1]
-        avatar_file.name = f"{uuid.uuid4().hex}{ext}"
-        
-        # 保存头像
         profile = user.profile
         
-        # 删除旧头像
-        if profile.avatar:
-            try:
-                os.remove(profile.avatar.path)
-            except:
-                pass
-        
-        profile.avatar = avatar_file
-        profile.save()
-        
-        return Response({
-            'avatar_url': profile.get_avatar_url(),
-            'detail': '头像上传成功'
-        })
+        try:
+            # 删除旧头像（如果存在）
+            if profile.avatar:
+                old_avatar_url = profile.avatar
+                # 在后台删除旧文件（不阻塞响应）
+                try:
+                    FileUploadHandler.delete_file(old_avatar_url)
+                except Exception as e:
+                    print(f"删除旧头像失败（已忽略）: {e}")
+            
+            # 上传新头像到 COS
+            avatar_url = FileUploadHandler.upload_avatar(avatar_file, user.id)
+            
+            # 保存 COS URL 到数据库
+            profile.avatar = avatar_url
+            profile.save()
+            
+            return Response({
+                'avatar_url': profile.get_avatar_url(),
+                'detail': '头像上传成功'
+            })
+            
+        except Exception as e:
+            return Response(
+                {'detail': f'头像上传失败: {str(e)}'},
+                status=500
+            )
     
     @action(detail=False, methods=['patch', 'put'], permission_classes=[IsAuthenticated])
     def update_profile(self, request):

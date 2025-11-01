@@ -1,17 +1,16 @@
 """
-用户头像上传视图
+用户头像上传视图 - 上传到腾讯云COS
 """
-import os
-import uuid
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from ...utils.file_upload_handler import FileUploadHandler
 
 
 @csrf_exempt
 @login_required
 def upload_avatar(request):
-    """上传头像"""
+    """上传头像到腾讯云 COS"""
     if request.method == 'POST' and request.FILES.get('avatar'):
         avatar_file = request.FILES['avatar']
         
@@ -24,26 +23,26 @@ def upload_avatar(request):
             return JsonResponse({'success': False, 'error': '图片大小不能超过5MB'})
         
         try:
-            # 生成唯一文件名
-            ext = os.path.splitext(avatar_file.name)[-1]
-            avatar_file.name = f"{uuid.uuid4().hex}{ext}"
-            
-            # 更新用户头像
             profile = request.user.profile
             
-            # 删除旧头像文件（如果存在）
+            # 删除旧头像（如果存在）
             if profile.avatar:
+                old_avatar_url = profile.avatar
                 try:
-                    os.remove(profile.avatar.path)
-                except:
-                    pass
+                    FileUploadHandler.delete_file(old_avatar_url)
+                except Exception as e:
+                    print(f"删除旧头像失败（已忽略）: {e}")
             
-            profile.avatar = avatar_file
+            # 上传新头像到 COS
+            avatar_url = FileUploadHandler.upload_avatar(avatar_file, request.user.id)
+            
+            # 保存 COS URL 到数据库
+            profile.avatar = avatar_url
             profile.save()
             
             return JsonResponse({
                 'success': True, 
-                'avatar_url': profile.avatar.url,
+                'avatar_url': profile.get_avatar_url(),
                 'message': '头像上传成功！'
             })
             

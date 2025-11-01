@@ -1,19 +1,18 @@
 """
 评论相关视图
 """
-import os
-import uuid
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from ..models import Comment
+from ..utils.file_upload_handler import FileUploadHandler
 
 
 @csrf_exempt
 @login_required
 def add_comment(request):
-    """添加评论（trip页面专用）"""
+    """添加评论（trip页面专用）- 上传到COS"""
     if not request.user.is_superuser:
         return JsonResponse({'error': '仅管理员可发表评论'}, status=403)
     if request.method == 'POST':
@@ -21,14 +20,27 @@ def add_comment(request):
         image = request.FILES.get('image')
         video = request.FILES.get('video')
         page = request.POST.get('page', 'trip')
-        if image:
-            ext = os.path.splitext(image.name)[-1]
-            image.name = f"{uuid.uuid4().hex}{ext}"
-        if video:
-            ext = os.path.splitext(video.name)[-1]
-            video.name = f"{uuid.uuid4().hex}{ext}"
-        if content or image or video:
-            Comment.objects.create(content=content, image=image, video=video, user=request.user, page=page)
+        
+        # 上传文件到 COS
+        image_url = None
+        video_url = None
+        
+        try:
+            if image:
+                image_url = FileUploadHandler.upload_comment_image(image, request.user.id)
+            if video:
+                video_url = FileUploadHandler.upload_comment_video(video, request.user.id)
+        except Exception as e:
+            return JsonResponse({'status': 'fail', 'message': f'文件上传失败: {str(e)}'}, status=500)
+        
+        if content or image_url or video_url:
+            Comment.objects.create(
+                content=content, 
+                image=image_url, 
+                video=video_url, 
+                user=request.user, 
+                page=page
+            )
             return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'fail', 'message': '只支持POST请求'})
 
@@ -54,21 +66,34 @@ def delete_comment(request, comment_id):
 @csrf_exempt
 @login_required
 def trip1_add_comment(request):
-    """添加评论（trip1页面专用）"""
+    """添加评论（trip1页面专用）- 上传到COS"""
     if not request.user.is_superuser:
         return JsonResponse({'error': '仅管理员可发表评论'}, status=403)
     if request.method == 'POST':
         content = request.POST.get('content', '').strip()
         image = request.FILES.get('image')
         video = request.FILES.get('video')
-        if image:
-            ext = os.path.splitext(image.name)[-1]
-            image.name = f"{uuid.uuid4().hex}{ext}"
-        if video:
-            ext = os.path.splitext(video.name)[-1]
-            video.name = f"{uuid.uuid4().hex}{ext}"
-        if content or image or video:
-            Comment.objects.create(content=content, image=image, video=video, user=request.user, page='trip1')
+        
+        # 上传文件到 COS
+        image_url = None
+        video_url = None
+        
+        try:
+            if image:
+                image_url = FileUploadHandler.upload_comment_image(image, request.user.id)
+            if video:
+                video_url = FileUploadHandler.upload_comment_video(video, request.user.id)
+        except Exception as e:
+            return JsonResponse({'status': 'fail', 'message': f'文件上传失败: {str(e)}'}, status=500)
+        
+        if content or image_url or video_url:
+            Comment.objects.create(
+                content=content, 
+                image=image_url, 
+                video=video_url, 
+                user=request.user, 
+                page='trip1'
+            )
             return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'fail', 'message': '只支持POST请求'})
 
@@ -94,7 +119,7 @@ def trip1_delete_comment(request, comment_id):
 @csrf_exempt
 @login_required
 def add_comment_generic(request, page_name):
-    """通用添加评论视图"""
+    """通用添加评论视图 - 上传到COS"""
     # 权限检查
     if not request.user.is_superuser:
         return JsonResponse({
@@ -111,22 +136,22 @@ def add_comment_generic(request, page_name):
         image = request.FILES.get('image')
         video = request.FILES.get('video')
         
-        # 重命名图片文件
-        if image:
-            ext = os.path.splitext(image.name)[-1]
-            image.name = f"{uuid.uuid4().hex}{ext}"
+        # 上传文件到 COS
+        image_url = None
+        video_url = None
         
-        # 重命名视频文件
+        if image:
+            image_url = FileUploadHandler.upload_comment_image(image, request.user.id)
+        
         if video:
-            ext = os.path.splitext(video.name)[-1]
-            video.name = f"{uuid.uuid4().hex}{ext}"
+            video_url = FileUploadHandler.upload_comment_video(video, request.user.id)
         
         # 创建评论
-        if content or image or video:
+        if content or image_url or video_url:
             Comment.objects.create(
                 content=content, 
-                image=image, 
-                video=video, 
+                image=image_url, 
+                video=video_url, 
                 user=request.user, 
                 page=page_name
             )

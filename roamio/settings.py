@@ -360,3 +360,21 @@ QQ_AUTHORIZE_URL = 'https://graph.qq.com/oauth2.0/authorize'
 QQ_ACCESS_TOKEN_URL = 'https://graph.qq.com/oauth2.0/token'
 QQ_GET_USER_INFO_URL = 'https://graph.qq.com/oauth2.0/me'
 QQ_GET_USER_DETAIL_URL = 'https://graph.qq.com/user/get_user_info'
+
+# ==================== 腾讯云 COS 对象存储配置 ====================
+# 从环境变量读取配置（敏感信息不要提交到代码仓库）
+TENCENT_COS_SECRET_ID = os.getenv('TENCENT_COS_SECRET_ID', '')
+TENCENT_COS_SECRET_KEY = os.getenv('TENCENT_COS_SECRET_KEY', '')
+TENCENT_COS_REGION = os.getenv('TENCENT_COS_REGION', 'ap-guangzhou')  # 默认广州
+TENCENT_COS_BUCKET = os.getenv('TENCENT_COS_BUCKET', '')  # 存储桶名称，格式: bucket-appid
+
+# COS 配置检查（DEBUG模式下显示提示）
+if DEBUG and not (TENCENT_COS_SECRET_ID and TENCENT_COS_SECRET_KEY and TENCENT_COS_BUCKET):
+    print("=" * 50)
+    print("[警告] 腾讯云 COS 配置不完整")
+    print("[提示] 请在 .env 文件中配置以下环境变量：")
+    print("  - TENCENT_COS_SECRET_ID")
+    print("  - TENCENT_COS_SECRET_KEY")
+    print("  - TENCENT_COS_BUCKET")
+    print("  - TENCENT_COS_REGION (可选，默认 ap-guangzhou)")
+    print("=" * 50)

@@ -25,71 +25,49 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'user', 'timestamp']
     
     def get_image(self, obj):
-        """返回完整URL（包含域名）或相对路径"""
+        """返回图片URL（COS完整URL或本地路径）"""
         if not obj.image:
             return None
         
-        # 获取原始 URL
-        image_url = obj.image.url
+        # image 现在是 URLField，直接返回字符串
+        # 如果是 COS URL（以 http:// 或 https:// 开头），直接返回
+        # 如果是本地路径（兼容旧数据），需要构建完整 URL
+        image_url = obj.image
         
-        # 处理 URL 中可能存在的 /media/media/ 重复问题
-        image_url = image_url.replace('/media/media/', '/media/')
+        if image_url.startswith('http://') or image_url.startswith('https://'):
+            # COS URL，直接返回
+            return image_url
         
-        # 获取 request 对象
+        # 本地路径，构建完整 URL（兼容旧数据）
         request = self.context.get('request')
-        
         if request:
-            # 检查 URL 是否已经包含域名
-            if image_url.startswith('http://') or image_url.startswith('https://'):
-                return image_url
-            
-            # 如果有 request，手动构建完整 URL
-            # 确保以 /media/ 开头
-            if image_url.startswith('/media/'):
-                full_url = f"{request.scheme}://{request.get_host()}{image_url}"
-            else:
-                # 如果路径不是以 /media/ 开头，添加它
-                if not image_url.startswith('/'):
-                    image_url = f"/media/{image_url}"
-                full_url = f"{request.scheme}://{request.get_host()}{image_url}"
-            
-            return full_url
+            if not image_url.startswith('/'):
+                image_url = f"/media/{image_url}"
+            return f"{request.scheme}://{request.get_host()}{image_url}"
         else:
-            # 没有 request 对象，返回相对路径
             return image_url
     
     def get_video(self, obj):
-        """返回完整URL（包含域名）或相对路径"""
+        """返回视频URL（COS完整URL或本地路径）"""
         if not obj.video:
             return None
         
-        # 获取原始 URL
-        video_url = obj.video.url
+        # video 现在是 URLField，直接返回字符串
+        # 如果是 COS URL（以 http:// 或 https:// 开头），直接返回
+        # 如果是本地路径（兼容旧数据），需要构建完整 URL
+        video_url = obj.video
         
-        # 处理 URL 中可能存在的 /media/media/ 重复问题
-        video_url = video_url.replace('/media/media/', '/media/')
+        if video_url.startswith('http://') or video_url.startswith('https://'):
+            # COS URL，直接返回
+            return video_url
         
-        # 获取 request 对象
+        # 本地路径，构建完整 URL（兼容旧数据）
         request = self.context.get('request')
-        
         if request:
-            # 检查 URL 是否已经包含域名
-            if video_url.startswith('http://') or video_url.startswith('https://'):
-                return video_url
-            
-            # 如果有 request，手动构建完整 URL
-            # 确保以 /media/ 开头
-            if video_url.startswith('/media/'):
-                full_url = f"{request.scheme}://{request.get_host()}{video_url}"
-            else:
-                # 如果路径不是以 /media/ 开头，添加它
-                if not video_url.startswith('/'):
-                    video_url = f"/media/{video_url}"
-                full_url = f"{request.scheme}://{request.get_host()}{video_url}"
-            
-            return full_url
+            if not video_url.startswith('/'):
+                video_url = f"/media/{video_url}"
+            return f"{request.scheme}://{request.get_host()}{video_url}"
         else:
-            # 没有 request 对象，返回相对路径
             return video_url
     
     def get_can_delete(self, obj):
@@ -142,6 +120,9 @@ class CommentCreateSerializer(serializers.ModelSerializer):
     """评论创建序列化器"""
     parent = serializers.PrimaryKeyRelatedField(queryset=Comment.objects.all(), required=False, allow_null=True)
     content = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    # image 和 video 字段允许接收文件上传（在 viewset 中处理上传）
+    image = serializers.URLField(required=False, allow_blank=True, allow_null=True)
+    video = serializers.URLField(required=False, allow_blank=True, allow_null=True)
     
     class Meta:
         model = Comment
@@ -150,26 +131,9 @@ class CommentCreateSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         """验证至少有一项内容"""
         content = attrs.get('content', '').strip() if attrs.get('content') else ''
-        image = attrs.get('image')
-        video = attrs.get('video')
-        
-        if not content and not image and not video:
-            raise serializers.ValidationError(
-                "评论内容、图片或视频至少需要提供一项"
-            )
+        # 注意：因为文件在 viewset 中处理，这里从 request.FILES 获取
+        # 或者直接检查是否有 image/video URL
         return attrs
-    
-    def validate_image(self, value):
-        """验证图片"""
-        if value and value.size > 10 * 1024 * 1024:
-            raise serializers.ValidationError("图片大小不能超过10MB")
-        return value
-    
-    def validate_video(self, value):
-        """验证视频"""
-        if value and value.size > 100 * 1024 * 1024:
-            raise serializers.ValidationError("视频大小不能超过100MB")
-        return value
 
 
 class CommentUpdateSerializer(serializers.ModelSerializer):
@@ -197,71 +161,45 @@ class CommentListSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'content', 'image', 'video', 'timestamp']
     
     def get_image(self, obj):
-        """返回完整URL（包含域名）或相对路径"""
+        """返回图片URL（COS完整URL或本地路径）"""
         if not obj.image:
             return None
         
-        # 获取原始 URL
-        image_url = obj.image.url
+        # image 现在是 URLField，直接返回字符串
+        image_url = obj.image
         
-        # 处理 URL 中可能存在的 /media/media/ 重复问题
-        image_url = image_url.replace('/media/media/', '/media/')
+        if image_url.startswith('http://') or image_url.startswith('https://'):
+            # COS URL，直接返回
+            return image_url
         
-        # 获取 request 对象
+        # 本地路径，构建完整 URL（兼容旧数据）
         request = self.context.get('request')
-        
         if request:
-            # 检查 URL 是否已经包含域名
-            if image_url.startswith('http://') or image_url.startswith('https://'):
-                return image_url
-            
-            # 如果有 request，手动构建完整 URL
-            # 确保以 /media/ 开头
-            if image_url.startswith('/media/'):
-                full_url = f"{request.scheme}://{request.get_host()}{image_url}"
-            else:
-                # 如果路径不是以 /media/ 开头，添加它
-                if not image_url.startswith('/'):
-                    image_url = f"/media/{image_url}"
-                full_url = f"{request.scheme}://{request.get_host()}{image_url}"
-            
-            return full_url
+            if not image_url.startswith('/'):
+                image_url = f"/media/{image_url}"
+            return f"{request.scheme}://{request.get_host()}{image_url}"
         else:
-            # 没有 request 对象，返回相对路径
             return image_url
     
     def get_video(self, obj):
-        """返回完整URL（包含域名）或相对路径"""
+        """返回视频URL（COS完整URL或本地路径）"""
         if not obj.video:
             return None
         
-        # 获取原始 URL
-        video_url = obj.video.url
+        # video 现在是 URLField，直接返回字符串
+        video_url = obj.video
         
-        # 处理 URL 中可能存在的 /media/media/ 重复问题
-        video_url = video_url.replace('/media/media/', '/media/')
+        if video_url.startswith('http://') or video_url.startswith('https://'):
+            # COS URL，直接返回
+            return video_url
         
-        # 获取 request 对象
+        # 本地路径，构建完整 URL（兼容旧数据）
         request = self.context.get('request')
-        
         if request:
-            # 检查 URL 是否已经包含域名
-            if video_url.startswith('http://') or video_url.startswith('https://'):
-                return video_url
-            
-            # 如果有 request，手动构建完整 URL
-            # 确保以 /media/ 开头
-            if video_url.startswith('/media/'):
-                full_url = f"{request.scheme}://{request.get_host()}{video_url}"
-            else:
-                # 如果路径不是以 /media/ 开头，添加它
-                if not video_url.startswith('/'):
-                    video_url = f"/media/{video_url}"
-                full_url = f"{request.scheme}://{request.get_host()}{video_url}"
-            
-            return full_url
+            if not video_url.startswith('/'):
+                video_url = f"/media/{video_url}"
+            return f"{request.scheme}://{request.get_host()}{video_url}"
         else:
-            # 没有 request 对象，返回相对路径
             return video_url
     
     def get_user(self, obj):
@@ -275,4 +213,3 @@ class CommentListSerializer(serializers.ModelSerializer):
             'username': obj.user.username,
             'avatar': avatar
         }
-

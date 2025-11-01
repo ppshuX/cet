@@ -2,8 +2,6 @@
 评论相关 ViewSet
 处理评论的 CRUD 操作、文件上传等功能
 """
-import uuid
-import os
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -13,7 +11,6 @@ from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import CharFilter
 from django_filters.rest_framework import FilterSet
-from django.conf import settings
 
 from ...models import Comment, Trip
 from ...serializers import (
@@ -21,6 +18,7 @@ from ...serializers import (
     CommentCreateSerializer,
     CommentUpdateSerializer,
 )
+from ...utils.file_upload_handler import FileUploadHandler
 
 
 class NoPagination(PageNumberPagination):
@@ -99,18 +97,22 @@ class CommentViewSet(viewsets.ModelViewSet):
             return [AllowAny()]
     
     def perform_create(self, serializer):
-        """创建评论时自动设置用户"""
-        # 处理文件重命名
+        """创建评论时自动设置用户并上传文件到COS"""
         image = self.request.FILES.get('image')
         video = self.request.FILES.get('video')
         
-        if image:
-            ext = os.path.splitext(image.name)[-1]
-            image.name = f"{uuid.uuid4().hex}{ext}"
+        # 上传文件到 COS 并获取 URL
+        image_url = None
+        video_url = None
         
-        if video:
-            ext = os.path.splitext(video.name)[-1]
-            video.name = f"{uuid.uuid4().hex}{ext}"
+        try:
+            if image:
+                image_url = FileUploadHandler.upload_comment_image(image, self.request.user.id)
+            
+            if video:
+                video_url = FileUploadHandler.upload_comment_video(video, self.request.user.id)
+        except Exception as e:
+            raise PermissionDenied(f'文件上传失败: {str(e)}')
         
         try:
             parent = serializer.validated_data.get('parent')
@@ -151,6 +153,12 @@ class CommentViewSet(viewsets.ModelViewSet):
                 
                 # 将page设置为父评论的页面
                 serializer.validated_data['page'] = parent_page
+            
+            # 将上传的文件 URL 添加到 validated_data
+            if image_url:
+                serializer.validated_data['image'] = image_url
+            if video_url:
+                serializer.validated_data['video'] = video_url
             
             serializer.save(user=self.request.user)
         except Exception as e:
@@ -226,35 +234,31 @@ class CommentViewSet(viewsets.ModelViewSet):
             )
     
     def perform_destroy(self, instance):
-        """删除评论时同时删除关联的文件"""
-        # 保存文件路径
-        image_name = instance.image.name if instance.image else None
-        video_name = instance.video.name if instance.video else None
+        """删除评论时同时删除 COS 上的文件"""
+        # 保存文件 URL
+        image_url = instance.image if instance.image else None
+        video_url = instance.video if instance.video else None
         
-        # 删除评论对象（这会自动触发文件清理）
+        # 删除评论对象
         try:
             instance.delete()
         except Exception as e:
             print(f"删除评论对象失败: {e}")
             raise
         
-        # 删除关联的图片文件
-        if image_name:
+        # 从 COS 删除关联的图片文件
+        if image_url:
             try:
-                image_path = os.path.join(settings.MEDIA_ROOT, image_name)
-                if os.path.isfile(image_path):
-                    os.remove(image_path)
-                    print(f"成功删除图片文件: {image_path}")
+                FileUploadHandler.delete_file(image_url)
+                print(f"成功删除图片文件: {image_url}")
             except Exception as e:
                 print(f"删除图片文件失败: {e}")
         
-        # 删除关联的视频文件
-        if video_name:
+        # 从 COS 删除关联的视频文件
+        if video_url:
             try:
-                video_path = os.path.join(settings.MEDIA_ROOT, video_name)
-                if os.path.isfile(video_path):
-                    os.remove(video_path)
-                    print(f"成功删除视频文件: {video_path}")
+                FileUploadHandler.delete_file(video_url)
+                print(f"成功删除视频文件: {video_url}")
             except Exception as e:
                 print(f"删除视频文件失败: {e}")
     
@@ -268,7 +272,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def add_image(self, request, pk=None):
-        """为评论添加或替换图片"""
+        """为评论添加或替换图片（上传到COS）"""
         comment = self.get_object()
         
         # 权限检查：只有评论作者或管理员可以修改图片
@@ -293,33 +297,27 @@ class CommentViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        # 如果评论已有图片，删除旧图片
-        if comment.image:
-            try:
-                old_image = comment.image
-                # 只使用文件名的相对路径，避免路径问题
-                if old_image.name:
-                    # 构建完整路径
-                    old_image_path = os.path.join(settings.MEDIA_ROOT, old_image.name)
-                    if os.path.isfile(old_image_path):
-                        os.remove(old_image_path)
-                        print(f"成功删除旧图片: {old_image_path}")
-            except Exception as e:
-                print(f"删除旧图片失败: {e}")
-                # 继续执行，不中断流程
-        
-        # 生成唯一文件名
-        ext = os.path.splitext(image.name)[-1]
-        image.name = f"{uuid.uuid4().hex}{ext}"
-        
         try:
-            # 保存新图片
-            comment.image = image
+            # 如果评论已有图片，删除旧图片
+            if comment.image:
+                old_image_url = comment.image
+                try:
+                    FileUploadHandler.delete_file(old_image_url)
+                    print(f"成功删除旧图片: {old_image_url}")
+                except Exception as e:
+                    print(f"删除旧图片失败（已忽略）: {e}")
+            
+            # 上传新图片到 COS
+            image_url = FileUploadHandler.upload_comment_image(image, request.user.id)
+            
+            # 保存新图片 URL
+            comment.image = image_url
             comment.save()
             
             # 返回更新后的评论
             serializer = CommentSerializer(comment, context={'request': request})
             return Response(serializer.data)
+            
         except Exception as e:
             print(f"添加图片失败: {e}")
             return Response(
