@@ -30,19 +30,17 @@ class CommentSerializer(serializers.ModelSerializer):
             return None
         
         # image 现在是 URLField，直接返回字符串
-        # 如果是 COS URL（以 http:// 或 https:// 开头），直接返回
-        # 如果是本地路径（兼容旧数据），需要构建完整 URL
         image_url = obj.image
         
+        # 如果是 COS URL（以 http:// 或 https:// 开头），直接返回
         if image_url.startswith('http://') or image_url.startswith('https://'):
-            # COS URL，直接返回
             return image_url
         
         # 本地路径，构建完整 URL（兼容旧数据）
         request = self.context.get('request')
         if request:
-                if not image_url.startswith('/'):
-                    image_url = f"/media/{image_url}"
+            if not image_url.startswith('/'):
+                image_url = f"/media/{image_url}"
             return f"{request.scheme}://{request.get_host()}{image_url}"
         else:
             return image_url
@@ -53,19 +51,17 @@ class CommentSerializer(serializers.ModelSerializer):
             return None
         
         # video 现在是 URLField，直接返回字符串
-        # 如果是 COS URL（以 http:// 或 https:// 开头），直接返回
-        # 如果是本地路径（兼容旧数据），需要构建完整 URL
         video_url = obj.video
         
+        # 如果是 COS URL（以 http:// 或 https:// 开头），直接返回
         if video_url.startswith('http://') or video_url.startswith('https://'):
-            # COS URL，直接返回
             return video_url
         
         # 本地路径，构建完整 URL（兼容旧数据）
         request = self.context.get('request')
         if request:
-                if not video_url.startswith('/'):
-                    video_url = f"/media/{video_url}"
+            if not video_url.startswith('/'):
+                video_url = f"/media/{video_url}"
             return f"{request.scheme}://{request.get_host()}{video_url}"
         else:
             return video_url
@@ -165,15 +161,15 @@ class CommentListSerializer(serializers.ModelSerializer):
         # image 现在是 URLField，直接返回字符串
         image_url = obj.image
         
+        # 如果是 COS URL（以 http:// 或 https:// 开头），直接返回
         if image_url.startswith('http://') or image_url.startswith('https://'):
-            # COS URL，直接返回
             return image_url
         
         # 本地路径，构建完整 URL（兼容旧数据）
         request = self.context.get('request')
         if request:
-                if not image_url.startswith('/'):
-                    image_url = f"/media/{image_url}"
+            if not image_url.startswith('/'):
+                image_url = f"/media/{image_url}"
             return f"{request.scheme}://{request.get_host()}{image_url}"
         else:
             return image_url
@@ -186,15 +182,15 @@ class CommentListSerializer(serializers.ModelSerializer):
         # video 现在是 URLField，直接返回字符串
         video_url = obj.video
         
+        # 如果是 COS URL（以 http:// 或 https:// 开头），直接返回
         if video_url.startswith('http://') or video_url.startswith('https://'):
-            # COS URL，直接返回
             return video_url
         
         # 本地路径，构建完整 URL（兼容旧数据）
         request = self.context.get('request')
         if request:
-                if not video_url.startswith('/'):
-                    video_url = f"/media/{video_url}"
+            if not video_url.startswith('/'):
+                video_url = f"/media/{video_url}"
             return f"{request.scheme}://{request.get_host()}{video_url}"
         else:
             return video_url
