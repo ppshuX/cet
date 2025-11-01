@@ -1,16 +1,17 @@
 """
 头像下载工具
-用于从QQ等第三方平台下载头像并设置为用户头像
+用于从QQ等第三方平台下载头像并上传到COS
 """
 import os
 import requests
 import uuid
+import tempfile
 from io import BytesIO
 from PIL import Image
-from django.core.files import File
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.conf import settings
 import sys
+from .file_upload_handler import FileUploadHandler
 
 
 def download_avatar_from_url(avatar_url):
@@ -93,7 +94,7 @@ def download_avatar_from_url(avatar_url):
 
 def set_user_avatar_from_url(user, avatar_url):
     """
-    从URL下载头像并设置为用户头像
+    从URL下载头像并上传到COS
     
     Args:
         user: User对象
@@ -110,21 +111,45 @@ def set_user_avatar_from_url(user, avatar_url):
     if not success:
         return False, result
     
+    temp_file_path = None
+    
     try:
         # 删除旧头像（如果存在）
         if user.profile.avatar:
             try:
-                if os.path.isfile(user.profile.avatar.path):
-                    os.remove(user.profile.avatar.path)
-            except:
-                pass  # 忽略删除失败
+                FileUploadHandler.delete_file(user.profile.avatar)
+            except Exception as e:
+                print(f"删除旧头像失败（已忽略）: {e}")
         
-        # 设置新头像
-        user.profile.avatar = result  # result是Django File对象
-        user.profile.save()  # save会自动处理图片压缩
+        # 将 InMemoryUploadedFile 保存到临时文件
+        temp_dir = tempfile.gettempdir()
+        temp_file_path = os.path.join(temp_dir, result.name)
         
-        return True, "头像设置成功"
+        with open(temp_file_path, 'wb') as temp_file:
+            result.seek(0)
+            temp_file.write(result.read())
+        
+        # 上传到 COS
+        cos_url = FileUploadHandler.upload_file(
+            result,  # 传入 InMemoryUploadedFile 对象
+            save_dir='media/avatars',
+            filename_prefix=f'user{user.id}'
+        )
+        
+        # 保存 COS URL 到数据库
+        user.profile.avatar = cos_url
+        user.profile.save()
+        
+        return True, f"头像设置成功: {cos_url}"
         
     except Exception as e:
-        return False, f"保存头像失败: {str(e)}"
+        return False, f"上传头像到COS失败: {str(e)}"
+    
+    finally:
+        # 清理临时文件
+        if temp_file_path and os.path.exists(temp_file_path):
+            try:
+                os.remove(temp_file_path)
+            except:
+                pass
 
