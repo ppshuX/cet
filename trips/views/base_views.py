@@ -8,8 +8,9 @@ import os
 
 
 def main_menu(request):
-    """主菜单页面（保留向后兼容）"""
-    return render(request, 'trips/index.html')
+    """主菜单页面 - 重定向到 Vue 首页"""
+    from django.shortcuts import redirect
+    return redirect('/')
 
 
 def vue_app(request):
