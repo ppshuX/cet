@@ -121,17 +121,12 @@ def set_user_avatar_from_url(user, avatar_url):
             except Exception as e:
                 print(f"删除旧头像失败（已忽略）: {e}")
         
-        # 将 InMemoryUploadedFile 保存到临时文件
-        temp_dir = tempfile.gettempdir()
-        temp_file_path = os.path.join(temp_dir, result.name)
+        # 重置文件指针到开始位置
+        result.seek(0)
         
-        with open(temp_file_path, 'wb') as temp_file:
-            result.seek(0)
-            temp_file.write(result.read())
-        
-        # 上传到 COS
+        # 上传到 COS（直接传入 InMemoryUploadedFile 对象）
         cos_url = FileUploadHandler.upload_file(
-            result,  # 传入 InMemoryUploadedFile 对象
+            result,
             save_dir='media/avatars',
             filename_prefix=f'user{user.id}'
         )
@@ -143,13 +138,8 @@ def set_user_avatar_from_url(user, avatar_url):
         return True, f"头像设置成功: {cos_url}"
         
     except Exception as e:
+        print(f"上传头像到COS时发生错误: {e}")
+        import traceback
+        traceback.print_exc()
         return False, f"上传头像到COS失败: {str(e)}"
-    
-    finally:
-        # 清理临时文件
-        if temp_file_path and os.path.exists(temp_file_path):
-            try:
-                os.remove(temp_file_path)
-            except:
-                pass
 
