@@ -120,19 +120,16 @@ class CommentCreateSerializer(serializers.ModelSerializer):
     """评论创建序列化器"""
     parent = serializers.PrimaryKeyRelatedField(queryset=Comment.objects.all(), required=False, allow_null=True)
     content = serializers.CharField(required=False, allow_blank=True, allow_null=True)
-    # image 和 video 字段允许接收文件上传（在 viewset 中处理上传）
-    image = serializers.URLField(required=False, allow_blank=True, allow_null=True)
-    video = serializers.URLField(required=False, allow_blank=True, allow_null=True)
+    # 这些字段在 viewset 中处理，不参与序列化验证
     
     class Meta:
         model = Comment
-        fields = ['content', 'image', 'video', 'page', 'parent']
+        fields = ['content', 'page', 'parent']
     
     def validate(self, attrs):
         """验证至少有一项内容"""
-        content = attrs.get('content', '').strip() if attrs.get('content') else ''
-        # 注意：因为文件在 viewset 中处理，这里从 request.FILES 获取
-        # 或者直接检查是否有 image/video URL
+        # 注意：image 和 video 在 viewset 中处理上传
+        # 这里只验证 content 或确保至少有文件上传
         return attrs
 
 

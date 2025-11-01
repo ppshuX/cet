@@ -100,6 +100,12 @@ class CommentViewSet(viewsets.ModelViewSet):
         """创建评论时自动设置用户并上传文件到COS"""
         image = self.request.FILES.get('image')
         video = self.request.FILES.get('video')
+        content = serializer.validated_data.get('content', '').strip() if serializer.validated_data.get('content') else ''
+        
+        # 验证至少有一项内容
+        if not content and not image and not video:
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError({'detail': '评论内容、图片或视频至少需要提供一项'})
         
         # 上传文件到 COS 并获取 URL
         image_url = None
