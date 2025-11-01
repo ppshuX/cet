@@ -41,8 +41,8 @@ class CommentSerializer(serializers.ModelSerializer):
         # 本地路径，构建完整 URL（兼容旧数据）
         request = self.context.get('request')
         if request:
-            if not image_url.startswith('/'):
-                image_url = f"/media/{image_url}"
+                if not image_url.startswith('/'):
+                    image_url = f"/media/{image_url}"
             return f"{request.scheme}://{request.get_host()}{image_url}"
         else:
             return image_url
@@ -64,8 +64,8 @@ class CommentSerializer(serializers.ModelSerializer):
         # 本地路径，构建完整 URL（兼容旧数据）
         request = self.context.get('request')
         if request:
-            if not video_url.startswith('/'):
-                video_url = f"/media/{video_url}"
+                if not video_url.startswith('/'):
+                    video_url = f"/media/{video_url}"
             return f"{request.scheme}://{request.get_host()}{video_url}"
         else:
             return video_url
@@ -172,8 +172,8 @@ class CommentListSerializer(serializers.ModelSerializer):
         # 本地路径，构建完整 URL（兼容旧数据）
         request = self.context.get('request')
         if request:
-            if not image_url.startswith('/'):
-                image_url = f"/media/{image_url}"
+                if not image_url.startswith('/'):
+                    image_url = f"/media/{image_url}"
             return f"{request.scheme}://{request.get_host()}{image_url}"
         else:
             return image_url
@@ -193,8 +193,8 @@ class CommentListSerializer(serializers.ModelSerializer):
         # 本地路径，构建完整 URL（兼容旧数据）
         request = self.context.get('request')
         if request:
-            if not video_url.startswith('/'):
-                video_url = f"/media/{video_url}"
+                if not video_url.startswith('/'):
+                    video_url = f"/media/{video_url}"
             return f"{request.scheme}://{request.get_host()}{video_url}"
         else:
             return video_url

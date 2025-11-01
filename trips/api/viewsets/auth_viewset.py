@@ -371,18 +371,28 @@ class AuthViewSet(viewsets.GenericViewSet):
                     avatar_url=qq_info.get('avatar_url', '')
                 )
                 
+                # 确保 UserProfile 已创建（刷新用户对象）
+                user.refresh_from_db()
+                
+                # 如果 profile 不存在，手动创建
+                if not hasattr(user, 'profile'):
+                    from ...models import UserProfile
+                    UserProfile.objects.create(user=user)
+                    user.refresh_from_db()
+                
                 # 自动下载并设置QQ头像（如果QQ头像URL存在）
                 if qq_info.get('avatar_url'):
                     from ...utils.avatar_downloader import set_user_avatar_from_url
                     try:
+                        print(f"开始设置 QQ 头像，用户 ID: {user.id}, 头像 URL: {qq_info.get('avatar_url')}")
                         success, message = set_user_avatar_from_url(user, qq_info.get('avatar_url'))
                         if success:
-                            print(f"QQ头像设置成功: {message}")
+                            print(f"✅ QQ头像设置成功: {message}")
                         else:
-                            print(f"QQ头像设置失败: {message}")
+                            print(f"❌ QQ头像设置失败: {message}")
                     except Exception as e:
                         # 头像下载失败不影响登录，只记录错误
-                        print(f"QQ头像下载异常: {e}")
+                        print(f"⚠️  QQ头像下载异常: {e}")
                         import traceback
                         traceback.print_exc()
                 
@@ -503,18 +513,26 @@ class AuthViewSet(viewsets.GenericViewSet):
             avatar_url=qq_info.get('avatar_url', '')
         )
         
+        # 确保 UserProfile 已创建
+        user.refresh_from_db()
+        if not hasattr(user, 'profile'):
+            from ...models import UserProfile
+            UserProfile.objects.create(user=user)
+            user.refresh_from_db()
+        
         # 自动下载并设置QQ头像（如果QQ头像URL存在且用户还没有头像）
-        if qq_info.get('avatar_url') and (not hasattr(user, 'profile') or not user.profile.avatar):
+        if qq_info.get('avatar_url') and not user.profile.avatar:
             from ...utils.avatar_downloader import set_user_avatar_from_url
             try:
+                print(f"开始设置 QQ 头像，用户 ID: {user.id}, 头像 URL: {qq_info.get('avatar_url')}")
                 success, message = set_user_avatar_from_url(user, qq_info.get('avatar_url'))
                 if success:
-                    print(f"QQ头像设置成功: {message}")
+                    print(f"✅ QQ头像设置成功: {message}")
                 else:
-                    print(f"QQ头像设置失败: {message}")
+                    print(f"❌ QQ头像设置失败: {message}")
             except Exception as e:
                 # 头像下载失败不影响绑定，只记录错误
-                print(f"QQ头像下载异常: {e}")
+                print(f"⚠️  QQ头像下载异常: {e}")
                 import traceback
                 traceback.print_exc()
         
@@ -581,18 +599,26 @@ class AuthViewSet(viewsets.GenericViewSet):
             avatar_url=qq_info.get('avatar_url', '')
         )
         
+        # 确保 UserProfile 已创建
+        request.user.refresh_from_db()
+        if not hasattr(request.user, 'profile'):
+            from ...models import UserProfile
+            UserProfile.objects.create(user=request.user)
+            request.user.refresh_from_db()
+        
         # 自动下载并设置QQ头像（如果QQ头像URL存在且用户还没有头像）
-        if qq_info.get('avatar_url') and (not hasattr(request.user, 'profile') or not request.user.profile.avatar):
+        if qq_info.get('avatar_url') and not request.user.profile.avatar:
             from ...utils.avatar_downloader import set_user_avatar_from_url
             try:
+                print(f"开始设置 QQ 头像，用户 ID: {request.user.id}, 头像 URL: {qq_info.get('avatar_url')}")
                 success, message = set_user_avatar_from_url(request.user, qq_info.get('avatar_url'))
                 if success:
-                    print(f"QQ头像设置成功: {message}")
+                    print(f"✅ QQ头像设置成功: {message}")
                 else:
-                    print(f"QQ头像设置失败: {message}")
+                    print(f"❌ QQ头像设置失败: {message}")
             except Exception as e:
                 # 头像下载失败不影响绑定，只记录错误
-                print(f"QQ头像下载异常: {e}")
+                print(f"⚠️  QQ头像下载异常: {e}")
                 import traceback
                 traceback.print_exc()
         

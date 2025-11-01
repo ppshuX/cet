@@ -158,7 +158,7 @@
           :can-like="trip.overview ? (trip.visibility === 'public') : true"
           @like="handleLike"
         />
-
+        
         <!-- 评论区组件 ⭐ -->
         <CommentSection
           ref="commentSectionRef"
@@ -322,7 +322,7 @@ export default {
           result = await likeTrip(slug)
         }
         if (trip.value.stats) {
-          trip.value.stats.likes = result.likes
+        trip.value.stats.likes = result.likes
         }
         alert('点赞成功！')
       } catch (error) {
