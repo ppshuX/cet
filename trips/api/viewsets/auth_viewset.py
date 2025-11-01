@@ -375,10 +375,16 @@ class AuthViewSet(viewsets.GenericViewSet):
                 if qq_info.get('avatar_url'):
                     from ...utils.avatar_downloader import set_user_avatar_from_url
                     try:
-                        set_user_avatar_from_url(user, qq_info.get('avatar_url'))
+                        success, message = set_user_avatar_from_url(user, qq_info.get('avatar_url'))
+                        if success:
+                            print(f"QQ头像设置成功: {message}")
+                        else:
+                            print(f"QQ头像设置失败: {message}")
                     except Exception as e:
                         # 头像下载失败不影响登录，只记录错误
-                        print(f"QQ头像下载失败: {e}")
+                        print(f"QQ头像下载异常: {e}")
+                        import traceback
+                        traceback.print_exc()
                 
                 # 生成JWT Token
                 refresh = RefreshToken.for_user(user)
@@ -501,10 +507,16 @@ class AuthViewSet(viewsets.GenericViewSet):
         if qq_info.get('avatar_url') and (not hasattr(user, 'profile') or not user.profile.avatar):
             from ...utils.avatar_downloader import set_user_avatar_from_url
             try:
-                set_user_avatar_from_url(user, qq_info.get('avatar_url'))
+                success, message = set_user_avatar_from_url(user, qq_info.get('avatar_url'))
+                if success:
+                    print(f"QQ头像设置成功: {message}")
+                else:
+                    print(f"QQ头像设置失败: {message}")
             except Exception as e:
                 # 头像下载失败不影响绑定，只记录错误
-                print(f"QQ头像下载失败: {e}")
+                print(f"QQ头像下载异常: {e}")
+                import traceback
+                traceback.print_exc()
         
         # 删除验证token
         cache.delete(cache_key)
@@ -573,10 +585,16 @@ class AuthViewSet(viewsets.GenericViewSet):
         if qq_info.get('avatar_url') and (not hasattr(request.user, 'profile') or not request.user.profile.avatar):
             from ...utils.avatar_downloader import set_user_avatar_from_url
             try:
-                set_user_avatar_from_url(request.user, qq_info.get('avatar_url'))
+                success, message = set_user_avatar_from_url(request.user, qq_info.get('avatar_url'))
+                if success:
+                    print(f"QQ头像设置成功: {message}")
+                else:
+                    print(f"QQ头像设置失败: {message}")
             except Exception as e:
                 # 头像下载失败不影响绑定，只记录错误
-                print(f"QQ头像下载失败: {e}")
+                print(f"QQ头像下载异常: {e}")
+                import traceback
+                traceback.print_exc()
         
         return Response({
             'success': True,
